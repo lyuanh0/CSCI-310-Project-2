@@ -36,3 +36,33 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
         Message message = messages.get(position);
 
         holder.tvSender.setText(message.getSender());
+        holder.tvMessage.setText(message.getText());
+        holder.tvTimestamp.setText(TimeUtils.formatTime(message.getTimestamp()));
+
+        // Style differently for user vs pet messages
+        if ("User".equals(message.getSender())) {
+            holder.itemView.setBackgroundResource(R.drawable.bg_user_message);
+        } else {
+            holder.itemView.setBackgroundResource(R.drawable.bg_pet_message);
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return messages.size();
+    }
+
+    // THIS CLASS MUST BE HERE! ↓↓↓
+    static class MessageViewHolder extends RecyclerView.ViewHolder {
+        TextView tvSender;
+        TextView tvMessage;
+        TextView tvTimestamp;
+
+        public MessageViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvSender = itemView.findViewById(R.id.tv_sender);
+            tvMessage = itemView.findViewById(R.id.tv_message);
+            tvTimestamp = itemView.findViewById(R.id.tv_timestamp);
+        }
+    }
+}
