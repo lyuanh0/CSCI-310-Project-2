@@ -25,36 +25,6 @@ public class User {
     public Pet getCurrentPet() { return currentPet; }
     public void setCurrentPet(Pet pet) { this.currentPet = pet; }
 
-    public void register(String username, String password) {
-
-    }
-
-    // For login validation
-    public boolean validate(String username, String password) {
-
-    }
-
-    // For registration validation, checking if username already exists
-    public boolean validate(String username) {
-
-    }
-
-    public boolean login(String username, String password) {
-
-    }
-
-    public void logout() {
-
-    }
-
-    public void updateUsername(String username) {
-
-    }
-
-    public void updatePassword(String password) {
-
-    }
-
     public void choosePet(String petType, String petName) {
 
     }
