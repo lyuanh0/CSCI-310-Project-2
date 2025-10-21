@@ -6,19 +6,19 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 import com.example.chatpet.logic.JournalGenerator;
-import com.example.chatpet.logic.NotificationManager;
+import com.example.chatpet.logic.ChatNotificationManager;
 
 import java.util.Date;
 
 public class JournalSchedulerService extends Service {
     private JournalGenerator journalGenerator;
-    private NotificationManager notificationManager;
+    private ChatNotificationManager notificationManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
         journalGenerator = JournalGenerator.getInstance();
-        notificationManager = new NotificationManager(this);
+        notificationManager = new ChatNotificationManager(this);
     }
 
     @Override

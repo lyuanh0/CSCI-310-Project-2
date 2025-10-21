@@ -1,7 +1,6 @@
 package com.example.chatpet.logic;
 
 import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +10,7 @@ import androidx.core.app.NotificationCompat;
 import com.example.chatpet.R;
 import com.example.chatpet.ui.MainActivity;
 
-public class NotificationManager {
+public class ChatNotificationManager {
     private static final String CHANNEL_ID = "ChatPet_Notifications";
     private static final String CHANNEL_NAME = "ChatPet Reminders";
     private static final int NOTIFICATION_ID = 1001;
@@ -19,7 +18,7 @@ public class NotificationManager {
     private Context context;
     private android.app.NotificationManager systemNotificationManager;
 
-    public NotificationManager(Context context) {
+    public ChatNotificationManager(Context context) {
         this.context = context;
         systemNotificationManager = (android.app.NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);

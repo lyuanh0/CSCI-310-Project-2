@@ -7,14 +7,14 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 import com.example.chatpet.data.model.Pet;
-import com.example.chatpet.logic.NotificationManager;
+import com.example.chatpet.logic.ChatNotificationManager;
 import com.example.chatpet.logic.PetManager;
 
 public class PetUpdateService extends Service {
     private static final long UPDATE_INTERVAL = 60 * 60 * 1000; // 1 hour
 
     private PetManager petManager;
-    private NotificationManager notificationManager;
+    private ChatNotificationManager notificationManager;
     private Handler handler;
     private Runnable updateRunnable;
 
@@ -23,7 +23,7 @@ public class PetUpdateService extends Service {
         super.onCreate();
 
         petManager = PetManager.getInstance();
-        notificationManager = new NotificationManager(this);
+        notificationManager = new ChatNotificationManager(this);
         handler = new Handler();
 
         updateRunnable = new Runnable() {
