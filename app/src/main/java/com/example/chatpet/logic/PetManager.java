@@ -42,7 +42,7 @@ public class PetManager {
     public void feedPet(Food food) {
         if (currentPet == null) return;
 
-        currentPet.feedFood(food);
+        currentPet.feed(food);
         checkLevelUp();
         petRepository.updatePet(currentPet);
     }

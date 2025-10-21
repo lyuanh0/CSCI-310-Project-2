@@ -24,7 +24,7 @@ public class FoodMenu {
         }
     }
 
-    public Food getFoodByName(String name) {
+    public Food getFood(String name) {
         for (Food food : menu) {
             if (food.getName().equalsIgnoreCase(name)) {
                 return food;

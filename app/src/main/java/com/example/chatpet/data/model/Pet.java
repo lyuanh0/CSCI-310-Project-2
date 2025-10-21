@@ -71,7 +71,7 @@ public class Pet {
         updatePersonality();
     }
 
-    public void feedFood(Food food) {
+    public void feed(Food food) {
         decreaseHunger(food.getHungerPoints());
         increaseHealth(5);
     }
@@ -94,6 +94,10 @@ public class Pet {
         } else {
             personalityTraits = "Shy and timid";
         }
+    }
+
+    public void updateStatus() {
+
     }
 
     // Getters and Setters

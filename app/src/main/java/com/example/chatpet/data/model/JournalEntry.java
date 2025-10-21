@@ -5,7 +5,7 @@ import java.util.Date;
 public class JournalEntry {
     private Date date;
     private String entry;
-    private String summary;
+    private String petMood;
 
     public JournalEntry() {
         this.date = new Date();
