@@ -14,7 +14,7 @@
 
 
 ### Feature 5 Journal: Li Yuan (LYH)
-- I set up the LMM so far
+- LMM was set up so far
 
 ## Updates on commits 
-LYH: Set up the llm inference for journal 10/22
+10/22 LYH: Set up the LMM inference for journal
