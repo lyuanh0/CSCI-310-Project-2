@@ -58,4 +58,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("com.google.mediapipe:tasks-genai:0.10.27")
+
+    // LLM inference implementation added LH Oct 22
+    implementation("com.google.mediapipe:tasks-genai:0.10.27")
 }
