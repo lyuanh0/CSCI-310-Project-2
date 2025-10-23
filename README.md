@@ -1,6 +1,6 @@
 # CSCI-310-Project-2
 ***PLEASE ACTIVELY EDIT THIS FILE TO DOCUMENT YOUR PROGRESS***
-## Status/Progress of features
+## Status/Progress of Features
 ### Feature 1 User Setup & Pet Creation: Devin (DT)
 
 
@@ -16,5 +16,5 @@
 ### Feature 5 Journal: Li Yuan (LYH)
 - LMM was set up so far
 
-## Updates on commits 
+## Latest Updates on Commits 
 10/22 LYH: Set up the LMM inference for journal
