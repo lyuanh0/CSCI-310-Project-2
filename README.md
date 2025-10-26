@@ -1,5 +1,5 @@
 # CSCI-310-Project-2
-***PLEASE ACTIVELY EDIT THIS FILE TO DOCUMENT YOUR PROGRESS***
+***PLEASE ACTIVELY EDIT THIS FILE TO DOCUMENT YOUR PROGRESS and UPDATE frequently to stay up-to-date with commits***
 ## Status/Progress of Features
 ### Feature 1 User Setup & Pet Creation: Devin (DT)
 
