@@ -7,21 +7,15 @@
 
     <TextView
         android:id="@+id/headerText"
-        android:text="ChatPet: Ask something!"
+        android:text="ChatPet: prompt"
         android:textSize="20sp"
         android:layout_marginBottom="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <EditText
-        android:id="@+id/inputText"
-        android:hint="Enter your prompt"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <Button
         android:id="@+id/sendButton"
-        android:text="Send Prompt"
+        android:text="Generate Prompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

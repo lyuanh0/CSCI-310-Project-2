@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
-//import com.example.chatpet.data.remote.ChatViewModel;
+import com.example.chatpet.data.remote.ChatViewModel;
 import com.example.chatpet.data.repository.JournalRepository;
 import com.example.chatpet.logic.JournalGenerator;
 
@@ -33,6 +33,7 @@ public class JournalActivity extends AppCompatActivity {
     private Button sendButton;
     private TextView outputText;
     private ProgressBar progressBar;
+    private TextView promptHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +50,12 @@ public class JournalActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.sendButton);
         outputText = findViewById(R.id.outputText);
         progressBar = findViewById(R.id.progressBar);
+        promptHeader = findViewById(R.id.headerText);
 
         // --- Logic setup ---
         journalRepository = JournalRepository.getInstance();
+        String prompt = "Played fetch at the park, ate lunch, and took a nap.";
+        promptHeader.setText("ChatPet Prompt: " + prompt);
 
         LocalDate testDate = LocalDate.of(2025, 10, 20);
         JournalEntry entry = new JournalEntry(testDate, "");
@@ -65,13 +69,13 @@ public class JournalActivity extends AppCompatActivity {
 
         if (entry == null) {
             entry = new JournalEntry(testDate, "");
-            entry.setReport("Played fetch at the park, ate lunch, and took a nap.");
+            entry.setReport(prompt);
             journalRepository.saveJournalEntry(entry);
             Log.i(TAG, "new Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
         }
         if (entry.getReport() == null) {
             entry = new JournalEntry(testDate, "");
-            entry.setReport("Fed bone, chatted 3 times, tucked in once.");
+            entry.setReport(prompt);
             journalRepository.updateJournalEntry(testDate, entry);
             Log.i(TAG, "updated Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
         }
