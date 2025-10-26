@@ -28,6 +28,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 }
 
@@ -62,4 +63,7 @@ dependencies {
 
     // LLM inference implementation added LH Oct 22
     implementation("com.google.mediapipe:tasks-genai:0.10.27")
+    // Core Library desugaring dependency to use new function in older API
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+
 }

@@ -41,7 +41,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     public void onBindViewHolder(@NonNull JournalViewHolder holder, int position) {
         JournalEntry entry = entries.get(position);
 
-        holder.tvDate.setText(TimeUtils.formatDate(entry.getDate()));
+        holder.tvDate.setText(entry.getDate().toString());
         holder.tvEntry.setText(entry.getEntry());
 
         // Expand/collapse functionality

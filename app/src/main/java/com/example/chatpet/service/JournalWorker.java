@@ -26,7 +26,7 @@ public class JournalWorker extends Worker {
         try {
             // Generate journal entry for today
             Date today = new Date();
-            journalGenerator.generateDailyEntry(today);
+            //journalGenerator.generateDailyEntry(today);
 
             // Send notification
             notificationManager.sendNotification(

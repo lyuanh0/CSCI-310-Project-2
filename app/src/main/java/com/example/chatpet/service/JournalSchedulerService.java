@@ -31,7 +31,7 @@ public class JournalSchedulerService extends Service {
 
     private void generateJournalEntry() {
         Date today = new Date();
-        journalGenerator.generateDailyEntry(today);
+        //journalGenerator.generateDailyEntry(today);
 
         // Send notification
         notificationManager.sendNotification(

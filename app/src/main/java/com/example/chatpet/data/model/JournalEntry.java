@@ -1,19 +1,20 @@
 package com.example.chatpet.data.model;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class JournalEntry {
-    private Date date;
+    private LocalDate date;
     private String entry;
-    private String summary;
+    private String report;
 
     public JournalEntry() {
-        this.date = new Date();
+        this.date = LocalDate.now();
+        this.report = "";
     }
 
-    public JournalEntry(Date date, String entry) {
+    public JournalEntry(LocalDate date, String entry) {
         this.date = date;
-        this.entry = entry;
     }
 
     public String generateEntry(Date date) {
@@ -26,12 +27,18 @@ public class JournalEntry {
         System.out.println("Entry: " + entry);
     }
 
-    public Date getDate() { return date; }
-    public void setDate(Date date) { this.date = date; }
+    public LocalDate getDate() { return date; }
+
+    public void setDate(LocalDate date) { this.date = date; }
 
     public String getEntry() { return entry; }
+
     public void setEntry(String entry) { this.entry = entry; }
 
-    public String getSummary() { return summary; }
-    public void setSummary(String summary) { this.summary = summary; }
+    public String getReport() { return report; }
+    public void setReport(String report) { this.report = report; }
+    public void addToReport(String interaction) {
+        this.report += "\n" + interaction;
+    }
+
 }
