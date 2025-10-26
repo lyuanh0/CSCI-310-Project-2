@@ -86,31 +86,31 @@ public class JournalActivity extends AppCompatActivity {
         String prompt = "Played fetch at the park, ate lunch, and took a nap.";
         promptHeader.setText("ChatPet Prompt: " + prompt);
 
-        LocalDate testDate = LocalDate.of(2025, 10, 20);
-        JournalEntry entry = new JournalEntry(testDate, "");
-
-        Log.i(TAG, "Before Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
-        journalRepository.saveJournalEntry(entry);
-        Log.i(TAG, "After Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
-
-        entry = journalRepository.getJournalEntryByDate(testDate);
-        Log.i(TAG, "entry: " + entry.getReport());
-
-        if (entry == null) {
-            entry = new JournalEntry(testDate, "");
-            entry.setReport(prompt);
-            journalRepository.saveJournalEntry(entry);
-            Log.i(TAG, "new Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
-        }
-        if (entry.getReport() == null) {
-            entry = new JournalEntry(testDate, "");
-            entry.setReport(prompt);
-            journalRepository.updateJournalEntry(testDate, entry);
-            Log.i(TAG, "updated Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
-        }
-
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
+            LocalDate testDate = LocalDate.of(2025, 10, 20);
+            JournalEntry entry = new JournalEntry(testDate, "first");
+
+            Log.i(TAG, "Before Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
+            journalRepository.saveJournalEntry(entry);
+            Log.i(TAG, "After Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
+
+            entry = journalRepository.getJournalEntryByDate(testDate);
+            Log.i(TAG, "entry: " + entry.getReport());
+
+            if (entry == null) {
+                entry = new JournalEntry(testDate, "null");
+                entry.setReport(prompt);
+                journalRepository.saveJournalEntry(entry);
+                Log.i(TAG, "new Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
+            }
+            if (entry.getReport() == null) {
+                entry.setReport(prompt);
+                journalRepository.updateJournalEntry(testDate, entry);
+                Log.i(TAG, "updated Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
+            }
+
+
             progressBar.setVisibility(View.VISIBLE);
             outputText.setText("Generating journal entry...");
 

@@ -12,6 +12,7 @@ import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
 import com.example.chatpet.util.TimeUtils;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +42,8 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     public void onBindViewHolder(@NonNull JournalViewHolder holder, int position) {
         JournalEntry entry = entries.get(position);
 
-        holder.tvDate.setText(entry.getDate().toString());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
+        holder.tvDate.setText(entry.getDate().format(formatter));
         holder.tvEntry.setText(entry.getEntry());
 
         // Expand/collapse functionality

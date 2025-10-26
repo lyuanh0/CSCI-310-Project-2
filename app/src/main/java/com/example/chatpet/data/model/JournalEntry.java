@@ -15,6 +15,7 @@ public class JournalEntry {
 
     public JournalEntry(LocalDate date, String entry) {
         this.date = date;
+        this.entry = entry;
     }
 
     public String generateEntry(Date date) {
