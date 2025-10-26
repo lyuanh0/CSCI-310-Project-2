@@ -18,9 +18,7 @@ import java.time.LocalDate;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class JournalGenerator extends ViewModel{
     private static final String MODEL_PATH = "/data/local/tmp/llm/gemma3-1b-it-int4.task";
@@ -53,8 +51,12 @@ public class JournalGenerator extends ViewModel{
         return instance;
     }
 
+    public List<JournalEntry> getAllEntries() {
+        return journalRepository.getAllJournalEntries();
+    }
+
     public void generateDailyEntry(Context context, LocalDate date, LlmCallback callback) {
-        Pet currentPet = petManager.getCurrentPet();
+        Pet pet = petManager.getCurrentPet();
         List<Message> messages = chatManager.getMessages();
 
         journalEntry = journalRepository.getJournalEntryByDate(date);
@@ -82,15 +84,6 @@ public class JournalGenerator extends ViewModel{
                 callback.onError(errorMessage);
             }
         });
-    }
-
-
-    public List<JournalEntry> getAllEntries() {
-        return journalRepository.getAllJournalEntries();
-    }
-
-    public JournalEntry getEntryByDate(LocalDate date) {
-        return journalRepository.getJournalEntryByDate(date);
     }
 
     public void generateJournalEntry(Context context, String modelPath, String report, LlmCallback callback) {
