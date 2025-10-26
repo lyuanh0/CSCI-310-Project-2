@@ -4,7 +4,6 @@ import com.example.chatpet.data.model.JournalEntry;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class JournalRepository {
@@ -19,6 +18,10 @@ public class JournalRepository {
             instance = new JournalRepository();
         }
         return instance;
+    }
+
+    public List<JournalEntry> getAllJournalEntries() {
+        return new ArrayList<>(journalEntries);
     }
 
     public boolean saveJournalEntry(JournalEntry entry) {
@@ -36,10 +39,6 @@ public class JournalRepository {
             }
         }
         return false;
-    }
-
-    public List<JournalEntry> getAllJournalEntries() {
-        return new ArrayList<>(journalEntries);
     }
 
     public JournalEntry getJournalEntryByDate(LocalDate date) {
