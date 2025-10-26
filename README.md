@@ -15,6 +15,8 @@
 
 ### Feature 5 Journal: Li Yuan (LYH)
 - LMM was set up so far
+- kinda got llm working with journal variables/functions
 
 ## Latest Updates on Commits 
-10/22 LYH: Set up the LMM inference for journal
+10/26 LYH: somewhat got llm working with journal clases
+10/22 LYH: Set up the LLM inference for journal
