@@ -40,20 +40,50 @@ public class JournalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_journal);
 
+        // Setup
         journalGenerator = JournalGenerator.getInstance();
+        journalRepository = JournalRepository.getInstance();
+        initializeViews();
+        setupRecyclerView();
 
-//        initializeViews();
-//        setupRecyclerView();
-        //loadJournalEntries();
+        // Entries logic setup
+        setUpEntries();
 
-        // --- UI elements (matching your layout) ---
+        loadJournalEntries();
+
+    }
+
+    private void initializeViews() {
         sendButton = findViewById(R.id.sendButton);
         outputText = findViewById(R.id.outputText);
         progressBar = findViewById(R.id.progressBar);
         promptHeader = findViewById(R.id.headerText);
 
-        // --- Logic setup ---
-        journalRepository = JournalRepository.getInstance();
+        rvJournal = findViewById(R.id.rv_journal);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Pet Journal");
+        }
+    }
+
+    private void setupRecyclerView() {
+        journalAdapter = new JournalAdapter(this);
+        rvJournal.setLayoutManager(new LinearLayoutManager(this));
+        rvJournal.setAdapter(journalAdapter);
+    }
+
+    private void loadJournalEntries() {
+        List<JournalEntry> entries = journalGenerator.getAllEntries();
+
+        if (entries.isEmpty()) {
+            // Generate a sample entry for today
+            JournalEntry entry = new JournalEntry(LocalDate.now(), "sample set up");
+            journalRepository.saveJournalEntry(entry);
+        }
+
+        journalAdapter.setEntries(entries);
+    }
+
+    private void setUpEntries() {
         String prompt = "Played fetch at the park, ate lunch, and took a nap.";
         promptHeader.setText("ChatPet Prompt: " + prompt);
 
@@ -99,6 +129,20 @@ public class JournalActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         progressBar.setVisibility(View.GONE);
                         outputText.setText("Generated Entry:\n\n" + result);
+
+                        // Update repository with new entry text
+                        JournalEntry updatedEntry = journalRepository.getJournalEntryByDate(testDate);
+                        if (updatedEntry == null) {
+                            updatedEntry = new JournalEntry(testDate, "");
+                        }
+                        updatedEntry.setEntry(result);
+                        journalRepository.updateJournalEntry(testDate, updatedEntry);
+
+                        // Refresh RecyclerView
+                        List<JournalEntry> updatedList = journalRepository.getAllJournalEntries();
+                        journalAdapter.setEntries(updatedList);
+
+
                         Toast.makeText(JournalActivity.this, "Journal entry created!", Toast.LENGTH_SHORT).show();
                     });
                 }
@@ -145,34 +189,7 @@ public class JournalActivity extends AppCompatActivity {
 //                });
 //            }
 //        });
+
     }
-
-
-//    private void initializeViews() {
-//        rvJournal = findViewById(R.id.rv_journal);
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setTitle("Pet Journal");
-//        }
-//    }
-//
-//    private void setupRecyclerView() {
-//        journalAdapter = new JournalAdapter(this);
-//        rvJournal.setLayoutManager(new LinearLayoutManager(this));
-//        rvJournal.setAdapter(journalAdapter);
-//    }
-
-//    private void loadJournalEntries() {
-//        List<JournalEntry> entries = journalGenerator.getAllEntries();
-//
-//        if (entries.isEmpty()) {
-//            // Generate a sample entry for today
-//            JournalEntry todayEntry = journalGenerator.generateDailyEntry(new Date());
-//            entries.add(todayEntry);
-//            Toast.makeText(this, "Generated today's journal entry!", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        journalAdapter.setEntries(entries);
-//    }
-
 
 }
