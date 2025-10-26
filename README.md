@@ -19,5 +19,5 @@
 - kinda got entries to be able to display
 
 ## Latest Updates on Commits 
-10/26 LYH: updated journal activity to get UI with entries with RecycleView  
+10/26 LYH: updated journal activity to get UI with entries with RecycleView & got rid of journal-related functions within LLM client file
 10/22 LYH: Set up the LLM inference for the journal
