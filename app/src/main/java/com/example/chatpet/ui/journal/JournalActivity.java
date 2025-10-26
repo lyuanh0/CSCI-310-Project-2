@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
-import com.example.chatpet.data.remote.ChatViewModel;
 import com.example.chatpet.data.repository.JournalRepository;
 import com.example.chatpet.logic.JournalGenerator;
 
