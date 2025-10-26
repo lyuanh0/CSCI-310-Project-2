@@ -18,5 +18,5 @@
 - kinda got llm working with journal variables/functions
 
 ## Latest Updates on Commits 
-10/26 LYH: somewhat got llm working with journal classes
+10/26 LYH: somewhat got llm working with journal classes  
 10/22 LYH: Set up the LLM inference for journal
