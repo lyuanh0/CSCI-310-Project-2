@@ -9,7 +9,6 @@ import com.example.chatpet.data.model.JournalEntry;
 import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.data.model.Message;
 import com.example.chatpet.data.repository.JournalRepository;
-import com.example.chatpet.data.remote.LLMClient;
 import com.google.mediapipe.tasks.genai.llminference.LlmInference;
 
 import androidx.lifecycle.ViewModel;
