@@ -16,6 +16,9 @@ import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.util.ValidationUtils;
 
+import android.os.Handler;
+import android.os.CountDownTimer;
+
 public class PetViewActivity extends AppCompatActivity {
     private ImageView ivPet;
     private TextView tvPetName;
@@ -37,6 +40,21 @@ public class PetViewActivity extends AppCompatActivity {
     private Pet currentPet;
     private FoodMenu foodMenu;
 
+    // ===== TEST: 10s stat decay =====
+    private Handler statHandler;
+    private Runnable statDecayRunnable;
+    private static final long STAT_DECAY_INTERVAL_MS = 10_000L; // 10 seconds
+
+    // ===== TEST Tuck-in rules =====
+    private static final int HAPPINESS_BOOST_PER_TUCK = 10; // +10%
+    private static final int TUCKS_BEFORE_COOLDOWN = 3;
+    private static final long COOLDOWN_MS = 3 * 60 * 1000L; // 3 minutes
+    private static final long TUCK_ANIMATION_MS = 3_000L; // quick 3s "sleep" sim for testing
+
+    private int tuckInCount = 0;
+    private boolean isInCooldown = false;
+    private CountDownTimer cooldownTimer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +65,7 @@ public class PetViewActivity extends AppCompatActivity {
 
         initializeViews();
 
-        // Check if pet exists, if not show creation dialog
+        //Check if pet exists, if not show creation dialog
         if (petManager.getCurrentPet() == null) {
             showPetCreationDialog();
         } else {
@@ -56,6 +74,24 @@ public class PetViewActivity extends AppCompatActivity {
         }
 
         setupListeners();
+
+        // ===== TEST: init handler that decays stats every 10 seconds while on this screen =====
+        statHandler = new Handler();
+        statDecayRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (currentPet != null) {
+                    // Decrease bars by 1% every 10 seconds (TEST ONLY)
+                    // For Hunger model: smaller = “less hungry”. This is per your request.
+                    currentPet.decreaseHunger(1);
+                    currentPet.decreaseHappiness(1);
+                    clampPetStats();
+                    updateUI();
+                }
+                statHandler.postDelayed(this, STAT_DECAY_INTERVAL_MS);
+            }
+        };
+
     }
 
     private void initializeViews() {
@@ -162,6 +198,29 @@ public class PetViewActivity extends AppCompatActivity {
     }
 
     private void handleTuckIn() {
+        // TEST: ignore PetManager.canTuckIn() and allow tucking unless in cooldown
+        if (isInCooldown) {
+            Toast.makeText(this, "Please wait until cooldown ends.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Apply instant “sleep” + +10 happiness, then 3s simulated animation lockout
+        performTuckOnce();
+
+        tuckInCount++;
+        if (tuckInCount >= TUCKS_BEFORE_COOLDOWN) {
+            startCooldown();
+        } else {
+            // Short disable to simulate sleep animation
+            btnTuckIn.setEnabled(false);
+            btnTuckIn.postDelayed(() -> {
+                if (!isInCooldown) {
+                    btnTuckIn.setEnabled(true);
+                    btnTuckIn.setText("Tuck In");
+                }
+            }, TUCK_ANIMATION_MS);
+        }
+        /*
         if (!petManager.canTuckIn()) {
             Toast.makeText(this, "Your pet is not tired yet!", Toast.LENGTH_SHORT).show();
             return;
@@ -183,6 +242,50 @@ public class PetViewActivity extends AppCompatActivity {
             btnTuckIn.setEnabled(true);
             btnFeed.setEnabled(true);
         }, 5000);
+        */
+    }
+
+    private void performTuckOnce() {
+        if (currentPet == null) return;
+
+        // Simulate going to sleep instantly
+        currentPet.tuck();
+
+        // +10% Happiness (cap at 100)
+        currentPet.increaseHappiness(HAPPINESS_BOOST_PER_TUCK);
+        clampPetStats();
+        updateUI();
+
+        Toast.makeText(this,
+                currentPet.getName() + " is happy!!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    private void startCooldown() {
+        isInCooldown = true;
+        btnTuckIn.setEnabled(false);
+
+        //Show countdown on the button
+        cooldownTimer = new CountDownTimer(COOLDOWN_MS, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long seconds = millisUntilFinished / 1000;
+                long m = seconds / 60;
+                long s = seconds % 60;
+                String label = String.format("Sleeping.. Wait %02d:%02d…", m, s);
+                btnTuckIn.setText(label);
+            }
+
+            @Override
+            public void onFinish() {
+                isInCooldown = false;
+                tuckInCount = 0;
+                btnTuckIn.setEnabled(true);
+                btnTuckIn.setText("Tuck In");
+                Toast.makeText(PetViewActivity.this,
+                        "You can tuck in again!", Toast.LENGTH_SHORT).show();
+            }
+        }.start();
     }
 
     private void handleLevelUp() {
@@ -218,11 +321,27 @@ public class PetViewActivity extends AppCompatActivity {
 
         // Update button states
         btnFeed.setEnabled(petManager.canFeed());
-        btnTuckIn.setEnabled(petManager.canTuckIn());
-        btnLevelUp.setEnabled(petManager.canLevelUp());
+        //btnTuckIn.setEnabled(petManager.canTuckIn());
+        // For TEST MODE, we control tuck button ourselves, not via PetManager
+        if (!isInCooldown) {
+            btnTuckIn.setEnabled(true);
+            btnTuckIn.setText("Tuck In");
+        }
+        //btnLevelUp.setEnabled(petManager.canLevelUp());
 
         // Update pet image based on type and level
         updatePetImage();
+    }
+
+    private void clampPetStats() {
+        // Ensure values remain within [0,100]
+        //if (currentPet.getHunger() < 0) currentPet.setHunger(0);
+        //if (currentPet.getHunger() > 100) currentPet.setHunger(100);
+        //if (currentPet.getHappiness() < 0) currentPet.setHappiness(0);
+        //if (currentPet.getHappiness() > 100) currentPet.setHappiness(100);
+
+        currentPet.setHunger(Math.max(0, Math.min(100, currentPet.getHunger())));
+        currentPet.setHappiness(Math.max(0, Math.min(100, currentPet.getHappiness())));
     }
 
     private void updatePetImage() {
@@ -240,6 +359,32 @@ public class PetViewActivity extends AppCompatActivity {
         if (currentPet != null) {
             currentPet = petManager.getCurrentPet();
             updateUI();
+        }
+
+        // START TEST MODE STAT DECAY HERE
+        if (statHandler != null && statDecayRunnable != null) {
+            statHandler.postDelayed(statDecayRunnable, STAT_DECAY_INTERVAL_MS);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Stop TEST MODE stat decay when leaving screen (avoid leaks)
+        if (statHandler != null && statDecayRunnable != null) {
+            statHandler.removeCallbacks(statDecayRunnable);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Clean up cooldown timer if running
+        if (cooldownTimer != null) {
+            cooldownTimer.cancel();
+        }
+        if (statHandler != null && statDecayRunnable != null) {
+            statHandler.removeCallbacks(statDecayRunnable);
         }
     }
 }
