@@ -1,7 +1,6 @@
 package com.example.chatpet.data.model;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 public class JournalEntry {
     private LocalDate date;
