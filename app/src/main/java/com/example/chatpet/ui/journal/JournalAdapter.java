@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
-import com.example.chatpet.util.TimeUtils;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.List;
 
 public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalViewHolder> {
     private List<JournalEntry> entries;
-    private Context context;
+    private final Context context;
 
     public JournalAdapter(Context context) {
         this.context = context;
@@ -61,7 +60,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
         return entries.size();
     }
 
-    static class JournalViewHolder extends RecyclerView.ViewHolder {
+    public static class JournalViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate;
         TextView tvEntry;
 

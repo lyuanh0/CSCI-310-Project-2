@@ -19,7 +19,6 @@ import com.example.chatpet.data.repository.JournalRepository;
 import com.example.chatpet.logic.JournalGenerator;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 public class JournalActivity extends AppCompatActivity {
@@ -75,11 +74,30 @@ public class JournalActivity extends AppCompatActivity {
 
         if (entries.isEmpty()) {
             // Generate a sample entry for today
-            JournalEntry entry = new JournalEntry(LocalDate.now(), "sample set up");
+            JournalEntry entry = new JournalEntry(LocalDate.now(), "first sample set up");
             journalRepository.saveJournalEntry(entry);
+
+            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 2), "second sample set up"));
+            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 1), "third sample set up"));
+            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 13), "fouth sample set up"));
+            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 31), "fifth sample set up"));
+            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 18), "sixth sample set up"));
+            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 6), "seventh sample set up"));
+
+
+
+
+
         }
 
         journalAdapter.setEntries(entries);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh RecyclerView data each time pull up journal
+        loadJournalEntries();
     }
 
     private void setUpEntries() {

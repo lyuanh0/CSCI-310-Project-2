@@ -9,6 +9,7 @@ import java.util.List;
 public class JournalRepository {
     private static JournalRepository instance;
     private List<JournalEntry> journalEntries;
+
     private JournalRepository() {
         journalEntries = new ArrayList<>();
     }
