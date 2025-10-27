@@ -101,7 +101,7 @@ public class JournalActivity extends AppCompatActivity {
     }
 
     private void setUpEntries() {
-        String prompt = "Played fetch at the park, ate lunch, and took a nap.";
+        String prompt = "fed me fish and we chatted 3 times.";
         promptHeader.setText("ChatPet Prompt: " + prompt);
 
         // Button click = run LLM

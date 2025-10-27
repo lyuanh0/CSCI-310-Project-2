@@ -18,11 +18,6 @@ public class JournalEntry {
         this.entry = entry;
     }
 
-    public String generateEntry(Date date) {
-        // This will be replaced with LLM-generated content
-        return "Dear Diary, Today was a wonderful day! My owner played with me...";
-    }
-
     public void displayEntry() {
         System.out.println("Date: " + date);
         System.out.println("Entry: " + entry);

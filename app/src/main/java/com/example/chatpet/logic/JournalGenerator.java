@@ -104,9 +104,9 @@ public class JournalGenerator extends ViewModel{
                 Log.d(TAG, "LlmInference instance created.");
 
                 // Run the model (blocking)
-                String prompt = "Write a diary entry from the perspective of the pet dog based on today's interactions." +
+                String prompt = "Write a diary entry from the perspective of the pet dog based on today's interactions, only give the content." +
                         "Do not include any unnecessary explanations or introductions." +
-                        "Do not invent extra events or characters that are not mentioned in the report." +
+                        "Do not invent extra events or characters that are not mentioned in the interaction." +
                         "Keep it somewhat short and in the style of a dog's inner thoughts." +
                         "These are the interactions that happened: " + report;
                 //String result = llm.generateResponse("Write a diary entry (without the date) in the pet " + pet.getType() +"'s perspective with this daily report: " + report);
