@@ -11,11 +11,17 @@ import com.example.chatpet.R;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.ui.MainActivity;
 import com.example.chatpet.util.ValidationUtils;
-import com.google.firebase.database.DatabaseReference;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText etUsername;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();;
     private EditText etPassword;
     private Button btnLogin;
     private Button btnRegister;
@@ -27,92 +33,23 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        authManager = AuthManager.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
         // Check if already logged in
-        if (authManager.isLoggedIn()) {
-            navigateToMain();
-            return;
-        }
+
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("test");
         ref.setValue("Hello, World!");
 
-        initializeViews();
-        setupListeners();
+        btnRegister = findViewById(R.id.btnRegister);
+
+        btnRegister.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+            startActivity(intent);
+        });
+
     }
 
-    private void initializeViews() {
-        etUsername = findViewById(R.id.et_username);
-        etPassword = findViewById(R.id.et_password);
-        btnLogin = findViewById(R.id.btn_login);
-        btnRegister = findViewById(R.id.btn_register);
     }
 
-    private void setupListeners() {
-        btnLogin.setOnClickListener(v -> handleLogin());
-        btnRegister.setOnClickListener(v -> handleRegister());
-    }
-
-    private void handleLogin() {
-        String username = etUsername.getText().toString().trim();
-        String password = etPassword.getText().toString();
-
-        // Validate input
-        String usernameError = ValidationUtils.getUsernameError(username);
-        if (usernameError != null) {
-            etUsername.setError(usernameError);
-            return;
-        }
-
-        String passwordError = ValidationUtils.getPasswordError(password);
-        if (passwordError != null) {
-            etPassword.setError(passwordError);
-            return;
-        }
-
-        // Attempt login
-        boolean success = authManager.login(username, password);
-
-        if (success) {
-            Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-            navigateToMain();
-        } else {
-            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void handleRegister() {
-        String username = etUsername.getText().toString().trim();
-        String password = etPassword.getText().toString();
-
-        // Validate input
-        String usernameError = ValidationUtils.getUsernameError(username);
-        if (usernameError != null) {
-            etUsername.setError(usernameError);
-            return;
-        }
-
-        String passwordError = ValidationUtils.getPasswordError(password);
-        if (passwordError != null) {
-            etPassword.setError(passwordError);
-            return;
-        }
-
-        // Attempt registration
-        boolean success = authManager.register(username, password);
-
-        if (success) {
-            Toast.makeText(this, "Registration successful! Please login.", Toast.LENGTH_SHORT).show();
-            etPassword.setText("");
-        } else {
-            Toast.makeText(this, "Username already exists", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void navigateToMain() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-}
