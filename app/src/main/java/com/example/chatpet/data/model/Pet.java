@@ -6,23 +6,27 @@ public class Pet {
     private String name;
     private String type;
     private Date creationDate;
-    private int age;
+    // private int age;
     private int level;
-    private int health;
+    // private int health;
     private int hunger;
     private int happiness;
     private int energy;
     private String currentStatus;
     private String personalityTraits;
     private String imageUrl;
+    private int totalXP;
+    private int xpLevel2 = 100;
+    private int xpLevel3 = 300;
+    private int maxXP = xpLevel3;
 
     public Pet() {
-        this.health = 100;
+        // this.health = 100;
         this.hunger = 50;
         this.happiness = 50;
         this.energy = 100;
         this.level = 1;
-        this.age = 0;
+        // this.age = 0;
         this.currentStatus = "happy";
         this.creationDate = new Date();
     }
@@ -31,12 +35,36 @@ public class Pet {
         this();
         this.name = name;
         this.type = type;
+        this.level = 1;
+        this.totalXP = 0;
+        this.maxXP = 10000;
+    }
+
+    public void addXP(int xp){
+        totalXP += xp;
+        checkLevelUp();
+    }
+
+    private void checkLevelUp(){
+        if (totalXP >= xpLevel3) {
+            level = 3;
+            // maxxed out!!!!
+        } else if (totalXP >= xpLevel2){
+            level = 2;
+            // intermediate level
+        } else {
+            level = 1;
+        }
+    }
+
+    public void increaseXP(int amount) {
+        this.totalXP = Math.min(maxXP, this.totalXP + amount);
     }
 
     // Status update methods
-    public void increaseHealth(int amount) {
-        this.health = Math.min(100, this.health + amount);
-    }
+//    public void increaseHealth(int amount) {
+//        this.health = Math.min(100, this.health + amount);
+//    }
 
     public void increaseEnergy(int amount) {
         this.energy = Math.min(100, this.energy + amount);
@@ -49,10 +77,9 @@ public class Pet {
     public void increaseHunger(int amount) {
         this.hunger = Math.min(100, this.hunger + amount);
     }
-
-    public void decreaseHealth(int amount) {
-        this.health = Math.max(0, this.health - amount);
-    }
+//    public void decreaseHealth(int amount) {
+//        this.health = Math.max(0, this.health - amount);
+//    }
 
     public void decreaseEnergy(int amount) {
         this.energy = Math.max(0, this.energy - amount);
@@ -73,7 +100,7 @@ public class Pet {
 
     public void feed(Food food) {
         decreaseHunger(food.getHungerPoints());
-        increaseHealth(5);
+        // increaseHealth(5);
     }
 
     public void tuck() {
@@ -110,14 +137,52 @@ public class Pet {
     public Date getCreationDate() { return creationDate; }
     public void setCreationDate(Date creationDate) { this.creationDate = creationDate; }
 
-    public int getAge() { return age; }
-    public void setAge(int age) { this.age = age; }
+//    public int getAge() { return age; }
+//    public void setAge(int age) { this.age = age; }
 
     public int getLevel() { return level; }
+    public int getTotalXP(){
+        return totalXP;
+    }
+
+    // returns the amount of XP needed to get to next level.
+    public int getCurrentLevelXP(){
+        if (level == 1) {
+            return totalXP;
+        }
+        else if (level == 2){
+            return totalXP - 100;
+        } else {
+            // return totalXP - 300; // this is tricky
+            return 300;
+        }
+    }
+
+    public int getXPToNextLevel(){
+        // XP needed for next lvl
+        if (level == 1) {
+            return xpLevel2;
+        } else if (level == 2){
+            return xpLevel3 - xpLevel2;
+        } else {
+//            return 300; // to make the bar full
+            return 0; // because you're already maxxed out
+        }
+    }
+
+    public int getXPProgress(){
+        if (level >= 3){
+            return 100; // max level
+        }
+        int current = getCurrentLevelXP();
+        int needed = getXPToNextLevel();
+        return (int) ((current / (float) needed ) * 100);
+    }
+
     public void setLevel(int level) { this.level = level; }
 
-    public int getHealth() { return health; }
-    public void setHealth(int health) { this.health = health; }
+//    public int getHealth() { return health; }
+//    public void setHealth(int health) { this.health = health; }
 
     public int getHunger() { return hunger; }
     public void setHunger(int hunger) { this.hunger = hunger; }

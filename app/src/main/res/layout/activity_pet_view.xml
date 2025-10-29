@@ -50,6 +50,38 @@
             android:orientation="vertical"
             android:layout_marginBottom="24dp">
 
+            <!-- ADDED THIS XP BELOW-->
+            <!-- XP -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="XP"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tv_xp_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0/100"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/pb_xp"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:progress="0"
+                android:layout_marginBottom="16dp"/>
+
             <!-- Hunger -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -137,33 +169,6 @@
                 android:progress="100"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Health -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Health"/>
-
-                <TextView
-                    android:id="@+id/tv_health_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="100%"/>
-            </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/pb_health"
-                style="@android:style/Widget.ProgressBar.Horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:progress="100"/>
         </LinearLayout>
 
         <!-- Action Buttons -->
