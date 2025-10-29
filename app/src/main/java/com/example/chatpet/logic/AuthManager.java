@@ -3,75 +3,49 @@ package com.example.chatpet.logic;
 import com.example.chatpet.data.model.User;
 import com.example.chatpet.data.repository.UserRepository;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 public class AuthManager {
-    private static AuthManager instance;
-    private UserRepository userRepository;
-    private User currentUser;
+    private static final FirebaseAuth auth = FirebaseAuth.getInstance();
 
-    private AuthManager() {
-        userRepository = UserRepository.getInstance();
-    }
 
-    public static AuthManager getInstance() {
-        if (instance == null) {
-            instance = new AuthManager();
-        }
-        return instance;
-    }
-
-    public boolean register(String username, String password) {
-        // Validate username and password
-        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
-            return false;
-        }
-
-        // Check if user already exists
-        if (userRepository.userExists(username)) {
-            return false;
-        }
-
-        // Create new user
-        User newUser = new User(username, password);
-        return userRepository.createUser(newUser);
-    }
-
-    public boolean login(String username, String password) {
-        User user = userRepository.getUserByUsername(username);
-
-        if (user != null && user.getPassword().equals(password)) {
-            currentUser = user;
+    public static boolean isUserLoggedIn(){
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if(currentUser != null){
             return true;
         }
         return false;
     }
-
-    public void logout() {
-        currentUser = null;
+    public interface AuthCallback {
+        void onComplete(boolean success, String errorMessage);
     }
 
-    public User getCurrentUser() {
-        return currentUser;
+    public static void register(String email, String password, final AuthCallback callback) {
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) callback.onComplete(true, null);
+                    else callback.onComplete(false, task.getException() != null ? task.getException().getMessage() : "Unknown error");
+                });
     }
 
-    public boolean isLoggedIn() {
-        return currentUser != null;
+    public static void login(String email, String password, final AuthCallback callback) {
+        auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) callback.onComplete(true, null);
+                    else callback.onComplete(false, task.getException() != null ? task.getException().getMessage() : "Unknown error");
+                });
     }
 
-    public boolean updateUsername(String oldUsername, String newUsername) {
-        if (currentUser == null) return false;
-
-        currentUser.setUsername(newUsername);
-        return userRepository.updateUser(currentUser);
+    public static void logout() {
+        auth.signOut();
     }
 
-    public boolean updatePassword(String oldPassword, String newPassword) {
-        if (currentUser == null) return false;
-
-        if (!currentUser.getPassword().equals(oldPassword)) {
-            return false;
-        }
-
-        currentUser.setPassword(newPassword);
-        return userRepository.updateUser(currentUser);
+    public static FirebaseUser currentUser() {
+        return auth.getCurrentUser();
     }
 }
