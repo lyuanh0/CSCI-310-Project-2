@@ -1,6 +1,8 @@
 package com.example.chatpet.service;
 
 import android.content.Context;
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -8,11 +10,14 @@ import androidx.work.WorkerParameters;
 import com.example.chatpet.logic.JournalGenerator;
 import com.example.chatpet.logic.ChatNotificationManager;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class JournalWorker extends Worker {
-    private JournalGenerator journalGenerator;
-    private ChatNotificationManager notificationManager;
+    private static final String TAG = "JournalWorker";
+    private final JournalGenerator journalGenerator;
+    private final ChatNotificationManager notificationManager;
 
     public JournalWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
@@ -23,21 +28,25 @@ public class JournalWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        try {
-            // Generate journal entry for today
-            Date today = new Date();
-            //journalGenerator.generateDailyEntry(today);
+        Log.i(TAG, "Running end-of-day journal generation...");
 
-            // Send notification
-            notificationManager.sendNotification(
-                    "New Journal Entry",
-                    "Your pet wrote a new diary entry today!"
-            );
+        JournalGenerator generator = JournalGenerator.getInstance();
 
-            return Result.success();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure();
-        }
+        generator.generateDailyEntry(getApplicationContext(), LocalDate.now(), new JournalGenerator.LlmCallback() {
+            @Override
+            public void onLoading() {}
+
+            @Override
+            public void onSuccess(String result) {
+                Log.i(TAG, "Successfully generated journal entry: " + result);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                Log.e(TAG, "Failed to generate journal entry: " + errorMessage);
+            }
+        });
+
+        return Result.success();
     }
 }

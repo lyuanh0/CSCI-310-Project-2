@@ -17,20 +17,16 @@ public class JournalEntry {
         this.entry = entry;
     }
 
-    public void displayEntry() {
-        System.out.println("Date: " + date);
-        System.out.println("Entry: " + entry);
-    }
-
     public LocalDate getDate() { return date; }
 
-    public void setDate(LocalDate date) { this.date = date; }
 
     public String getEntry() { return entry; }
 
+    public String getReport() { return report; }
+
+    public void setDate(LocalDate date) { this.date = date; }
     public void setEntry(String entry) { this.entry = entry; }
 
-    public String getReport() { return report; }
     public void setReport(String report) { this.report = report; }
     public void addToReport(String interaction) {
         this.report += "\n" + interaction;

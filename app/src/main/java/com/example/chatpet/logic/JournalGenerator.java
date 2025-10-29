@@ -4,20 +4,27 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.example.chatpet.data.model.JournalEntry;
 import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.data.model.Message;
 import com.example.chatpet.data.repository.JournalRepository;
+import com.example.chatpet.service.JournalWorker;
 import com.google.mediapipe.tasks.genai.llminference.LlmInference;
 
 import androidx.lifecycle.ViewModel;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class JournalGenerator extends ViewModel{
     private static final String MODEL_PATH = "/data/local/tmp/llm/gemma3-1b-it-int4.task";
@@ -48,10 +55,6 @@ public class JournalGenerator extends ViewModel{
             instance = new JournalGenerator();
         }
         return instance;
-    }
-
-    public List<JournalEntry> getAllEntries() {
-        return journalRepository.getAllJournalEntries();
     }
 
     public void generateDailyEntry(Context context, LocalDate date, LlmCallback callback) {
@@ -104,8 +107,10 @@ public class JournalGenerator extends ViewModel{
                 Log.d(TAG, "LlmInference instance created.");
 
                 // Run the model (blocking)
-                String prompt = "Write a diary entry from the perspective of the pet dog based on today's interactions, only give the content." +
+                String prompt = "Write a diary entry from the perspective of the pet dog based on today's interactions, " +
+                        "only give the content of the diary entry (no date)." +
                         "Do not include any unnecessary explanations or introductions." +
+                        "Don't add phrases like 'okay here goes' " +
                         "Do not invent extra events or characters that are not mentioned in the interaction." +
                         "Keep it somewhat short and in the style of a dog's inner thoughts." +
                         "These are the interactions that happened: " + report;
@@ -133,6 +138,33 @@ public class JournalGenerator extends ViewModel{
         });
     }
 
+    // Schedule the worker to run at 11:59 PM today
+    public void scheduleEndOfDayJournalWork(Context context) {
+        WorkManager.getInstance(context).cancelUniqueWork("daily_journal_work");
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime targetTime = LocalDate.now().atTime(23, 59);
+        long delay = Duration.between(now, targetTime).toMillis();
+
+        if (delay <= 0) {
+            Log.w(TAG, "It's already past target time today. Skipping schedule.");
+            return;
+        }
+
+        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(JournalWorker.class)
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .addTag("daily_journal_work")
+                .build();
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+                "daily_journal_work",
+                ExistingWorkPolicy.REPLACE,
+                workRequest
+        );
+
+        Log.i(TAG, "Scheduled end-of-day journal generation in " + delay / 1000 / 60 + " minutes.");
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
@@ -145,61 +177,3 @@ public class JournalGenerator extends ViewModel{
     }
 
 }
-
-/*
-package com.example.chatpet.logic;
-
-import com.example.chatpet.data.model.JournalEntry;
-import com.example.chatpet.data.model.Pet;
-import com.example.chatpet.data.model.Message;
-import com.example.chatpet.data.repository.JournalRepository;
-import com.example.chatpet.data.remote.LLMClient;
-
-import java.util.Date;
-import java.util.List;
-
-public class JournalGenerator {
-    private static JournalGenerator instance;
-    private JournalRepository journalRepository;
-    private LLMClient llmClient;
-    private ChatManager chatManager;
-    private PetManager petManager;
-
-    private JournalGenerator() {
-        journalRepository = JournalRepository.getInstance();
-        llmClient = new LLMClient();
-        chatManager = ChatManager.getInstance();
-        petManager = PetManager.getInstance();
-    }
-
-    public static JournalGenerator getInstance() {
-        if (instance == null) {
-            instance = new JournalGenerator();
-        }
-        return instance;
-    }
-
-    public JournalEntry generateDailyEntry(Date date) {
-        Pet currentPet = petManager.getCurrentPet();
-
-        // Get conversation history from today
-        List<Message> messages = chatManager.getMessages();
-
-        // Generate journal entry using LLM
-        String entryText = llmClient.generateJournalEntry(currentPet, messages, date);
-
-        JournalEntry entry = new JournalEntry(date, entryText);
-        journalRepository.saveJournalEntry(entry);
-
-        return entry;
-    }
-
-    public List<JournalEntry> getAllEntries() {
-        return journalRepository.getAllJournalEntries();
-    }
-
-    public JournalEntry getEntryByDate(Date date) {
-        return journalRepository.getJournalEntryByDate(date);
-    }
-}
-*/

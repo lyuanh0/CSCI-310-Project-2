@@ -4,6 +4,7 @@ import com.example.chatpet.data.model.JournalEntry;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class JournalRepository {
@@ -22,6 +23,7 @@ public class JournalRepository {
     }
 
     public List<JournalEntry> getAllJournalEntries() {
+        journalEntries.sort(Comparator.comparing(JournalEntry::getDate).reversed());
         return new ArrayList<>(journalEntries);
     }
 

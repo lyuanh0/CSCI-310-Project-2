@@ -9,9 +9,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
@@ -27,11 +29,11 @@ public class JournalActivity extends AppCompatActivity {
     private JournalAdapter journalAdapter;
     private JournalGenerator journalGenerator;
     private JournalRepository journalRepository;
-    //given example
     private Button sendButton;
     private TextView outputText;
     private ProgressBar progressBar;
     private TextView promptHeader;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +46,14 @@ public class JournalActivity extends AppCompatActivity {
         initializeViews();
         setupRecyclerView();
 
-        // Entries logic setup
-        setUpEntries();
+        // Search bar set up
+        searchBar();
 
+        // Entries logic setup
         loadJournalEntries();
+        //setUpEntries();
+
+        generateToday();
 
     }
 
@@ -56,11 +62,28 @@ public class JournalActivity extends AppCompatActivity {
         outputText = findViewById(R.id.outputText);
         progressBar = findViewById(R.id.progressBar);
         promptHeader = findViewById(R.id.headerText);
+        searchView = findViewById(R.id.searchView);
 
         rvJournal = findViewById(R.id.rv_journal);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("Pet Journal");
         }
+    }
+
+    private void searchBar() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                journalAdapter.filter(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                journalAdapter.filter(newText);
+                return true;
+            }
+        });
     }
 
     private void setupRecyclerView() {
@@ -70,11 +93,11 @@ public class JournalActivity extends AppCompatActivity {
     }
 
     private void loadJournalEntries() {
-        List<JournalEntry> entries = journalGenerator.getAllEntries();
+        List<JournalEntry> entries = journalRepository.getAllJournalEntries();
 
         if (entries.isEmpty()) {
             // Generate a sample entry for today
-            JournalEntry entry = new JournalEntry(LocalDate.now(), "first sample set up");
+            JournalEntry entry = new JournalEntry(LocalDate.now(), "Before clicking, todays' entry.");
             journalRepository.saveJournalEntry(entry);
 
             journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 2), "second sample set up"));
@@ -83,9 +106,6 @@ public class JournalActivity extends AppCompatActivity {
             journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 31), "fifth sample set up"));
             journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 18), "sixth sample set up"));
             journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 6), "seventh sample set up"));
-
-
-
 
 
         }
@@ -100,6 +120,7 @@ public class JournalActivity extends AppCompatActivity {
         loadJournalEntries();
     }
 
+    // For testing setup
     private void setUpEntries() {
         String prompt = "fed me fish and we chatted 3 times.";
         promptHeader.setText("ChatPet Prompt: " + prompt);
@@ -173,40 +194,55 @@ public class JournalActivity extends AppCompatActivity {
                 }
             });
         });
+    }
 
-//        // given example
-//        journalGenerator = new ViewModelProvider(this).get(JournalGenerator.class);
-//        String report = "Went to school. Fed 3 times, went to sleep.";
-//        sendButton = findViewById(R.id.sendButton);
-//        outputText = findViewById(R.id.outputText);
-//        progressBar = findViewById(R.id.progressBar);
-//        sendButton.setOnClickListener(v -> {
-//            //String prompt = inputText.getText().toString().trim();
-//            String prompt = report;
-//            if (!prompt.isEmpty()) {
-//                String modelPath = getString(R.string.model_path);
-//                journalGenerator.generateJournalEntry(this, modelPath, prompt, new JournalGenerator.LlmCallback() {
-//                    @Override
-//                    public void onLoading() {
-//                        progressBar.setVisibility(View.VISIBLE);
-//                        outputText.setText("Thinking...");
-//                    }
-//
-//                    @Override
-//                    public void onSuccess(String result) {
-//                        progressBar.setVisibility(View.GONE);
-//                        outputText.setText(result);
-//                    }
-//
-//                    @Override
-//                    public void onError(String errorMessage) {
-//                        progressBar.setVisibility(View.GONE);
-//                        outputText.setText("Error: " + errorMessage);
-//                    }
-//                });
-//            }
-//        });
+    private void generateToday() {
+        String prompt = "fed me fish and we chatted 3 times.";
+        promptHeader.setText("ChatPet Prompt: " + prompt);
 
+        JournalEntry today = journalRepository.getJournalEntryByDate(LocalDate.now());
+
+        // Button click = run LLM
+        sendButton.setOnClickListener(v -> {
+            today.setReport(prompt); // testing
+
+            Log.i(TAG, today.getDate() + ": " + today.getReport());
+
+            progressBar.setVisibility(View.VISIBLE);
+            outputText.setText("Generating journal entry...");
+
+            journalGenerator.generateDailyEntry(this, today.getDate(), new JournalGenerator.LlmCallback() {
+                @Override
+                public void onLoading() {
+                    runOnUiThread(() -> {
+                        progressBar.setVisibility(View.VISIBLE);
+                        outputText.setText("Writting...");
+                    });
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    runOnUiThread(() -> {
+                        progressBar.setVisibility(View.GONE);
+                        outputText.setText("Generated Entry:\n\n" + result);
+
+                        // Refresh RecyclerView
+                        List<JournalEntry> updatedList = journalRepository.getAllJournalEntries();
+                        journalAdapter.setEntries(updatedList);
+
+                        Toast.makeText(JournalActivity.this, "Journal entry created!", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    runOnUiThread(() -> {
+                        progressBar.setVisibility(View.GONE);
+                        outputText.setText("Error: " + errorMessage);
+                    });
+                }
+            });
+        });
     }
 
 }

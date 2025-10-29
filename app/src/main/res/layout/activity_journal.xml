@@ -4,17 +4,32 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-<TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:queryHint="Search journal entries by content or date..." />
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="74dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="OO" />
+    </LinearLayout>
+
+    <TextView
         android:id="@+id/headerText"
         android:text="ChatPet: prompt"
         android:textSize="20sp"
         android:layout_marginBottom="16dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/sendButton"
-        android:text="Generate Prompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -24,14 +39,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <!-- Divider -->
     <TextView
         android:id="@+id/outputText"
-        android:text=""
-        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="" />
 
-    <!-- Divider -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -39,6 +54,7 @@
         android:layout_marginVertical="8dp" />
 
     <!-- Recycle View UI of journal entries -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_journal"
         android:layout_width="match_parent"

@@ -16,16 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalViewHolder> {
-    private List<JournalEntry> entries;
+    private List<JournalEntry> allEntries;  // OG entries
+    private List<JournalEntry> displayedEntries;
     private final Context context;
 
     public JournalAdapter(Context context) {
         this.context = context;
-        this.entries = new ArrayList<>();
+        this.allEntries = new ArrayList<>();
+        this.displayedEntries = new ArrayList<>();
     }
 
     public void setEntries(List<JournalEntry> entries) {
-        this.entries = entries;
+        this.allEntries = new ArrayList<>(entries);
+        this.displayedEntries = new ArrayList<>(entries);
         notifyDataSetChanged();
     }
 
@@ -39,7 +42,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
     @Override
     public void onBindViewHolder(@NonNull JournalViewHolder holder, int position) {
-        JournalEntry entry = entries.get(position);
+        JournalEntry entry = displayedEntries.get(position);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
         holder.tvDate.setText(entry.getDate().format(formatter));
@@ -57,7 +60,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
     @Override
     public int getItemCount() {
-        return entries.size();
+        return displayedEntries.size();
     }
 
     public static class JournalViewHolder extends RecyclerView.ViewHolder {
@@ -70,4 +73,26 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
             tvEntry = itemView.findViewById(R.id.tv_entry);
         }
     }
+
+    // For searching with search bar
+    public void filter(String query) {
+        query = query.toLowerCase();
+        displayedEntries.clear();
+
+        for (JournalEntry entry : allEntries) {
+            boolean matchesText = entry.getEntry().toLowerCase().contains(query);
+
+            String dateStr = entry.getDate().toString().replace("-", ""); // yyyyMMdd
+            boolean matchesDate = dateStr.contains(query);
+
+            String formattedDate = entry.getDate().format(DateTimeFormatter.ofPattern("MMMM d yyyy")).toLowerCase();
+            boolean matchesFormattedDate = formattedDate.contains(query);
+
+            if (matchesText || matchesDate || matchesFormattedDate) {
+                displayedEntries.add(entry);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
 }
