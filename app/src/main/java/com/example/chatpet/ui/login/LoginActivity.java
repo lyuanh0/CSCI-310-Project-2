@@ -11,6 +11,8 @@ import com.example.chatpet.R;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.ui.MainActivity;
 import com.example.chatpet.util.ValidationUtils;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText etUsername;
@@ -32,6 +34,9 @@ public class LoginActivity extends AppCompatActivity {
             navigateToMain();
             return;
         }
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("test");
+        ref.setValue("Hello, World!");
 
         initializeViews();
         setupListeners();
