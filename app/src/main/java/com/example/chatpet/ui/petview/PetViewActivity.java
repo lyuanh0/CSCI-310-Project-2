@@ -24,13 +24,8 @@ public class PetViewActivity extends AppCompatActivity {
     private TextView tvPetName;
     private TextView tvPetLevel;
     private TextView tvPetStatus;
-    private ProgressBar pbHunger;
-    private ProgressBar pbHappiness;
-    private ProgressBar pbEnergy;
-    private ProgressBar pbHealth;
-    private TextView tvHungerValue;
-    private TextView tvHappinessValue;
-    private TextView tvEnergyValue;
+    private ProgressBar pbHunger, pbHappiness, pbEnergy, pbXP;
+    private TextView tvHungerValue, tvHappinessValue, tvEnergyValue, tvXPValue;
     private TextView tvHealthValue;
     private Button btnFeed;
     private Button btnTuckIn;
@@ -102,11 +97,13 @@ public class PetViewActivity extends AppCompatActivity {
         pbHunger = findViewById(R.id.pb_hunger);
         pbHappiness = findViewById(R.id.pb_happiness);
         pbEnergy = findViewById(R.id.pb_energy);
-        pbHealth = findViewById(R.id.pb_health);
+        pbXP = findViewById(R.id.pb_xp); // added for xp
+        // pbHealth = findViewById(R.id.pb_health);
         tvHungerValue = findViewById(R.id.tv_hunger_value);
         tvHappinessValue = findViewById(R.id.tv_happiness_value);
         tvEnergyValue = findViewById(R.id.tv_energy_value);
-        tvHealthValue = findViewById(R.id.tv_health_value);
+        tvXPValue = findViewById(R.id.tv_xp_value); // added for xp
+        // tvHealthValue = findViewById(R.id.tv_health_value);
         btnFeed = findViewById(R.id.btn_feed);
         btnTuckIn = findViewById(R.id.btn_tuck_in);
         btnLevelUp = findViewById(R.id.btn_level_up);
@@ -122,7 +119,8 @@ public class PetViewActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose Your Pet");
 
-        String[] petTypes = {"Dog", "Cat", "Bird", "Rabbit"};
+        // Changed this to have four options
+        String[] petTypes = {"Dog", "Cat", "Dragon", "Rabbit"};
 
         builder.setItems(petTypes, (dialog, which) -> {
             String selectedType = petTypes[which];
@@ -307,17 +305,30 @@ public class PetViewActivity extends AppCompatActivity {
         tvPetLevel.setText("Level " + currentPet.getLevel());
         tvPetStatus.setText("Status: " + currentPet.getCurrentStatus());
 
+        if (currentPet.getLevel() >= 3){
+            tvPetLevel.setText("Level " + currentPet.getLevel() + "(MAX)");
+            tvXPValue.setText("MAX LEVEL");
+        } else {
+            tvPetLevel.setText("Level " + currentPet.getLevel());
+            tvXPValue.setText(currentPet.getCurrentLevelXP() + "/" + currentPet.getXPToNextLevel());
+        }
+
+        //maybe comment this one out?
+        tvPetStatus.setText("Status: " + currentPet.getCurrentStatus());
+
+
         // Update progress bars
         pbHunger.setProgress(currentPet.getHunger());
         pbHappiness.setProgress(currentPet.getHappiness());
         pbEnergy.setProgress(currentPet.getEnergy());
-        pbHealth.setProgress(currentPet.getHealth());
+        pbXP.setProgress(currentPet.getXPProgress());
+        // pbHealth.setProgress(currentPet.getHealth());
 
         // Update text values
         tvHungerValue.setText(currentPet.getHunger() + "%");
         tvHappinessValue.setText(currentPet.getHappiness() + "%");
         tvEnergyValue.setText(currentPet.getEnergy() + "%");
-        tvHealthValue.setText(currentPet.getHealth() + "%");
+        // tvHealthValue.setText(currentPet.getHealth() + "%");
 
         // Update button states
         btnFeed.setEnabled(petManager.canFeed());
@@ -342,6 +353,7 @@ public class PetViewActivity extends AppCompatActivity {
 
         currentPet.setHunger(Math.max(0, Math.min(100, currentPet.getHunger())));
         currentPet.setHappiness(Math.max(0, Math.min(100, currentPet.getHappiness())));
+        currentPet.setEnergy(Math.max(0, Math.min(100, currentPet.getHunger())));
     }
 
     private void updatePetImage() {
