@@ -27,21 +27,18 @@ public class JournalRepository {
         return new ArrayList<>(journalEntries);
     }
 
-    public boolean saveJournalEntry(JournalEntry entry) {
+    public void saveJournalEntry(JournalEntry entry) {
         journalEntries.add(entry);
-        return true;
     }
 
-    public boolean updateJournalEntry(LocalDate date, JournalEntry newEntry) {
+    public void updateJournalEntry(LocalDate date, JournalEntry newEntry) {
         for (int i = 0; i < journalEntries.size(); i++) {
             JournalEntry entry = journalEntries.get(i);
             if (entry.getDate().isEqual(date)) {
                 // Replace the old entry with the new one
                 journalEntries.set(i, newEntry);
-                return true;
             }
         }
-        return false;
     }
 
     public JournalEntry getJournalEntryByDate(LocalDate date) {
