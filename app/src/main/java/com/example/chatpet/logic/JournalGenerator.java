@@ -139,7 +139,7 @@ public class JournalGenerator extends ViewModel{
     }
 
     // Schedule the worker to run at 11:59 PM today
-    public void scheduleEndOfDayJournalWork(Context context) {
+    public void scheduleJournalWork(Context context) {
         WorkManager.getInstance(context).cancelUniqueWork("daily_journal_work");
 
         LocalDateTime now = LocalDateTime.now();
