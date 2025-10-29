@@ -16,9 +16,9 @@
 ### Feature 5 Journal: Li Yuan (LYH)
 - LLM was set up so far
 - kinda got llm working with journal variables/functions
-- kinda got entries to be able to display
+- kinda got entries to be able to display with search bar
 
-## Latest Updates on Commits 
+## Latest Updates on Commits
 10/26 LYH: updated journal activity to get UI with entries with RecycleView & got rid of journal-related functions within LLM client file  
 10/22 LYH: Set up the LLM inference for the journal
 
