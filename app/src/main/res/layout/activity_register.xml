@@ -27,7 +27,13 @@
         android:inputType="textPersonName"
         android:layout_marginBottom="16dp" />
 
-    <!-- Email Input -->
+    <EditText
+    android:id="@+id/username"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:hint="username"
+    android:inputType="textEmailAddress"
+    android:layout_marginBottom="16dp" />
     <EditText
         android:id="@+id/email"
         android:layout_width="match_parent"

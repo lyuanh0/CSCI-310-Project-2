@@ -34,7 +34,7 @@ public class ProfileFragment extends Fragment {
 
         initializeViews(view);
         setupListeners();
-        loadUserData();
+  //      loadUserData();
 
         return view;
     }
@@ -50,12 +50,12 @@ public class ProfileFragment extends Fragment {
         btnChangePassword.setOnClickListener(v -> handleChangePassword());
     }
 
-    private void loadUserData() {
-        User currentUser = authManager.getCurrentUser();
-        if (currentUser != null) {
-            tvUsername.setText("Username: " + currentUser.getUsername());
-        }
-    }
+//    private void loadUserData() {
+//        User currentUser = authManager.getCurrentUser();
+//        if (currentUser != null) {
+//            tvUsername.setText("Username: " + currentUser.getUsername());
+//        }
+//    }
 
     private void handleLogout() {
         authManager.logout();

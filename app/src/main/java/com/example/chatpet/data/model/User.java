@@ -7,7 +7,7 @@ public class User {
     private String email;
     private String password;
     private Pet currentPet;
-    private Date birthday;
+    private String birthday;
     private String avatar;
 
     public User() {}
@@ -16,12 +16,20 @@ public class User {
         this.username = username;
         this.password = password;
     }
+    public User(String username, String email, String password, Pet currentPet, String birthday, String avatar) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.currentPet = currentPet;
+        this.birthday = birthday;
+        this.avatar = avatar;
+    }
 
     // Getters and Setters
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
-    public Date getBirthday() {return  birthday;}
-    public void setBirthday(Date birthday){this.birthday = birthday;}
+    public String getBirthday() {return  birthday;}
+    public void setBirthday(String birthday){this.birthday = birthday;}
     public String getAvatar(){return avatar;}
     public void setAvatar(String avatar){this.avatar = avatar;}
 

@@ -12,8 +12,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 public class AuthManager {
     private static final FirebaseAuth auth = FirebaseAuth.getInstance();
+    private static AuthManager instance;
 
-
+    public static AuthManager getInstance() {
+        if (instance == null) {
+            instance = new AuthManager();
+        }
+        return instance;
+    }
     public static boolean isUserLoggedIn(){
         FirebaseUser currentUser = auth.getCurrentUser();
         if(currentUser != null){
@@ -47,5 +53,14 @@ public class AuthManager {
 
     public static FirebaseUser currentUser() {
         return auth.getCurrentUser();
+    }
+
+    public static boolean isLoggedIn(){
+        FirebaseUser curr = currentUser();
+
+        if(curr != null){
+            return true;
+        }
+        return false;
     }
 }
