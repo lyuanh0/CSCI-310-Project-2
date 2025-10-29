@@ -19,14 +19,16 @@ public class JournalEntry {
 
     public LocalDate getDate() { return date; }
 
-
     public String getEntry() { return entry; }
 
     public String getReport() { return report; }
 
     public void setDate(LocalDate date) { this.date = date; }
+
     public void setEntry(String entry) { this.entry = entry; }
+
     public void setReport(String report) { this.report = report; }
+
     public void addToReport(String interaction) {
         this.report += "\n" + interaction;
     }
