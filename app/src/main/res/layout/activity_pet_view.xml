@@ -35,15 +35,15 @@
             android:textSize="16sp"
             android:layout_marginBottom="24dp"/>
 
+        <!-- Stats Section -->
         <ImageView
             android:id="@+id/iv_pet"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@drawable/ic_launcher_foreground"
             android:layout_marginBottom="32dp"
-            android:contentDescription="Pet Image"/>
+            android:contentDescription="Pet Image"
+            android:src="@drawable/ic_launcher_foreground" />
 
-        <!-- Stats Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
