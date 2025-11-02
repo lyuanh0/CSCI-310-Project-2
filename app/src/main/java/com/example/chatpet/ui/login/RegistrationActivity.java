@@ -28,7 +28,7 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register); // build layout with matching ids
 
-        //grab values
+        //find all input fields
         emailEt = findViewById(R.id.email);
         passwordEt = findViewById(R.id.password);
         birthdayEt = findViewById(R.id.birthday);
@@ -39,7 +39,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         registerBtn = findViewById(R.id.registerButton);
 
-        //when reg button is hit set values
+        //when reg button is hit,  grab values
         registerBtn.setOnClickListener(v -> {
             String email = emailEt.getText().toString().trim();
             String password = passwordEt.getText().toString();
