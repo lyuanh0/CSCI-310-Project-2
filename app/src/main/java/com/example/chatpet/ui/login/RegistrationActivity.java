@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 public class RegistrationActivity extends AppCompatActivity {
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
 // intake variables
@@ -36,10 +35,9 @@ public class RegistrationActivity extends AppCompatActivity {
         petTypeEt = findViewById(R.id.petType);
         avatarEt = findViewById(R.id.avatar);
         usernameEt = findViewById(R.id.username);
-
         registerBtn = findViewById(R.id.registerButton);
 
-        //when reg button is hit,  grab values
+        //when reg button is hit, grab values
         registerBtn.setOnClickListener(v -> {
             String email = emailEt.getText().toString().trim();
             String password = passwordEt.getText().toString();
@@ -54,7 +52,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 if(success){
                     //get current user Id
                     String uid = AuthManager.currentUser().getUid();
-                    //create user/pet/date
+                    //create user/pet
                     Pet newPet = new Pet(petName,petType);
                     User newUser = new User(username,email,password,newPet,birthday,avatar);
                     //save to database
