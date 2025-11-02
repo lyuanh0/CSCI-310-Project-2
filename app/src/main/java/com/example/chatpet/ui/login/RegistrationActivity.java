@@ -20,7 +20,7 @@ public class RegistrationActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
 // intake variables
-    EditText emailEt, passwordEt, birthdayEt, petTypeEt, petNameEt, avatarEt, usernameEt;
+    EditText emailEt, passwordEt, birthdayEt, avatarEt, usernameEt;
     Button registerBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +31,6 @@ public class RegistrationActivity extends AppCompatActivity {
         emailEt = findViewById(R.id.email);
         passwordEt = findViewById(R.id.password);
         birthdayEt = findViewById(R.id.birthday);
-        petNameEt = findViewById(R.id.petName);
-        petTypeEt = findViewById(R.id.petType);
         avatarEt = findViewById(R.id.avatar);
         usernameEt = findViewById(R.id.username);
         registerBtn = findViewById(R.id.registerButton);
@@ -42,8 +40,6 @@ public class RegistrationActivity extends AppCompatActivity {
             String email = emailEt.getText().toString().trim();
             String password = passwordEt.getText().toString();
             String birthday = birthdayEt.getText().toString().trim();
-            String petName = petNameEt.getText().toString().trim();
-            String petType = petTypeEt.getText().toString().trim();
             String avatar = avatarEt.getText().toString().trim();
             String username = usernameEt.getText().toString().trim();
 
@@ -53,8 +49,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     //get current user Id
                     String uid = AuthManager.currentUser().getUid();
                     //create user/pet
-                    Pet newPet = new Pet(petName,petType);
-                    User newUser = new User(username,email,password,newPet,birthday,avatar);
+                    User newUser = new User(username,email,password,null,birthday,avatar);
                     //save to database
                     database.getReference("users").child(uid).setValue(newUser).addOnCompleteListener(dbTask ->
                     { if(dbTask.isSuccessful()){
