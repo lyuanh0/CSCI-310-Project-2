@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Set default selection
-        bottomNav.setSelectedItemId(R.id.nav_pet);
+      //  bottomNav.setSelectedItemId(R.id.nav_pet);
     }
 
     private void loadFragment(androidx.fragment.app.Fragment fragment) {

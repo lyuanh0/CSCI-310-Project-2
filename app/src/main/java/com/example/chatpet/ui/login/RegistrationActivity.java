@@ -59,8 +59,6 @@ public class RegistrationActivity extends AppCompatActivity {
                         Toast.makeText(this, "Database save failed", Toast.LENGTH_LONG).show();
                     }
                     });
-                    //call setup pet/ initialize pet
-                    //save user data to database
 
                 } else{
                     // auth failed send error message

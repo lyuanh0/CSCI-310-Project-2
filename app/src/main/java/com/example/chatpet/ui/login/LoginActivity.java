@@ -8,8 +8,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chatpet.R;
+import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.logic.AuthManager;
+import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.ui.MainActivity;
+import com.example.chatpet.ui.petview.PetViewActivity;
 import com.example.chatpet.util.ValidationUtils;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
 public class LoginActivity extends AppCompatActivity {
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();;
     private EditText passwordEt, emailEt;
     private Button btnLogin;
     private Button btnRegister;
@@ -50,9 +52,9 @@ public class LoginActivity extends AppCompatActivity {
             AuthManager.login(email,password,(boolean success, String errorMessage) -> {
                 if(success){
                     Toast.makeText(this,"You have been logged in",Toast.LENGTH_LONG).show();
-                    //open dashboard
-                    Toast.makeText(this,"Loaded Dashboard",Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    //load data
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    loadUserDataAndNavigate();
                 } else{
                     Toast.makeText(this,"Login failed",Toast.LENGTH_LONG).show();
 
@@ -67,16 +69,32 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        if(currentUser != null){
-//            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-//            finish();
-//        }
-//    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = AuthManager.currentUser();
+        if(currentUser != null){
+            loadUserDataAndNavigate();
+        }
+    }
+    private void loadUserDataAndNavigate() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        PetManager.getInstance().loadPetData(userId, new PetManager.OnPetLoadedListener() {
+            @Override
+            public void onPetLoaded(Pet pet) {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onNoPetFound() {
+                startActivity(new Intent(LoginActivity.this, PetViewActivity.class));
+                finish();
+            }
+        });
+    }
 
     }
 
