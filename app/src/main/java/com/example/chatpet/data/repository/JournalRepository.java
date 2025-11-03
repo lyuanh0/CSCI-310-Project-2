@@ -60,12 +60,10 @@ public class JournalRepository {
         return null;
     }
 
-    public boolean deleteJournalEntry(LocalDate date) {
+    public void deleteJournalEntry(LocalDate date) {
         JournalEntry entryToRemove = getJournalEntryByDate(date);
         if (entryToRemove != null) {
             journalEntries.remove(entryToRemove);
-            return true;
         }
-        return false;
     }
 }
