@@ -1,0 +1,19 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background (track) -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E0"/> <!-- light gray track -->
+            <corners android:radius="2dp"/>  <!-- smaller radius -->
+        </shape>
+    </item>
+
+    <!-- Progress (fill) -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <solid android:color="?attr/colorAccent"/> <!-- will use progressTint -->
+                <corners android:radius="2dp"/>  <!-- same small radius -->
+            </shape>
+        </clip>
+    </item>
+</layer-list>
