@@ -19,6 +19,8 @@ import com.example.chatpet.util.ValidationUtils;
 import android.os.Handler;
 import android.os.CountDownTimer;
 
+import java.util.Random;
+
 public class PetViewActivity extends AppCompatActivity {
     private ImageView ivPet;
     private TextView tvPetName;
@@ -39,9 +41,13 @@ public class PetViewActivity extends AppCompatActivity {
     private Handler statHandler;
     private Runnable statDecayRunnable;
     private static final long STAT_DECAY_INTERVAL_MS = 10_000L; // 10 seconds
+    private final Random random = new Random();
 
     // ===== TEST Tuck-in rules =====
     private static final int HAPPINESS_BOOST_PER_TUCK = 10; // +10%
+    private static final int ENERGY_BOOST_PER_TUCK = 10;
+    private static final int XP_GAIN_PER_ACTION = 10;
+    private static final int MAX_XP = 100;
     private static final int TUCKS_BEFORE_COOLDOWN = 3;
     private static final long COOLDOWN_MS = 3 * 60 * 1000L; // 3 minutes
     private static final long TUCK_ANIMATION_MS = 3_000L; // quick 3s "sleep" sim for testing
@@ -57,7 +63,6 @@ public class PetViewActivity extends AppCompatActivity {
 
         petManager = PetManager.getInstance();
         foodMenu = new FoodMenu();
-
         initializeViews();
 
         //Check if pet exists, if not show creation dialog
@@ -69,24 +74,7 @@ public class PetViewActivity extends AppCompatActivity {
         }
 
         setupListeners();
-
-        // ===== TEST: init handler that decays stats every 10 seconds while on this screen =====
-        statHandler = new Handler();
-        statDecayRunnable = new Runnable() {
-            @Override
-            public void run() {
-                if (currentPet != null) {
-                    // Decrease bars by 1% every 10 seconds (TEST ONLY)
-                    // For Hunger model: smaller = “less hungry”. This is per your request.
-                    currentPet.decreaseHunger(1);
-                    currentPet.decreaseHappiness(1);
-                    clampPetStats();
-                    updateUI();
-                }
-                statHandler.postDelayed(this, STAT_DECAY_INTERVAL_MS);
-            }
-        };
-
+        setupStatDecayHandler();
     }
 
     private void initializeViews() {
@@ -98,12 +86,10 @@ public class PetViewActivity extends AppCompatActivity {
         pbHappiness = findViewById(R.id.pb_happiness);
         pbEnergy = findViewById(R.id.pb_energy);
         pbXP = findViewById(R.id.pb_xp); // added for xp
-        // pbHealth = findViewById(R.id.pb_health);
         tvHungerValue = findViewById(R.id.tv_hunger_value);
         tvHappinessValue = findViewById(R.id.tv_happiness_value);
         tvEnergyValue = findViewById(R.id.tv_energy_value);
         tvXPValue = findViewById(R.id.tv_xp_value); // added for xp
-        // tvHealthValue = findViewById(R.id.tv_health_value);
         btnFeed = findViewById(R.id.btn_feed);
         btnTuckIn = findViewById(R.id.btn_tuck_in);
         btnLevelUp = findViewById(R.id.btn_level_up);
@@ -163,11 +149,21 @@ public class PetViewActivity extends AppCompatActivity {
     }
 
     private void handleFeed() {
+        /*
         if (!petManager.canFeed()) {
             Toast.makeText(this, "Your pet is not hungry right now!", Toast.LENGTH_SHORT).show();
             return;
-        }
+        }*/
+        if (currentPet == null) return;
 
+        if (currentPet.getEnergy() <= 0) {
+            Toast.makeText(this, currentPet.getName() + " is too tired to eat! Try tucking in first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (currentPet.getHunger() >= 100) {
+            Toast.makeText(this, currentPet.getName() + " is full!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         showFoodMenu();
     }
 
@@ -178,16 +174,15 @@ public class PetViewActivity extends AppCompatActivity {
         String[] foodNames = new String[foodMenu.getMenu().size()];
         for (int i = 0; i < foodMenu.getMenu().size(); i++) {
             Food food = foodMenu.getMenu().get(i);
-            foodNames[i] = food.getName() + " (-" + food.getHungerPoints() + " hunger)";
+            foodNames[i] = food.getName() + " (+" + food.getHungerPoints() + ")";
         }
 
         builder.setItems(foodNames, (dialog, which) -> {
             Food selectedFood = foodMenu.getMenu().get(which);
             petManager.feedPet(selectedFood);
-
-            Toast.makeText(this, currentPet.getName() + " ate " + selectedFood.getName() + "!",
-                    Toast.LENGTH_SHORT).show();
-
+            currentPet.increaseHappiness(10);
+            //currentPet.increaseXP(10);
+            Toast.makeText(this, "Fed " + currentPet.getName() + "! +10 XP", Toast.LENGTH_SHORT).show();
             updateUI();
         });
 
@@ -201,9 +196,17 @@ public class PetViewActivity extends AppCompatActivity {
             Toast.makeText(this, "Please wait until cooldown ends.", Toast.LENGTH_SHORT).show();
             return;
         }
+        currentPet.tuck();
+        currentPet.increaseEnergy(ENERGY_BOOST_PER_TUCK);
+        currentPet.increaseHappiness(HAPPINESS_BOOST_PER_TUCK);
+
+        currentPet.increaseXP(10);
+        clampPetStats();
+        updateUI();
+        Toast.makeText(this, currentPet.getName() + " is resting and feeling happier!", Toast.LENGTH_SHORT).show();
 
         // Apply instant “sleep” + +10 happiness, then 3s simulated animation lockout
-        performTuckOnce();
+        //performTuckOnce();
 
         tuckInCount++;
         if (tuckInCount >= TUCKS_BEFORE_COOLDOWN) {
@@ -218,29 +221,6 @@ public class PetViewActivity extends AppCompatActivity {
                 }
             }, TUCK_ANIMATION_MS);
         }
-        /*
-        if (!petManager.canTuckIn()) {
-            Toast.makeText(this, "Your pet is not tired yet!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        petManager.tuckInPet();
-        Toast.makeText(this, currentPet.getName() + " is sleeping...", Toast.LENGTH_SHORT).show();
-        updateUI();
-
-        // Simulate sleep for 5 seconds (in production, this would be longer)
-        btnTuckIn.setEnabled(false);
-        btnFeed.setEnabled(false);
-
-        new android.os.Handler().postDelayed(() -> {
-            petManager.wakeUpPet();
-            Toast.makeText(this, currentPet.getName() + " woke up feeling refreshed!",
-                    Toast.LENGTH_SHORT).show();
-            updateUI();
-            btnTuckIn.setEnabled(true);
-            btnFeed.setEnabled(true);
-        }, 5000);
-        */
     }
 
     private void performTuckOnce() {
@@ -257,6 +237,8 @@ public class PetViewActivity extends AppCompatActivity {
         Toast.makeText(this,
                 currentPet.getName() + " is happy!!",
                 Toast.LENGTH_SHORT).show();
+
+        currentPet.increaseXP(10);
     }
 
     private void startCooldown() {
@@ -270,8 +252,7 @@ public class PetViewActivity extends AppCompatActivity {
                 long seconds = millisUntilFinished / 1000;
                 long m = seconds / 60;
                 long s = seconds % 60;
-                String label = String.format("Sleeping.. Wait %02d:%02d…", m, s);
-                btnTuckIn.setText(label);
+                btnTuckIn.setText(String.format("Sleeping… %02d:%02d", m, s));
             }
 
             @Override
@@ -287,8 +268,10 @@ public class PetViewActivity extends AppCompatActivity {
     }
 
     private void handleLevelUp() {
+        if (currentPet == null) return;
+
         if (!petManager.canLevelUp()) {
-            Toast.makeText(this, "Not enough happiness to level up!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Not enough XP to level up!", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -296,6 +279,30 @@ public class PetViewActivity extends AppCompatActivity {
         Toast.makeText(this, "Level Up! " + currentPet.getName() + " is now level " +
                 currentPet.getLevel() + "!", Toast.LENGTH_LONG).show();
         updateUI();
+    }
+    private void setupStatDecayHandler() {
+        statHandler = new Handler();
+        statDecayRunnable = new Runnable() {
+            @Override
+            public void run() {
+                currentPet = petManager.getCurrentPet();
+
+                if (currentPet != null) {
+                    int hungerDrop = random.nextInt(10) + 1;
+                    int happinessDrop = random.nextInt(10) + 1;
+                    int energyDrop = random.nextInt(10) + 1;
+
+                    currentPet.decreaseHunger(hungerDrop);
+                    currentPet.decreaseHappiness(happinessDrop);
+                    currentPet.decreaseEnergy(energyDrop);
+
+                    clampPetStats();
+                    petManager.setCurrentPet(currentPet);
+                    updateUI();
+                }
+                statHandler.postDelayed(this, STAT_DECAY_INTERVAL_MS);
+            }
+        };
     }
 
     private void updateUI() {
@@ -305,53 +312,28 @@ public class PetViewActivity extends AppCompatActivity {
         tvPetLevel.setText("Level " + currentPet.getLevel());
         tvPetStatus.setText("Status: " + currentPet.getCurrentStatus());
 
-        if (currentPet.getLevel() >= 3){
-            tvPetLevel.setText("Level " + currentPet.getLevel() + "(MAX)");
-            tvXPValue.setText("MAX LEVEL");
-        } else {
-            tvPetLevel.setText("Level " + currentPet.getLevel());
-            tvXPValue.setText(currentPet.getCurrentLevelXP() + "/" + currentPet.getXPToNextLevel());
-        }
-
-        //maybe comment this one out?
-        tvPetStatus.setText("Status: " + currentPet.getCurrentStatus());
-
-
-        // Update progress bars
         pbHunger.setProgress(currentPet.getHunger());
         pbHappiness.setProgress(currentPet.getHappiness());
         pbEnergy.setProgress(currentPet.getEnergy());
-        pbXP.setProgress(currentPet.getXPProgress());
-        // pbHealth.setProgress(currentPet.getHealth());
+        pbXP.setProgress(currentPet.getTotalXP() % 100);
 
-        // Update text values
         tvHungerValue.setText(currentPet.getHunger() + "%");
         tvHappinessValue.setText(currentPet.getHappiness() + "%");
         tvEnergyValue.setText(currentPet.getEnergy() + "%");
-        // tvHealthValue.setText(currentPet.getHealth() + "%");
+        tvXPValue.setText((currentPet.getTotalXP() % 100) + "/100");
 
-        // Update button states
-        btnFeed.setEnabled(petManager.canFeed());
-        //btnTuckIn.setEnabled(petManager.canTuckIn());
-        // For TEST MODE, we control tuck button ourselves, not via PetManager
+        btnFeed.setEnabled(currentPet.getEnergy() > 0 && currentPet.getHunger() < 100);
         if (!isInCooldown) {
             btnTuckIn.setEnabled(true);
             btnTuckIn.setText("Tuck In");
         }
-        //btnLevelUp.setEnabled(petManager.canLevelUp());
 
         // Update pet image based on type and level
         updatePetImage();
     }
 
     private void clampPetStats() {
-        // Ensure values remain within [0,100]
-        //if (currentPet.getHunger() < 0) currentPet.setHunger(0);
-        //if (currentPet.getHunger() > 100) currentPet.setHunger(100);
-        //if (currentPet.getHappiness() < 0) currentPet.setHappiness(0);
-        //if (currentPet.getHappiness() > 100) currentPet.setHappiness(100);
-
-        currentPet.setHunger(Math.max(0, Math.min(100, currentPet.getHunger())));
+        currentPet.setHunger(Math.max(0, Math.min(100, currentPet.getEnergy())));
         currentPet.setHappiness(Math.max(0, Math.min(100, currentPet.getHappiness())));
         currentPet.setEnergy(Math.max(0, Math.min(100, currentPet.getHunger())));
     }
@@ -368,10 +350,11 @@ public class PetViewActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        /*
         if (currentPet != null) {
             currentPet = petManager.getCurrentPet();
             updateUI();
-        }
+        }*/
 
         // START TEST MODE STAT DECAY HERE
         if (statHandler != null && statDecayRunnable != null) {

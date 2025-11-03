@@ -10,6 +10,9 @@ public class PetManager {
     private Pet currentPet;
 
     private static final int LEVEL_UP_THRESHOLD = 100;
+    private static final int XP_LEVEL_1 = LEVEL_UP_THRESHOLD;
+    private static final int XP_LEVEL_2 = 200;
+    private static final int XP_LEVEL_3 = 300;
     private static final int FEED_THRESHOLD = 30;
     private static final int SLEEP_THRESHOLD = 20;
 
@@ -43,8 +46,9 @@ public class PetManager {
         if (currentPet == null) return;
 
         currentPet.feed(food);
-        checkLevelUp();
-        petRepository.updatePet(currentPet);
+        //checkLevelUp();
+        //petRepository.updatePet(currentPet);
+        setCurrentPet(currentPet);
     }
 
     public boolean canFeed() {
@@ -95,7 +99,16 @@ public class PetManager {
     }
 
     public boolean canLevelUp() {
-        return currentPet != null && currentPet.getHappiness() >= LEVEL_UP_THRESHOLD;
+        //return currentPet != null && currentPet.getHappiness() >= LEVEL_UP_THRESHOLD;
+        if (currentPet == null) return false;
+
+        int level = currentPet.getLevel();
+        int xp = currentPet.getTotalXP();
+
+        if (level == 1) return xp >= LEVEL_UP_THRESHOLD;
+        if (level == 2) return xp >= XP_LEVEL_2;
+        if (level == 3) return xp >= XP_LEVEL_3;
+        return false;
     }
 
     public void levelUpPet() {

@@ -20,7 +20,7 @@ public class FoodMenu {
 
     public void displayMenu() {
         for (Food food : menu) {
-            System.out.println(food.getName() + " - Hunger Points: " + food.getHungerPoints());
+            System.out.println(food.getName() + " + Hunger Points: " + food.getHungerPoints());
         }
     }
 
