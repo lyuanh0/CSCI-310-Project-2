@@ -44,7 +44,6 @@ public class JournalActivity extends AppCompatActivity {
         // Schedule daily journal generation work
         JournalGenerator.getInstance().scheduleJournalWork(this);
 
-
         // Setup
         journalGenerator = JournalGenerator.getInstance();
         journalRepository = JournalRepository.getInstance();
@@ -59,7 +58,6 @@ public class JournalActivity extends AppCompatActivity {
         //setUpEntries();
 
         generateToday();
-
     }
 
     private void initializeViews() {
@@ -101,18 +99,18 @@ public class JournalActivity extends AppCompatActivity {
         List<JournalEntry> entries = journalRepository.getAllJournalEntries();
 
         // For testing: samples
-        if (entries.isEmpty()) {
-            // Generate a sample entry for today
-//            JournalEntry entry = new JournalEntry(LocalDate.now(), "Before clicking, todays' entry.");
-//            journalRepository.saveJournalEntry(entry);
-
-            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 2), "second sample set up"));
-            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 1), "third sample set up"));
-            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 23), "fouth sample set up"));
-            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 17), "fifth sample set up"));
-            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 18), "sixth sample set up"));
-            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 6), "seventh sample set up"));
-        }
+//        if (entries.isEmpty()) {
+//            // Generate a sample entry for today
+////            JournalEntry entry = new JournalEntry(LocalDate.now(), "Before clicking, todays' entry.");
+////            journalRepository.saveJournalEntry(entry);
+//
+//            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 2), "second sample set up"));
+//            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 1), "third sample set up"));
+//            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 23), "fouth sample set up"));
+//            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 17), "fifth sample set up"));
+//            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 18), "sixth sample set up"));
+//            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 6), "seventh sample set up"));
+//        }
 
         journalAdapter.setEntries(entries);
     }
