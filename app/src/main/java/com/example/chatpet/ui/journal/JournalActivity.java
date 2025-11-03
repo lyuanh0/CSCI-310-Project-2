@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ public class JournalActivity extends AppCompatActivity {
     private JournalAdapter journalAdapter;
     private JournalGenerator journalGenerator;
     private JournalRepository journalRepository;
-    private Button sendButton;
+    private ImageButton sendButton;
     private TextView outputText;
     private ProgressBar progressBar;
     private TextView promptHeader;
@@ -39,6 +40,10 @@ public class JournalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_journal);
+
+        // Schedule daily journal generation work
+        JournalGenerator.getInstance().scheduleJournalWork(this);
+
 
         // Setup
         journalGenerator = JournalGenerator.getInstance();
@@ -95,19 +100,18 @@ public class JournalActivity extends AppCompatActivity {
     private void loadJournalEntries() {
         List<JournalEntry> entries = journalRepository.getAllJournalEntries();
 
+        // For testing: samples
         if (entries.isEmpty()) {
             // Generate a sample entry for today
-            JournalEntry entry = new JournalEntry(LocalDate.now(), "Before clicking, todays' entry.");
-            journalRepository.saveJournalEntry(entry);
+//            JournalEntry entry = new JournalEntry(LocalDate.now(), "Before clicking, todays' entry.");
+//            journalRepository.saveJournalEntry(entry);
 
             journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 2), "second sample set up"));
             journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 1), "third sample set up"));
-            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 13), "fouth sample set up"));
-            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 31), "fifth sample set up"));
+            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 23), "fouth sample set up"));
+            journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 17), "fifth sample set up"));
             journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 18), "sixth sample set up"));
             journalRepository.saveJournalEntry(new JournalEntry(LocalDate.of(2025, 10, 6), "seventh sample set up"));
-
-
         }
 
         journalAdapter.setEntries(entries);
@@ -197,13 +201,22 @@ public class JournalActivity extends AppCompatActivity {
     }
 
     private void generateToday() {
+
         String prompt = "fed me fish and we chatted 3 times.";
         promptHeader.setText("ChatPet Prompt: " + prompt);
 
-        JournalEntry today = journalRepository.getJournalEntryByDate(LocalDate.now());
-
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
+            Log.e(TAG, "button clicked");
+            JournalEntry today = journalRepository.getJournalEntryByDate(LocalDate.now());
+            if (today != null) {
+                Log.e(TAG, "today journalEntry is exist");
+                today.setReport("went to sleep");
+            } else {
+                Log.e(TAG, "today journalEntry is null!");
+                // optionally create a new one or show an error
+            }
+
             today.setReport(prompt); // testing
 
             Log.i(TAG, today.getDate() + ": " + today.getReport());

@@ -27,6 +27,15 @@ public class JournalRepository {
         return new ArrayList<>(journalEntries);
     }
 
+    public JournalEntry getLatestEntry() {
+        if (journalEntries == null || journalEntries.isEmpty()) {
+            return null; // no entries available
+        }
+        journalEntries.sort(Comparator.comparing(JournalEntry::getDate).reversed());
+        return journalEntries.get(0);
+    }
+
+
     public void saveJournalEntry(JournalEntry entry) {
         journalEntries.add(entry);
     }
@@ -39,6 +48,7 @@ public class JournalRepository {
                 journalEntries.set(i, newEntry);
             }
         }
+
     }
 
     public JournalEntry getJournalEntryByDate(LocalDate date) {

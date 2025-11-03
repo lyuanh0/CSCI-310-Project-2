@@ -1,6 +1,7 @@
 package com.example.chatpet.logic;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -64,7 +65,7 @@ public class JournalGenerator extends ViewModel{
         journalEntry = journalRepository.getJournalEntryByDate(date);
         String report = journalEntry.getReport();
 
-        Log.i(TAG, "Generating daily entry with report: " + report);
+        Log.i(TAG, "Generating " + date + "  entry with report: " + report);
 
         // Run LLM generation
         generateJournalEntry(context, MODEL_PATH, report, new LlmCallback() {
@@ -107,13 +108,13 @@ public class JournalGenerator extends ViewModel{
                 Log.d(TAG, "LlmInference instance created.");
 
                 // Run the model (blocking)
-                String prompt = "Write a diary entry from the perspective of the pet dog based on today's interactions, " +
-                        "only give the content of the diary entry (no date)." +
+                String prompt = "Give a somewhat short diary entry from the perspective of the pet dog strictly based on given interactions, " +
+                        "Just give the content of the diary entry (no date and no extra response)." +
                         "Do not include any unnecessary explanations or introductions." +
-                        "Don't add phrases like 'okay here goes' " +
-                        "Do not invent extra events or characters that are not mentioned in the interaction." +
-                        "Keep it somewhat short and in the style of a dog's inner thoughts." +
+                        "Don't add beginning transitions, just give the entry content" +
+                        "Do not make up extra interactions, details, events, or characters not mentioned in the interaction, stay true to the given interactions." +
                         "These are the interactions that happened: " + report;
+
                 //String result = llm.generateResponse("Write a diary entry (without the date) in the pet " + pet.getType() +"'s perspective with this daily report: " + report);
                 String result = llm.generateResponse(prompt);
 
@@ -140,10 +141,20 @@ public class JournalGenerator extends ViewModel{
 
     // Schedule the worker to run at 11:59 PM today
     public void scheduleJournalWork(Context context) {
-        WorkManager.getInstance(context).cancelUniqueWork("daily_journal_work");
+        LocalDate today = LocalDate.now();
+        String key = "last_scheduled_date";
+
+        SharedPreferences prefs = context.getSharedPreferences("journal_prefs", Context.MODE_PRIVATE);
+        String lastScheduledDate = prefs.getString(key, "");
+
+        // Prevent re-scheduling multiple times per day
+        if (today.toString().equals(lastScheduledDate)) {
+            Log.i(TAG, "Journal work already scheduled for " + LocalDate.now());
+            return;
+        }
 
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime targetTime = LocalDate.now().atTime(23, 59);
+        LocalDateTime targetTime = today.atTime(23, 59);
         long delay = Duration.between(now, targetTime).toMillis();
 
         if (delay <= 0) {
@@ -162,7 +173,10 @@ public class JournalGenerator extends ViewModel{
                 workRequest
         );
 
-        Log.i(TAG, "Scheduled end-of-day journal generation in " + delay / 1000 / 60 + " minutes.");
+        // Save today's date so won't schedule multiple times
+        prefs.edit().putString(key, today.toString()).apply();
+
+        Log.i(TAG, "Scheduled " + LocalDate.now() + " end-of-day journal generation in " + delay / 1000 / 60 + " minutes.");
     }
 
     @Override
@@ -177,3 +191,52 @@ public class JournalGenerator extends ViewModel{
     }
 
 }
+
+/*
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- ADD THESE PERMISSIONS at the top, before <application> -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:name=".ChatPetApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ChatPet"
+        tools:targetApi="31">
+        <activity
+            android:name=".ui.journal.journalAct2"
+            android:exported="true" />
+        <!-- CHANGE: Make LoginActivity the launcher instead of MainActivity -->
+        <activity
+            android:name=".ui.journal.JournalActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity> <!-- ADD: All other activities -->
+        <activity android:name=".ui.MainActivity" />
+        <activity android:name=".ui.petview.PetViewActivity" />
+        <activity android:name=".ui.chat.ChatActivity" />
+        <activity android:name=".ui.login.LoginActivity" android:exported="true" /> <!-- ADD: Services -->
+        <service
+            android:name=".service.JournalSchedulerService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".service.PetUpdateService"
+            android:enabled="true"
+            android:exported="false" />
+    </application>
+</manifest>
+
+ */

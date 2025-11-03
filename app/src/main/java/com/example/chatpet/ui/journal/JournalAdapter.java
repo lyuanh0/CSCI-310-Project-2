@@ -28,7 +28,15 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
     public void setEntries(List<JournalEntry> entries) {
         this.allEntries = new ArrayList<>(entries);
-        this.displayedEntries = new ArrayList<>(entries);
+
+        // Display entries that are not empty
+        this.displayedEntries = new ArrayList<>();
+        for (JournalEntry e : entries) {
+            if (e.getEntry() != null && !e.getEntry().trim().isEmpty()) {
+                displayedEntries.add(e);
+            }
+        }
+
         notifyDataSetChanged();
     }
 

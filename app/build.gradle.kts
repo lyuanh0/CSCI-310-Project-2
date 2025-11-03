@@ -63,10 +63,12 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("com.google.mediapipe:tasks-genai:0.10.27")
 
-    // LLM inference implementation added LH Oct 22
+    // LLM inference implementation added
     implementation("com.google.mediapipe:tasks-genai:0.10.27")
     // Core Library desugaring dependency to use new function in older API
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    // For journal autogeneration (for app process in foreground vs background)
+    implementation("androidx.lifecycle:lifecycle-process:2.8.4")
 
     //for firebase
     implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
