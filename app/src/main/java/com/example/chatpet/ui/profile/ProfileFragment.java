@@ -92,10 +92,10 @@ public class ProfileFragment extends Fragment {
         View.OnClickListener avatarClickListener = v -> {
             int avatarId = v.getId();
 
-            if (avatarId == R.id.avatar1) selectedAvatar = R.drawable.catawake1;
-            else if (avatarId == R.id.avatar2) selectedAvatar = R.drawable.catawake2;
-            else if (avatarId == R.id.avatar3) selectedAvatar = R.drawable.catawake3;
-            else if (avatarId == R.id.avatar4) selectedAvatar = R.drawable.catawake3;
+            if (avatarId == R.id.avatar1) selectedAvatar = R.drawable.pf1;
+            else if (avatarId == R.id.avatar2) selectedAvatar = R.drawable.pf2;
+            else if (avatarId == R.id.avatar3) selectedAvatar = R.drawable.pf3;
+            else if (avatarId == R.id.avatar4) selectedAvatar = R.drawable.pf4;
 
             avatar0.setImageResource(selectedAvatar);
             Toast.makeText(getContext(), "Avatar selected!", Toast.LENGTH_SHORT).show();
