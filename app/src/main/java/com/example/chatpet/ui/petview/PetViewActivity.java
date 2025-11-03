@@ -302,9 +302,9 @@ public class PetViewActivity extends AppCompatActivity {
                 currentPet = petManager.getCurrentPet();
 
                 if (currentPet != null) {
-                    int hungerDrop = random.nextInt(10) + 1;
-                    int happinessDrop = random.nextInt(10) + 1;
-                    int energyDrop = random.nextInt(10) + 1;
+                    int hungerDrop = random.nextInt(5) + 1;
+                    int happinessDrop = random.nextInt(5) + 1;
+                    int energyDrop = random.nextInt(5) + 1;
 
                     currentPet.decreaseHunger(hungerDrop);
                     currentPet.decreaseHappiness(happinessDrop);
