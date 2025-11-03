@@ -67,7 +67,7 @@ public class PetViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pet_view);
 
         petManager = PetManager.getInstance();
-        foodMenu = new FoodMenu();
+        foodMenu = new FoodMenu(currentPet.getType());
         initializeViews();
 
         //Check if pet exists, if not show creation dialog
@@ -323,7 +323,7 @@ public class PetViewActivity extends AppCompatActivity {
         if (currentPet == null) return;
 
         tvPetName.setText(currentPet.getName());
-        tvPetLevel.setText("Level " + currentPet.getLevel());
+        tvPetLevel.setText("Level: " + currentPet.getLevel());
         tvPetStatus.setText("Status: " + currentPet.getCurrentStatus());
 
         pbHunger.setProgress(currentPet.getHunger());
