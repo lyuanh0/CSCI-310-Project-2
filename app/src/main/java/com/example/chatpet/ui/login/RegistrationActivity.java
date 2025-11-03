@@ -1,79 +1,99 @@
 package com.example.chatpet.ui.login;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chatpet.MainActivity;
 import com.example.chatpet.R;
-import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.data.model.User;
 import com.example.chatpet.logic.AuthManager;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import android.content.Intent;
-import android.os.Bundle;
-import android.widget.Toast;
 
 public class RegistrationActivity extends AppCompatActivity {
-    FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-// intake variables
-    EditText emailEt, passwordEt, birthdayEt, petTypeEt, petNameEt, avatarEt, usernameEt;
+    // input fields
+    EditText emailEt, passwordEt, birthdayEt, usernameEt;
+    ImageView avatar1, avatar2, avatar3, avatar4;
+    private int selectedAvatar = R.drawable.catawake1; // default avatar
+
     Button registerBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register); // build layout with matching ids
 
-        //grab values
+        // find all input fields
         emailEt = findViewById(R.id.email);
         passwordEt = findViewById(R.id.password);
         birthdayEt = findViewById(R.id.birthday);
-        petNameEt = findViewById(R.id.petName);
-        petTypeEt = findViewById(R.id.petType);
-        avatarEt = findViewById(R.id.avatar);
         usernameEt = findViewById(R.id.username);
-
         registerBtn = findViewById(R.id.registerButton);
 
-        //when reg button is hit set values
+        avatar1 = findViewById(R.id.avatar1);
+        avatar2 = findViewById(R.id.avatar2);
+        avatar3 = findViewById(R.id.avatar3);
+        avatar4 = findViewById(R.id.avatar4);
+
+        // Setup avatar selection
+        setupAvatarSelection();
+
+        // when reg button is hit, grab values
         registerBtn.setOnClickListener(v -> {
             String email = emailEt.getText().toString().trim();
             String password = passwordEt.getText().toString();
             String birthday = birthdayEt.getText().toString().trim();
-            String petName = petNameEt.getText().toString().trim();
-            String petType = petTypeEt.getText().toString().trim();
-            String avatar = avatarEt.getText().toString().trim();
             String username = usernameEt.getText().toString().trim();
 
-            //create user
-            AuthManager.register(email,password,(success, errorMessage) -> {
-                if(success){
-                    //get current user Id
+            // create user in Firebase Auth
+            AuthManager.register(email, password, (success, errorMessage) -> {
+                if (success) {
                     String uid = AuthManager.currentUser().getUid();
-                    //create user/pet/date
-                    Pet newPet = new Pet(petName,petType);
-                    User newUser = new User(username,email,password,newPet,birthday,avatar);
-                    //save to database
-                    database.getReference("users").child(uid).setValue(newUser).addOnCompleteListener(dbTask ->
-                    { if(dbTask.isSuccessful()){
-                        startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
-                        finish();
-                        }else{
-                        Toast.makeText(this, "Database save failed", Toast.LENGTH_LONG).show();
-                    }
-                    });
-                    //call setup pet/ initialize pet
-                    //save user data to database
 
-                } else{
-                    // auth failed send error message
+                    // create user object
+                    User newUser = new User(username, email, password, null, birthday, selectedAvatar);
+
+                    // save to database
+                    database.getReference("users").child(uid).setValue(newUser)
+                            .addOnCompleteListener(dbTask -> {
+                                if (dbTask.isSuccessful()) {
+                                    Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
+                                    finish();
+                                } else {
+                                    Toast.makeText(this, "Database save failed", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                } else {
                     Toast.makeText(this, "Auth failed: " + errorMessage, Toast.LENGTH_LONG).show();
                 }
             });
         });
+    }
+
+    private void setupAvatarSelection() {
+        View.OnClickListener avatarClickListener = v -> {
+            int avatarId = v.getId();
+
+            if (avatarId == R.id.avatar1) selectedAvatar = R.drawable.catawake1;
+            else if (avatarId == R.id.avatar2) selectedAvatar = R.drawable.catawake2;
+            else if (avatarId == R.id.avatar3) selectedAvatar = R.drawable.catawake3;
+            else if (avatarId == R.id.avatar4) selectedAvatar = R.drawable.dogawake2;
+
+            Toast.makeText(this, "Avatar selected!", Toast.LENGTH_SHORT).show();
+        };
+
+        avatar1.setOnClickListener(avatarClickListener);
+        avatar2.setOnClickListener(avatarClickListener);
+        avatar3.setOnClickListener(avatarClickListener);
+        avatar4.setOnClickListener(avatarClickListener);
     }
 }

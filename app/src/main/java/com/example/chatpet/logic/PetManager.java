@@ -3,6 +3,8 @@ package com.example.chatpet.logic;
 import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.data.model.Food;
 import com.example.chatpet.data.repository.PetRepository;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class PetManager {
     private static PetManager instance;
@@ -26,7 +28,23 @@ public class PetManager {
         }
         return instance;
     }
-
+    public void loadPetData(String userId, OnPetLoadedListener petLoadedListener){
+        DatabaseReference petRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("currentPet");
+        //wait for ref
+        petRef.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()&&task.getResult().exists()){//if we grab the ref and not null
+                Pet pet = task.getResult().getValue(Pet.class);
+                currentPet = pet;
+                petLoadedListener.onPetLoaded(pet);
+            }else{
+                petLoadedListener.onNoPetFound();
+            }
+        });
+    }
+    public interface OnPetLoadedListener {
+        void onPetLoaded(Pet pet);
+        void onNoPetFound();
+    }
     public Pet createPet(String name, String type) {
         Pet pet = new Pet(name, type);
         petRepository.savePet(pet);

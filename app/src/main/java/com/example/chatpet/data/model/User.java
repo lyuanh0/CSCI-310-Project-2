@@ -8,7 +8,7 @@ public class User {
     private String password;
     private Pet currentPet;
     private String birthday;
-    private String avatar;
+    private int avatar;
 
     public User() {}
 
@@ -16,7 +16,7 @@ public class User {
         this.username = username;
         this.password = password;
     }
-    public User(String username, String email, String password, Pet currentPet, String birthday, String avatar) {
+    public User(String username, String email, String password, Pet currentPet, String birthday, int avatar) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -30,8 +30,8 @@ public class User {
     public void setUsername(String username) { this.username = username; }
     public String getBirthday() {return  birthday;}
     public void setBirthday(String birthday){this.birthday = birthday;}
-    public String getAvatar(){return avatar;}
-    public void setAvatar(String avatar){this.avatar = avatar;}
+    public int getAvatar(){return avatar;}
+    public void setAvatar(int avatar){this.avatar = avatar;}
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }

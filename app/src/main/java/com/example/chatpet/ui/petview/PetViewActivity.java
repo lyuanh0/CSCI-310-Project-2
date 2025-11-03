@@ -13,8 +13,12 @@ import com.example.chatpet.R;
 import com.example.chatpet.data.model.Food;
 import com.example.chatpet.data.model.FoodMenu;
 import com.example.chatpet.data.model.Pet;
+import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.util.ValidationUtils;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import android.os.Handler;
 import android.os.CountDownTimer;
@@ -36,6 +40,7 @@ public class PetViewActivity extends AppCompatActivity {
     private PetManager petManager;
     private Pet currentPet;
     private FoodMenu foodMenu;
+
 
     // ===== TEST: 10s stat decay =====
     private Handler statHandler;
@@ -136,6 +141,15 @@ public class PetViewActivity extends AppCompatActivity {
             }
 
             currentPet = petManager.createPet(petName, petType);
+
+            //add pet to database
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(AuthManager.currentUser().getUid());
+            ref.child("currentPet").setValue(currentPet).addOnCompleteListener((task -> {
+                if(task.isSuccessful()){
+                    Toast.makeText(this, "New pet saved", Toast.LENGTH_SHORT).show();                }
+            }));
+
+
             Toast.makeText(this, "Welcome, " + petName + "!", Toast.LENGTH_SHORT).show();
             updateUI();
         });

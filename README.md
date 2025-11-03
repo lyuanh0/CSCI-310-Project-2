@@ -21,6 +21,12 @@
 ## Latest Updates on Commits
 10/26 LYH: updated journal activity to get UI with entries with RecycleView & got rid of journal-related functions within LLM client file  
 10/22 LYH: Set up the LLM inference for the journal
+11/2  CL: Done with feature behaviors (feeding&tucking in) lists:
+1. Hunger: Initial value: 50, 0 means hungry, 100 means full.
+2. If hunger is 100 which is full, the user cannot feed the pet. Leave a message saying, “ pet name + is full” 
+3. Happiness: Initial value: 50, it increases by 10 when the pet (feeding/tucking in)
+4. Energy: initial value:50, 0 means tired and it wants to go sleep, 100 means energized. When the energy bar is 0, the user cannot feed.
+5. Hunger, happiness, energy bars are supposed to decrease by 1~10% randomly every 10 seconds.
 
 ## TA Notes on Implementation:
 1. How many animals do you want as pet options? Which animals? These are our ideas: Fish, cat, dog, dragon, hamster

@@ -13,11 +13,13 @@ import com.example.chatpet.ui.journal.JournalActivity;
 import com.example.chatpet.ui.login.LoginActivity;
 import com.example.chatpet.ui.petview.PetViewActivity;
 import com.example.chatpet.ui.profile.ProfileFragment;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNav;
     private AuthManager authManager;
     private PetManager petManager;
+    private FirebaseUser currUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
             navigateToLogin();
             return;
         }
+
+        //set user
+        currUser = AuthManager.currentUser();
 
         // Check if user has a pet, if not navigate to pet creation
         if (petManager.getCurrentPet() == null) {
@@ -69,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Set default selection
-        bottomNav.setSelectedItemId(R.id.nav_pet);
+      //  bottomNav.setSelectedItemId(R.id.nav_pet);
     }
 
     private void loadFragment(androidx.fragment.app.Fragment fragment) {

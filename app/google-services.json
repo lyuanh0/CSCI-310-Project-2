@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "897707984505",
+    "project_id": "project-2-a5af4",
+    "storage_bucket": "project-2-a5af4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:897707984505:android:6b03dd1e8635dbe55d36a8",
+        "android_client_info": {
+          "package_name": "com.example.chatpet"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRvUETMt3CTWisQm7_AFQNdY0knM7wTns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
