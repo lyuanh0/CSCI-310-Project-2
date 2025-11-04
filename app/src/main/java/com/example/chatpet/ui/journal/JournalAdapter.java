@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,9 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
         JournalEntry entry = displayedEntries.get(position);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM d, yyyy");
-        holder.tvDate.setText(entry.getDate().format(formatter));
+        LocalDate entryDate = LocalDate.parse(entry.getDate());
+
+        holder.tvDate.setText(entryDate.format(formatter));
         holder.tvEntry.setText(entry.getEntry());
 
         // Expand/collapse functionality
@@ -92,8 +95,9 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
             String dateStr = entry.getDate().toString().replace("-", ""); // yyyyMMdd
             boolean matchesDate = dateStr.contains(query);
+            LocalDate entryDate = LocalDate.parse(entry.getDate());
 
-            String formattedDate = entry.getDate().format(DateTimeFormatter.ofPattern("MMMM d yyyy")).toLowerCase();
+            String formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMMM d yyyy")).toLowerCase();
             boolean matchesFormattedDate = formattedDate.contains(query);
 
             if (matchesText || matchesDate || matchesFormattedDate) {

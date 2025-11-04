@@ -14,6 +14,7 @@ import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.ui.MainActivity;
 import com.example.chatpet.ui.petview.PetViewActivity;
 import com.example.chatpet.util.ValidationUtils;
+import com.example.chatpet.data.repository.JournalRepository;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -80,6 +81,9 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void loadUserDataAndNavigate() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+        JournalRepository.getInstance().loadJournalSnapshot();
 
         PetManager.getInstance().loadPetData(userId, new PetManager.OnPetLoadedListener() {
             @Override

@@ -126,7 +126,7 @@ public class JournalActivity extends AppCompatActivity {
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
             LocalDate testDate = LocalDate.of(2025, 10, 20);
-            JournalEntry entry = new JournalEntry(testDate, "first");
+            JournalEntry entry = new JournalEntry(testDate.toString(), "first");
 
             Log.i(TAG, "Before Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
             journalRepository.saveJournalEntry(entry);
@@ -136,7 +136,7 @@ public class JournalActivity extends AppCompatActivity {
             Log.i(TAG, "entry: " + entry.getReport());
 
             if (entry == null) {
-                entry = new JournalEntry(testDate, "null");
+                entry = new JournalEntry(testDate.toString(), "null");
                 entry.setReport(prompt);
                 journalRepository.saveJournalEntry(entry);
                 Log.i(TAG, "new Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
@@ -165,7 +165,7 @@ public class JournalActivity extends AppCompatActivity {
                         // Update repository with new entry text
                         JournalEntry updatedEntry = journalRepository.getJournalEntryByDate(testDate);
                         if (updatedEntry == null) {
-                            updatedEntry = new JournalEntry(testDate, "");
+                            updatedEntry = new JournalEntry(testDate.toString(), "");
                         }
                         updatedEntry.setEntry(result);
                         journalRepository.updateJournalEntry(testDate, updatedEntry);
@@ -215,8 +215,8 @@ public class JournalActivity extends AppCompatActivity {
             Log.i(TAG, today.getDate() + ": " + today.getReport());
 
             Log.e(TAG, "Generating journal entry...");
-
-            journalGenerator.generateDailyEntry(this, today.getDate(), new JournalGenerator.LlmCallback() {
+            LocalDate todayDate = LocalDate.parse(today.getDate());
+            journalGenerator.generateDailyEntry(this, todayDate, new JournalGenerator.LlmCallback() {
                 @Override
                 public void onLoading() {
                     runOnUiThread(() -> {

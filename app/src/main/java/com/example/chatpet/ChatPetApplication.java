@@ -35,7 +35,7 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
         // Create a blank entry for today
         JournalEntry todayEntry = journalRepo.getJournalEntryByDate(today);
         if (todayEntry == null) {
-            todayEntry = new JournalEntry(today, "");
+            todayEntry = new JournalEntry(today.toString(), "");
             //todayEntry.setReport("went to the beach");
             journalRepo.saveJournalEntry(todayEntry);
             Log.i(TAG, "Created placeholder journal entry for " + today);
@@ -46,13 +46,14 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
         Log.i(TAG, "Entries size: " + allEntries.size());
 
         for (JournalEntry entry : allEntries) {
-            if (entry.getDate().isBefore(today) && entry.getEntry().isEmpty() &&
+            LocalDate entryDate = LocalDate.parse(entry.getDate());
+            if (entryDate.isBefore(today) && entry.getEntry().isEmpty() &&
                     (entry.getReport() != null) ) {
 
                 Log.i(TAG, "Generating report for " + entry.getDate());
                 JournalGenerator.getInstance().generateDailyEntry(
                         getApplicationContext(),
-                        entry.getDate(),
+                        entryDate,
                         new JournalGenerator.LlmCallback() {
                             @Override
                             public void onLoading() {}
@@ -61,7 +62,7 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
                             public void onSuccess(String result) {
                                 Log.i(TAG, "Generated entry for " + entry.getDate());
                                 entry.setEntry(result);
-                                journalRepo.updateJournalEntry(entry.getDate(), entry);
+                                journalRepo.updateJournalEntry(entryDate, entry);
 
                             }
 
@@ -73,11 +74,11 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
                 );
             }
 
-            else if (entry.getDate().isBefore(today) && entry.getEntry().isEmpty() &&
+            else if (entryDate.isBefore(today) && entry.getEntry().isEmpty() &&
                     (entry.getReport() == null) ) {
                 Log.i(TAG, "Deleting empty entry/report " + entry.getDate());
 
-                journalRepo.deleteJournalEntry(entry.getDate());
+                journalRepo.deleteJournalEntry(entryDate);
 
             }
         }
