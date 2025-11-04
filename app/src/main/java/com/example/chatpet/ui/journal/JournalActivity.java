@@ -33,7 +33,6 @@ public class JournalActivity extends AppCompatActivity {
     private ImageButton sendButton;
     private TextView outputText;
     private ProgressBar progressBar;
-    private TextView promptHeader;
     private SearchView searchView;
 
     @Override
@@ -62,7 +61,6 @@ public class JournalActivity extends AppCompatActivity {
 
     private void initializeViews() {
         sendButton = findViewById(R.id.sendButton);
-        promptHeader = findViewById(R.id.headerText);
         searchView = findViewById(R.id.searchView);
 
         rvJournal = findViewById(R.id.rv_journal);
@@ -194,7 +192,7 @@ public class JournalActivity extends AppCompatActivity {
 
     private void generateToday() {
 //        String prompt = "fed me fish and we chatted 3 times.";
-//        promptHeader.setText("ChatPet Prompt: " + prompt);
+//        Log.e(TAG, "ChatPet Prompt: " + prompt);
 
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
