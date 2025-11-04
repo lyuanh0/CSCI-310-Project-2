@@ -53,25 +53,24 @@ public class Pet {
     }
 
     private void checkLevelUp(){
-        /*
-        if (totalXP >= xpLevel3) {
-            level = 3;
-            // maxxed out!!!!
-        } else if (totalXP >= xpLevel2){
-            level = 2;
-            // intermediate level
-        } else {
-            level = 1;
-        }
-        */
-        if (totalXP >= maxXP) {
+        int maxXPForLevel = getMaxXPForLevel();
+        if (totalXP >= maxXPForLevel && level < 3) {
             level++;
-            totalXP = 0; // reset XP after leveling
+            totalXP = 0; // reset XP
         }
     }
 
+    public int getMaxXPForLevel() {
+        if (level == 1) return 100;
+        else if (level == 2) return 200;
+        else if (level == 3) return 300;
+        else return 300; // max level cap
+    }
+
     public void increaseXP(int amount) {
-        this.totalXP = Math.min(maxXP, this.totalXP + amount);
+        int maxXPForLevel = getMaxXPForLevel();
+        this.totalXP = Math.min(maxXPForLevel, this.totalXP + amount);
+        //this.totalXP = Math.min(maxXP, this.totalXP + amount);
     }
 
     public void increaseEnergy(int amount) {
@@ -107,11 +106,12 @@ public class Pet {
         increaseHunger(food.getHungerPoints()); // fills hunger
         increaseHappiness(10);
         decreaseEnergy(10);                     // eating uses energy
-        increaseXP(10);                         // gain XP
+        increaseXP(70);                         // gain XP
     }
 
     public void tuck() {
-        this.currentStatus = "sleeping";
+        //this.currentStatus = "sleeping";//handle in petviewactivity
+        decreaseHunger(10);
         increaseHappiness(10);
         increaseEnergy(20); // regain energy
         increaseXP(10);     // gain XP
@@ -119,9 +119,12 @@ public class Pet {
 
     public void wakeUp() {
         this.currentStatus = "awake";
-        increaseEnergy(70);
+        increaseEnergy(60);
+
+        if (this.totalXP > 100) this.totalXP = 100;
     }
 
+    /*
     public void decreaseRandomStats() {
         int hungerDrop = random.nextInt(10) + 1;     // 1–10
         int energyDrop = random.nextInt(10) + 1;     // 1–10
@@ -131,6 +134,7 @@ public class Pet {
         decreaseEnergy(energyDrop);
         decreaseHappiness(happinessDrop);
     }
+    */
 
     public void updatePersonality() {
         // Logic to update personality based on level and interactions
@@ -192,6 +196,9 @@ public class Pet {
         int current = getCurrentLevelXP();
         int needed = getXPToNextLevel();
         return (int) ((current / (float) needed ) * 100);
+    }
+    public void setTotalXP(int totalXP) {
+        this.totalXP = Math.max(0, totalXP);
     }
     public int getAge() { return age; }
     public void setAge(int age) { this.age = age; }

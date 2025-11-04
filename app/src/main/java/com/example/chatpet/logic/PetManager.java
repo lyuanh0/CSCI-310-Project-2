@@ -123,9 +123,9 @@ public class PetManager {
         int level = currentPet.getLevel();
         int xp = currentPet.getTotalXP();
 
-        if (level == 1) return xp >= LEVEL_UP_THRESHOLD;
-        if (level == 2) return xp >= XP_LEVEL_2;
-        if (level == 3) return xp >= XP_LEVEL_3;
+        if (level == 1) return xp >= 100;
+        if (level == 2) return xp >= 200;
+        if (level == 3) return xp >= 300; // max level
         return false;
     }
 
