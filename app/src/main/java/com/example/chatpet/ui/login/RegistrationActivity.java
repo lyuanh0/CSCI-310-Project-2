@@ -22,7 +22,7 @@ public class RegistrationActivity extends AppCompatActivity {
     // input fields
     EditText emailEt, passwordEt, birthdayEt, usernameEt;
     ImageView avatar1, avatar2, avatar3, avatar4;
-    private int selectedAvatar = R.drawable.catawake1; // default avatar
+    private int selectedAvatar = R.drawable.pf3; // default avatar
 
     Button registerBtn;
 
@@ -83,10 +83,10 @@ public class RegistrationActivity extends AppCompatActivity {
         View.OnClickListener avatarClickListener = v -> {
             int avatarId = v.getId();
 
-            if (avatarId == R.id.avatar1) selectedAvatar = R.drawable.catawake1;
-            else if (avatarId == R.id.avatar2) selectedAvatar = R.drawable.catawake2;
-            else if (avatarId == R.id.avatar3) selectedAvatar = R.drawable.catawake3;
-            else if (avatarId == R.id.avatar4) selectedAvatar = R.drawable.dogawake2;
+            if (avatarId == R.id.avatar1) selectedAvatar = R.drawable.pf1;
+            else if (avatarId == R.id.avatar2) selectedAvatar = R.drawable.pf2;
+            else if (avatarId == R.id.avatar3) selectedAvatar = R.drawable.pf3;
+            else if (avatarId == R.id.avatar4) selectedAvatar = R.drawable.pf4;
 
             Toast.makeText(this, "Avatar selected!", Toast.LENGTH_SHORT).show();
         };

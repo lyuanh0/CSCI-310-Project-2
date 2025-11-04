@@ -23,7 +23,7 @@
         android:id="@+id/birthday"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Birthday: mm/dd/year"
+        android:hint="Birthday: mm-dd-year"
         android:inputType="textPersonName"
         android:layout_marginBottom="16dp" />
 
@@ -63,8 +63,8 @@
             android:id="@+id/avatar1"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/catawake1"
-            android:layout_margin="8dp"
+            android:src="@drawable/pf1"
+            android:layout_margin="6dp"
             android:scaleType="centerCrop"
             android:background="@drawable/circle_background"
             android:clipToOutline="true" />
@@ -73,8 +73,8 @@
             android:id="@+id/avatar2"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/catawake1"
-            android:layout_margin="8dp"
+            android:src="@drawable/pf2"
+            android:layout_margin="6dp"
             android:scaleType="centerCrop"
             android:background="@drawable/circle_background"
             android:clipToOutline="true" />
@@ -83,8 +83,8 @@
             android:id="@+id/avatar3"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/catawake1"
-            android:layout_margin="8dp"
+            android:src="@drawable/pf3"
+            android:layout_margin="6dp"
             android:scaleType="centerCrop"
             android:background="@drawable/circle_background"
             android:clipToOutline="true" />
@@ -92,8 +92,8 @@
             android:id="@+id/avatar4"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/catawake1"
-            android:layout_margin="8dp"
+            android:src="@drawable/pf4"
+            android:layout_margin="6dp"
             android:scaleType="centerCrop"
             android:background="@drawable/circle_background"
             android:clipToOutline="true" />

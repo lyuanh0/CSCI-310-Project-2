@@ -33,7 +33,6 @@ public class JournalActivity extends AppCompatActivity {
     private ImageButton sendButton;
     private TextView outputText;
     private ProgressBar progressBar;
-    private TextView promptHeader;
     private SearchView searchView;
 
     @Override
@@ -62,9 +61,6 @@ public class JournalActivity extends AppCompatActivity {
 
     private void initializeViews() {
         sendButton = findViewById(R.id.sendButton);
-        outputText = findViewById(R.id.outputText);
-        progressBar = findViewById(R.id.progressBar);
-        promptHeader = findViewById(R.id.headerText);
         searchView = findViewById(R.id.searchView);
 
         rvJournal = findViewById(R.id.rv_journal);
@@ -125,7 +121,7 @@ public class JournalActivity extends AppCompatActivity {
     // For testing setup
     private void setUpEntries() {
         String prompt = "fed me fish and we chatted 3 times.";
-        promptHeader.setText("ChatPet Prompt: " + prompt);
+        Log.e(TAG, "Prompt: " + prompt);
 
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
@@ -151,24 +147,20 @@ public class JournalActivity extends AppCompatActivity {
                 Log.i(TAG, "updated Size of journalEntries: " + journalRepository.getAllJournalEntries().size());
             }
 
-
-            progressBar.setVisibility(View.VISIBLE);
-            outputText.setText("Generating journal entry...");
+            Log.e(TAG, "Generating Journal entry...");
 
             journalGenerator.generateDailyEntry(this, testDate, new JournalGenerator.LlmCallback() {
                 @Override
                 public void onLoading() {
                     runOnUiThread(() -> {
-                        progressBar.setVisibility(View.VISIBLE);
-                        outputText.setText("Thinking...");
+                        Log.e(TAG, "thinking...");
                     });
                 }
 
                 @Override
                 public void onSuccess(String result) {
                     runOnUiThread(() -> {
-                        progressBar.setVisibility(View.GONE);
-                        outputText.setText("Generated Entry:\n\n" + result);
+                        Log.e(TAG, "Generated Entry:\n\n" + result);
 
                         // Update repository with new entry text
                         JournalEntry updatedEntry = journalRepository.getJournalEntryByDate(testDate);
@@ -190,8 +182,8 @@ public class JournalActivity extends AppCompatActivity {
                 @Override
                 public void onError(String errorMessage) {
                     runOnUiThread(() -> {
-                        progressBar.setVisibility(View.GONE);
-                        outputText.setText("Error: " + errorMessage);
+                        Log.e(TAG, "Error: " + errorMessage);
+
                     });
                 }
             });
@@ -199,9 +191,8 @@ public class JournalActivity extends AppCompatActivity {
     }
 
     private void generateToday() {
-
-        String prompt = "fed me fish and we chatted 3 times.";
-        promptHeader.setText("ChatPet Prompt: " + prompt);
+//        String prompt = "fed me fish and we chatted 3 times.";
+//        Log.e(TAG, "ChatPet Prompt: " + prompt);
 
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
@@ -209,33 +200,35 @@ public class JournalActivity extends AppCompatActivity {
             JournalEntry today = journalRepository.getJournalEntryByDate(LocalDate.now());
             if (today != null) {
                 Log.e(TAG, "today journalEntry is exist");
-                today.setReport("went to sleep");
+                if(today.getReport() == null) {
+                    Log.e(TAG, "today journalEntry exist but report is null");
+                    today.setReport("Went to the park");
+                }
             } else {
                 Log.e(TAG, "today journalEntry is null!");
                 // optionally create a new one or show an error
+                return;
             }
 
-            today.setReport(prompt); // testing
+            //today.setReport(prompt); // testing
 
             Log.i(TAG, today.getDate() + ": " + today.getReport());
 
-            progressBar.setVisibility(View.VISIBLE);
-            outputText.setText("Generating journal entry...");
+            Log.e(TAG, "Generating journal entry...");
 
             journalGenerator.generateDailyEntry(this, today.getDate(), new JournalGenerator.LlmCallback() {
                 @Override
                 public void onLoading() {
                     runOnUiThread(() -> {
-                        progressBar.setVisibility(View.VISIBLE);
-                        outputText.setText("Writting...");
+                        Log.e(TAG, "writing...");
+
                     });
                 }
 
                 @Override
                 public void onSuccess(String result) {
                     runOnUiThread(() -> {
-                        progressBar.setVisibility(View.GONE);
-                        outputText.setText("Generated Entry:\n\n" + result);
+                        Log.e(TAG, "Generated Entry:\n\n" + result);
 
                         // Refresh RecyclerView
                         List<JournalEntry> updatedList = journalRepository.getAllJournalEntries();
@@ -248,8 +241,8 @@ public class JournalActivity extends AppCompatActivity {
                 @Override
                 public void onError(String errorMessage) {
                     runOnUiThread(() -> {
-                        progressBar.setVisibility(View.GONE);
-                        outputText.setText("Error: " + errorMessage);
+                        Log.e(TAG, "Error: " + errorMessage);
+
                     });
                 }
             });
