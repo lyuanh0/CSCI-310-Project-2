@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onNoPetFound() {
-                startActivity(new Intent(LoginActivity.this, PetViewActivity.class));
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             }
         });

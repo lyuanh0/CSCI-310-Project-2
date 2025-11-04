@@ -1,6 +1,9 @@
 package com.example.chatpet.ui.petview;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -8,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.Food;
@@ -25,7 +29,7 @@ import android.os.CountDownTimer;
 
 import java.util.Random;
 
-public class PetViewActivity extends AppCompatActivity {
+public class PetViewFragment extends Fragment {
     private ImageView ivPet;
     private TextView tvPetName;
     private TextView tvPetLevel;
@@ -61,44 +65,46 @@ public class PetViewActivity extends AppCompatActivity {
     private boolean isInCooldown = false;
     private CountDownTimer cooldownTimer;
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pet_view);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_pet_view, container, false);
 
         petManager = PetManager.getInstance();
-        initializeViews();
 
-        //Check if pet exists, if not show creation dialog
-        if (petManager.getCurrentPet() == null) {
-            showPetCreationDialog();
-        } else {
-            currentPet = petManager.getCurrentPet();
-            updateUI();
-            foodMenu = new FoodMenu(currentPet.getType());
-
-        }
-
+        initializeViews(view);
         setupListeners();
         setupStatDecayHandler();
+
+        // Check if pet exists
+        currentPet = petManager.getCurrentPet();
+        if (currentPet == null) {
+            showPetCreationDialog(); // Dialog will create currentPet
+        } else {
+            foodMenu = new FoodMenu(currentPet.getType()); // Now it's safe
+            updateUI();
+        }
+
+        return view;
     }
 
-    private void initializeViews() {
-        ivPet = findViewById(R.id.iv_pet);
-        tvPetName = findViewById(R.id.tv_pet_name);
-        tvPetLevel = findViewById(R.id.tv_pet_level);
-        tvPetStatus = findViewById(R.id.tv_pet_status);
-        pbHunger = findViewById(R.id.pb_hunger);
-        pbHappiness = findViewById(R.id.pb_happiness);
-        pbEnergy = findViewById(R.id.pb_energy);
-        pbXP = findViewById(R.id.pb_xp); // added for xp
-        tvHungerValue = findViewById(R.id.tv_hunger_value);
-        tvHappinessValue = findViewById(R.id.tv_happiness_value);
-        tvEnergyValue = findViewById(R.id.tv_energy_value);
-        tvXPValue = findViewById(R.id.tv_xp_value); // added for xp
-        btnFeed = findViewById(R.id.btn_feed);
-        btnTuckIn = findViewById(R.id.btn_tuck_in);
-        btnLevelUp = findViewById(R.id.btn_level_up);
+
+    private void initializeViews(View view) {
+        ivPet = view.findViewById(R.id.iv_pet);
+        tvPetName = view.findViewById(R.id.tv_pet_name);
+        tvPetLevel = view.findViewById(R.id.tv_pet_level);
+        tvPetStatus = view.findViewById(R.id.tv_pet_status);
+        pbHunger = view.findViewById(R.id.pb_hunger);
+        pbHappiness = view.findViewById(R.id.pb_happiness);
+        pbEnergy = view.findViewById(R.id.pb_energy);
+        pbXP = view.findViewById(R.id.pb_xp); // added for xp
+        tvHungerValue = view.findViewById(R.id.tv_hunger_value);
+        tvHappinessValue = view.findViewById(R.id.tv_happiness_value);
+        tvEnergyValue = view.findViewById(R.id.tv_energy_value);
+        tvXPValue = view.findViewById(R.id.tv_xp_value); // added for xp
+        btnFeed = view.findViewById(R.id.btn_feed);
+        btnTuckIn = view.findViewById(R.id.btn_tuck_in);
+        btnLevelUp = view.findViewById(R.id.btn_level_up);
     }
 
     private void setupListeners() {
@@ -108,7 +114,7 @@ public class PetViewActivity extends AppCompatActivity {
     }
 
     private void showPetCreationDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Choose Your Pet");
 
         // Changed this to have four options
@@ -124,10 +130,10 @@ public class PetViewActivity extends AppCompatActivity {
     }
 
     private void showNameInputDialog(String petType) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Name Your " + petType);
 
-        final android.widget.EditText input = new android.widget.EditText(this);
+        final android.widget.EditText input = new android.widget.EditText(requireContext());
         input.setHint("Enter pet name");
         builder.setView(input);
 
@@ -136,7 +142,7 @@ public class PetViewActivity extends AppCompatActivity {
 
             String error = ValidationUtils.getPetNameError(petName);
             if (error != null) {
-                Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
                 showNameInputDialog(petType);
                 return;
             }
@@ -147,11 +153,11 @@ public class PetViewActivity extends AppCompatActivity {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(AuthManager.currentUser().getUid());
             ref.child("currentPet").setValue(currentPet).addOnCompleteListener((task -> {
                 if(task.isSuccessful()){
-                    Toast.makeText(this, "New pet saved", Toast.LENGTH_SHORT).show();                }
+                    Toast.makeText(requireContext(), "New pet saved", Toast.LENGTH_SHORT).show();                }
             }));
 
 
-            Toast.makeText(this, "Welcome, " + petName + "!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Welcome, " + petName + "!", Toast.LENGTH_SHORT).show();
             updateUI();
         });
 
@@ -166,24 +172,24 @@ public class PetViewActivity extends AppCompatActivity {
     private void handleFeed() {
         /*
         if (!petManager.canFeed()) {
-            Toast.makeText(this, "Your pet is not hungry right now!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Your pet is not hungry right now!", Toast.LENGTH_SHORT).show();
             return;
         }*/
         if (currentPet == null) return;
 
         if (currentPet.getEnergy() <= 0) {
-            Toast.makeText(this, currentPet.getName() + " is too tired to eat! Try tucking in first.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), currentPet.getName() + " is too tired to eat! Try tucking in first.", Toast.LENGTH_SHORT).show();
             return;
         }
         if (currentPet.getHunger() >= 100) {
-            Toast.makeText(this, currentPet.getName() + " is full!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), currentPet.getName() + " is full!", Toast.LENGTH_SHORT).show();
             return;
         }
         showFoodMenu();
     }
 
     private void showFoodMenu() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle("Choose Food");
 
         String[] foodNames = new String[foodMenu.getMenu().size()];
@@ -197,7 +203,7 @@ public class PetViewActivity extends AppCompatActivity {
             petManager.feedPet(selectedFood);
             currentPet.increaseHappiness(10);
             //currentPet.increaseXP(10);
-            Toast.makeText(this, "Fed " + currentPet.getName() + "! +10 XP", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Fed " + currentPet.getName() + "! +10 XP", Toast.LENGTH_SHORT).show();
             updateUI();
         });
 
@@ -208,7 +214,7 @@ public class PetViewActivity extends AppCompatActivity {
     private void handleTuckIn() {
         // TEST: ignore PetManager.canTuckIn() and allow tucking unless in cooldown
         if (isInCooldown) {
-            Toast.makeText(this, "Please wait until cooldown ends.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Please wait until cooldown ends.", Toast.LENGTH_SHORT).show();
             return;
         }
         currentPet.tuck();
@@ -218,7 +224,7 @@ public class PetViewActivity extends AppCompatActivity {
         currentPet.increaseXP(10);
         clampPetStats();
         updateUI();
-        Toast.makeText(this, currentPet.getName() + " is resting and feeling happier!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), currentPet.getName() + " is resting and feeling happier!", Toast.LENGTH_SHORT).show();
 
         // Apply instant “sleep” + +10 happiness, then 3s simulated animation lockout
         //performTuckOnce();
@@ -249,9 +255,7 @@ public class PetViewActivity extends AppCompatActivity {
         clampPetStats();
         updateUI();
 
-        Toast.makeText(this,
-                currentPet.getName() + " is happy!!",
-                Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), currentPet.getName() + " is happy!!", Toast.LENGTH_SHORT).show();
 
         currentPet.increaseXP(10);
     }
@@ -276,7 +280,7 @@ public class PetViewActivity extends AppCompatActivity {
                 tuckInCount = 0;
                 btnTuckIn.setEnabled(true);
                 btnTuckIn.setText("Tuck In");
-                Toast.makeText(PetViewActivity.this,
+                Toast.makeText(requireContext(),
                         "You can tuck in again!", Toast.LENGTH_SHORT).show();
             }
         }.start();
@@ -286,12 +290,12 @@ public class PetViewActivity extends AppCompatActivity {
         if (currentPet == null) return;
 
         if (!petManager.canLevelUp()) {
-            Toast.makeText(this, "Not enough XP to level up!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Not enough XP to level up!", Toast.LENGTH_SHORT).show();
             return;
         }
 
         petManager.levelUpPet();
-        Toast.makeText(this, "Level Up! " + currentPet.getName() + " is now level " +
+        Toast.makeText(requireContext(), "Level Up! " + currentPet.getName() + " is now level " +
                 currentPet.getLevel() + "!", Toast.LENGTH_LONG).show();
         updateUI();
     }
@@ -362,39 +366,5 @@ public class PetViewActivity extends AppCompatActivity {
         // Example: ivPet.setImageResource(R.drawable.pet_dog_level_1);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        /*
-        if (currentPet != null) {
-            currentPet = petManager.getCurrentPet();
-            updateUI();
-        }*/
 
-        // START TEST MODE STAT DECAY HERE
-        if (statHandler != null && statDecayRunnable != null) {
-            statHandler.postDelayed(statDecayRunnable, STAT_DECAY_INTERVAL_MS);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Stop TEST MODE stat decay when leaving screen (avoid leaks)
-        if (statHandler != null && statDecayRunnable != null) {
-            statHandler.removeCallbacks(statDecayRunnable);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // Clean up cooldown timer if running
-        if (cooldownTimer != null) {
-            cooldownTimer.cancel();
-        }
-        if (statHandler != null && statDecayRunnable != null) {
-            statHandler.removeCallbacks(statDecayRunnable);
-        }
-    }
 }
