@@ -108,7 +108,8 @@ public class JournalGenerator extends ViewModel{
                 Log.d(TAG, "LlmInference instance created.");
 
                 // Run the model (blocking)
-                String prompt = "Respond with a somewhat short diary entry from the perspective of the pet dog " +
+                Pet currPet = petManager.getCurrentPet();
+                String prompt = "Respond with a somewhat short diary entry from the perspective of the pet " + currPet.getType()  +
                         "strictly based on given interactions. " +
                         "Respond only with the content of the diary entry (no date and no extra response)." +
                         "Do not include any unnecessary explanations or introductions." +

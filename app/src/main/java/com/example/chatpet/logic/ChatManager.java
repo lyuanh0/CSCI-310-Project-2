@@ -3,19 +3,16 @@ package com.example.chatpet.logic;
 import com.example.chatpet.data.model.Chat;
 import com.example.chatpet.data.model.Message;
 import com.example.chatpet.data.model.Pet;
-import com.example.chatpet.data.remote.LLMClient;
 
 import java.util.List;
 
 public class ChatManager {
     private static ChatManager instance;
     private Chat currentChat;
-    private LLMClient llmClient;
     private PetManager petManager;
 
     private ChatManager() {
         currentChat = new Chat();
-        llmClient = new LLMClient();
         petManager = PetManager.getInstance();
     }
 
@@ -34,8 +31,8 @@ public class ChatManager {
         currentChat.getMessages().add(userMsg);
 
         // Get response from LLM (placeholder for now)
-        String petResponse = llmClient.generateResponse(userMessage, currentPet);
-
+//        String petResponse = llmClient.generateResponse(userMessage, currentPet);
+        String petResponse = null;
         // Add pet response to chat
         Message petMsg = new Message(currentPet != null ? currentPet.getName() : "Pet", petResponse);
         currentChat.getMessages().add(petMsg);
