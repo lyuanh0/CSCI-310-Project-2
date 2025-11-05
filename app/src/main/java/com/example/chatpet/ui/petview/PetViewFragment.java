@@ -363,6 +363,12 @@ public class PetViewFragment extends Fragment {
                     //clampPetStats();
                     petManager.setCurrentPet(currentPet);
                     updateUI();
+                    //add pet to database
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(AuthManager.currentUser().getUid());
+                    ref.child("currentPet").setValue(currentPet).addOnCompleteListener((task -> {
+                        if(task.isSuccessful()){
+                        }
+                    }));
                 }
                 statHandler.postDelayed(this, STAT_DECAY_INTERVAL_MS);
             }
