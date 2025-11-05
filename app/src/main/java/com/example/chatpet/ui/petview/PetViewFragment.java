@@ -57,7 +57,7 @@ public class PetViewFragment extends Fragment {
     private static final int XP_GAIN_PER_ACTION = 10;
     private static final int MAX_XP = 100;
     private static final int TUCKS_BEFORE_COOLDOWN = 1;
-    private static final long COOLDOWN_MS =  60 * 1000L; // 1 minutes
+    private static final long COOLDOWN_MS =  10 * 1000L; // 1 minutes
     private static final long TUCK_ANIMATION_MS = 3_000L; // quick 3s "sleep" sim for testing
 
     private int tuckInCount = 0;
@@ -244,7 +244,7 @@ public class PetViewFragment extends Fragment {
         // Apply instant “sleep” + +10 happiness, then 3s simulated animation lockout
         //performTuckOnce();
 
-        tuckInCount++;
+        tuckInCount++; // we had tuckincount = 3 before, but now just 1
         if (tuckInCount >= TUCKS_BEFORE_COOLDOWN) {
             startCooldown();
         } else {
@@ -278,6 +278,9 @@ public class PetViewFragment extends Fragment {
 //    }
 
     private void startCooldown() {
+        // YOU ARE SLEEPING
+        // TODO fix the journal calling
+        //today.addtoReport("I was tucked in today");
         isInCooldown = true;
         btnTuckIn.setEnabled(false);
         currentPet.setCurrentStatus("sleeping");//stays sleeping
@@ -502,29 +505,29 @@ public class PetViewFragment extends Fragment {
         }
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        /*
-//        if (currentPet != null) {
-//            currentPet = petManager.getCurrentPet();
-//            updateUI();
-//        }*/
-//
-//        // START TEST MODE STAT DECAY HERE
-//        if (statHandler != null && statDecayRunnable != null) {
-//            statHandler.postDelayed(statDecayRunnable, STAT_DECAY_INTERVAL_MS);
-//        }
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        /*
+        if (currentPet != null) {
+            currentPet = petManager.getCurrentPet();
+            updateUI();
+        }*/
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        // Stop TEST MODE stat decay when leaving screen (avoid leaks)
-//        if (statHandler != null && statDecayRunnable != null) {
-//            statHandler.removeCallbacks(statDecayRunnable);
-//        }
-//    }
+        // START TEST MODE STAT DECAY HERE
+        if (statHandler != null && statDecayRunnable != null) {
+            statHandler.postDelayed(statDecayRunnable, STAT_DECAY_INTERVAL_MS);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Stop TEST MODE stat decay when leaving screen (avoid leaks)
+        if (statHandler != null && statDecayRunnable != null) {
+            statHandler.removeCallbacks(statDecayRunnable);
+        }
+    }
 
 //    @Override
 //    protected void onDestroy() {

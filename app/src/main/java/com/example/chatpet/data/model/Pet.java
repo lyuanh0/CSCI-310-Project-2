@@ -110,6 +110,9 @@ public class Pet {
     public void levelUp() {
         this.level++;
         updatePersonality();
+        // TODO fix the journal calling
+        // TODO also add journal calling for the CHAT AS WELL!
+        // today.addtoReport("I was leveled up to level + this.level+ today");
     }
 
     public void feed(Food food) {

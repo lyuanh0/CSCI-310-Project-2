@@ -206,6 +206,8 @@ public class PetViewActivity extends AppCompatActivity {
         builder.setItems(foodNames, (dialog, which) -> {
             Food selectedFood = foodMenu.getMenu().get(which);
             petManager.feedPet(selectedFood);
+            // TODO fix the journal calling
+                //      today.addtoReport("I was feed + selectedFood + today");
             currentPet.increaseHappiness(10);
             currentPet.increaseXP(10);
 
