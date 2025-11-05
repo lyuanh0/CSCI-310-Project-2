@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private PetManager petManager;
     private FirebaseUser currUser;
 
-    // Receive result from ChatActivity to grant XP
     private final ActivityResultLauncher<Intent> chatLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "+10 XP for chatting!", Toast.LENGTH_SHORT).show();
                     }
                 }
-                // keep nav state sane after returning
+
                 if (bottomNav != null) bottomNav.setSelectedItemId(R.id.nav_pet);
             });
 
@@ -60,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         bottomNav = findViewById(R.id.bottom_navigation);
         setupBottomNavigation();
 
-        // If we were launched with a requested tab (from ChatActivity), honor it
         selectDestFromIntent(getIntent());
     }
 
@@ -78,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_profile) {
                 loadFragment(new ProfileFragment());
-                return true; // <-- ensure we return true here
+                return true;
             }
             return false;
         });
@@ -97,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    // CHAT tab → gate on happiness, then launch for result so we can award XP
     private void navigateToChat() {
         if (petManager.getCurrentPet() == null) {
             Toast.makeText(this, "Create a pet first!", Toast.LENGTH_SHORT).show();
@@ -116,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
         chatLauncher.launch(intent);
     }
 
-    // ===== Deep-link support from ChatActivity =====
     private void selectDestFromIntent(Intent intent) {
         if (intent == null || bottomNav == null) return;
         String dest = intent.getStringExtra("dest");

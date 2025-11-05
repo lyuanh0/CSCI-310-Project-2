@@ -99,7 +99,6 @@ public class ChatActivity extends AppCompatActivity {
             if (petType == null || petType.isEmpty()) petType = currentPet.getType();
             petType = (petType == null) ? "dog" : petType.trim().toLowerCase();
 
-            // ---- Java 11 friendly switch ----
             String greeting;
             switch (petType) {
                 case "cat":
@@ -115,7 +114,6 @@ public class ChatActivity extends AppCompatActivity {
                     greeting = "Woof! I'm happy to meet you!";
                     break;
             }
-            // ---------------------------------
 
             chatManager.getMessages().add(new Message(currentPet.getName(), greeting));
             chatAdapter.notifyDataSetChanged();
