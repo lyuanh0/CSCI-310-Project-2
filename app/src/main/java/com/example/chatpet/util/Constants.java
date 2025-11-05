@@ -21,7 +21,7 @@ public class Constants {
     public static final String PET_TYPE_DOG = "Dog";
     public static final String PET_TYPE_CAT = "Cat";
     public static final String PET_TYPE_BIRD = "Bird";
-    public static final String PET_TYPE_RABBIT = "Rabbit";
+    public static final String PET_TYPE_FISH = "Fish";
 
     // Food Items
     public static final String FOOD_KIBBLE = "Kibble";

@@ -117,7 +117,7 @@ public class PetViewActivity extends AppCompatActivity {
         builder.setTitle("Choose Your Pet");
 
         // Changed this to have four options
-        String[] petTypes = {"Dog", "Cat", "Dragon", "Rabbit"};
+        String[] petTypes = {"Dog", "Cat", "Dragon", "Fish"};
 
         builder.setItems(petTypes, (dialog, which) -> {
             String selectedType = petTypes[which];
