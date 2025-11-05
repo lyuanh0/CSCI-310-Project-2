@@ -3,13 +3,14 @@ package com.example.chatpet.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.chatpet.ui.journal.JournalFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import com.example.chatpet.R;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.ui.chat.ChatActivity;
-import com.example.chatpet.ui.journal.JournalActivity;
 import com.example.chatpet.ui.login.LoginActivity;
 import com.example.chatpet.ui.petview.PetViewActivity;
 import com.example.chatpet.ui.profile.ProfileFragment;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 navigateToChat();
                 return true;
             } else if (itemId == R.id.nav_journal) {
-                navigateToJournal();
+                loadFragment(new JournalFragment());
                 return true;
             } else if (itemId == R.id.nav_profile) {
                 loadFragment(new ProfileFragment());
@@ -100,8 +101,5 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void navigateToJournal() {
-        Intent intent = new Intent(this, JournalActivity.class);
-        startActivity(intent);
-    }
+
 }

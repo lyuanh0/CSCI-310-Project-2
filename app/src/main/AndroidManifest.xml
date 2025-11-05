@@ -32,7 +32,6 @@ xmlns:tools="http://schemas.android.com/tools">
     <activity android:name=".ui.MainActivity" />
     <activity android:name=".ui.petview.PetViewActivity" />
     <activity android:name=".ui.chat.ChatActivity" />
-    <activity android:name=".ui.journal.JournalActivity" />
     <activity android:name=".ui.login.RegistrationActivity" />
 
 
