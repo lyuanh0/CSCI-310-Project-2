@@ -48,10 +48,7 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
 //        SharedPreferences prefs = getSharedPreferences("journal_prefs", MODE_PRIVATE);
 //        String lastScheduledDate = prefs.getString("last_scheduled_date", "");
 
-
-        JournalEntry todayEntry = journalRepo.getJournalEntryByDate(today);
         Log.i(TAG, "Entries size: " + allEntries.size());
-
 
         for (JournalEntry entry : allEntries) {
             LocalDate entryDate = LocalDate.parse(entry.getDate());
@@ -93,13 +90,7 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
 
         Log.i(TAG, "Entries size after: " + journalRepo.getAllJournalEntries().size());
 
-        // Create a blank entry for today
-//        if (todayEntry == null) {
-//            todayEntry = new JournalEntry(today.toString(), "");
-//            todayEntry.setReport("went to the beach");
-//            journalRepo.saveJournalEntry(todayEntry);
-//            Log.i(TAG, "Created placeholder journal entry for " + today);
-//        }
+        JournalEntry todayEntry = journalRepo.getJournalEntryByDate(today);
         if (todayEntry == null ) {
             todayEntry = new JournalEntry(today.toString(), "");
             todayEntry.setReport("went to the beach");
@@ -109,7 +100,7 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
 
         // Generate entries for past days with existing reports
         allEntries = journalRepo.getAllJournalEntries();
-        Log.i(TAG, "Entries size: " + allEntries.size());
+        Log.i(TAG, "Entries size adding today: " + allEntries.size());
 
 
         // Schedule tonight’s generation
