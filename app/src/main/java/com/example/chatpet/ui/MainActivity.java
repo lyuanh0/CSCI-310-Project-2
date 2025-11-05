@@ -2,25 +2,47 @@ package com.example.chatpet.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.chatpet.ui.journal.JournalFragment;
 import com.example.chatpet.ui.petview.PetViewFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 
 import com.example.chatpet.R;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.ui.chat.ChatActivity;
+import com.example.chatpet.ui.journal.JournalActivity;
 import com.example.chatpet.ui.login.LoginActivity;
+import com.example.chatpet.ui.petview.PetViewActivity;
 import com.example.chatpet.ui.profile.ProfileFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
+
     private BottomNavigationView bottomNav;
     private AuthManager authManager;
     private PetManager petManager;
     private FirebaseUser currUser;
+
+    // Receive result from ChatActivity to grant XP
+    private final ActivityResultLauncher<Intent> chatLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    boolean chatted = result.getData().getBooleanExtra("chatted", false);
+                    if (chatted && petManager.getCurrentPet() != null) {
+                        petManager.getCurrentPet().addXP(10);
+                        Toast.makeText(this, "+10 XP for chatting!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                // keep nav state sane after returning
+                if (bottomNav != null) bottomNav.setSelectedItemId(R.id.nav_pet);
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +61,7 @@ public class MainActivity extends AppCompatActivity {
         //set user
         currUser = AuthManager.currentUser();
 
-//        // Check if user has a pet, if not navigate to pet creation
-//        if (petManager.getCurrentPet() == null) {
-//            navigateToPetView();
-//            return;
-//        }
-
-        initializeViews();
+        bottomNav = findViewById(R.id.bottom_navigation);
         setupBottomNavigation();
     }
 
@@ -55,27 +71,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupBottomNavigation() {
         bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-
-            if (itemId == R.id.nav_pet) {
+            int id = item.getItemId();
+            if (id == R.id.nav_pet) {
                 loadFragment(new PetViewFragment());
                 return true;
-            } else if (itemId == R.id.nav_chat) {
+            } else if (id == R.id.nav_chat) {
                 navigateToChat();
                 return true;
-            } else if (itemId == R.id.nav_journal) {
+            } else if (id == R.id.nav_journal) {
                 loadFragment(new JournalFragment());
                 return true;
-            } else if (itemId == R.id.nav_profile) {
+            } else if (id == R.id.nav_profile) {
                 loadFragment(new ProfileFragment());
-                return true;
             }
-
             return false;
         });
-
-        // Set default selection
         bottomNav.setSelectedItemId(R.id.nav_pet);
+    }
+
+    private void navigateToLogin() {
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     private void loadFragment(androidx.fragment.app.Fragment fragment) {
@@ -85,17 +101,25 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private void navigateToLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
-    }
 
 
-
+    // CHAT tab → gate on happiness, then launch for result so we can award XP
     private void navigateToChat() {
+        if (petManager.getCurrentPet() == null) {
+            Toast.makeText(this, "Create a pet first!", Toast.LENGTH_SHORT).show();
+            bottomNav.setSelectedItemId(R.id.nav_pet);
+            return;
+        }
+        if (petManager.getCurrentPet().getHappiness() > 90) {
+            Toast.makeText(this, "Your pet is already super happy—try another activity!", Toast.LENGTH_SHORT).show();
+            bottomNav.setSelectedItemId(R.id.nav_pet);
+            return;
+        }
+
         Intent intent = new Intent(this, ChatActivity.class);
-        startActivity(intent);
+        intent.putExtra("petName", petManager.getCurrentPet().getName());
+        intent.putExtra("petType", petManager.getCurrentPet().getType());
+        chatLauncher.launch(intent);
     }
 
 

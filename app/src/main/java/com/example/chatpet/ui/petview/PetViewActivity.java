@@ -1,11 +1,17 @@
 package com.example.chatpet.ui.petview;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -61,31 +67,42 @@ public class PetViewActivity extends AppCompatActivity {
     private boolean isInCooldown = false;
     private CountDownTimer cooldownTimer;
 
+    private final ActivityResultLauncher<Intent> chatLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    boolean chatted = result.getData().getBooleanExtra("chatted", false);
+                    if (chatted) {
+                        Pet p = petManager.getCurrentPet();
+                        if (p != null) {
+                            p.addXP(10); // your Pet class method; or petManager.addXP(10)
+                            Toast.makeText(this, "+10 XP for chatting!", Toast.LENGTH_SHORT).show();
+                            updateUI();
+                        }
+                    }
+                }
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_view);
 
         petManager = PetManager.getInstance();
-        foodMenu = new FoodMenu("dog");
-        foodMenu = new FoodMenu("cat");
-        foodMenu = new FoodMenu("dragon");
-        foodMenu = new FoodMenu("fish");
-        //foodMenu = new FoodMenu(currentPet.getType());
-
         initializeViews();
 
-        //Check if pet exists, if not show creation dialog
+
+        // Check if pet exists, if not show creation dialog
         if (petManager.getCurrentPet() == null) {
             showPetCreationDialog();
         } else {
             currentPet = petManager.getCurrentPet();
+            // build menu for this pet type
+            foodMenu = new FoodMenu(currentPet.getType());
             updateUI();
         }
 
         setupListeners();
         setupStatDecayHandler();
-
     }
 
     private void initializeViews() {
