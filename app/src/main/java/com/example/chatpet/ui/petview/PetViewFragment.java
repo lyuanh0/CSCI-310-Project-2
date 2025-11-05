@@ -217,6 +217,10 @@ public class PetViewFragment extends Fragment {
 
         builder.setItems(foodNames, (dialog, which) -> {
             Food selectedFood = foodMenu.getMenu().get(which);
+
+            JournalEntry today = journalRepo.getJournalEntryByDate(LocalDate.now());
+            today.addToReport("Was fed " + selectedFood.getName() + ".");
+
             petManager.feedPet(selectedFood);
             currentPet.increaseHappiness(10);
             currentPet.increaseXP(10); //increase XP after opening menu?
