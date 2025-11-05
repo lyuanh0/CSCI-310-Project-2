@@ -224,6 +224,14 @@
             android:background="@drawable/outlined_button_green"
             android:layout_marginTop="6dp" />
 
+        <Button
+            android:id="@+id/btn_background"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="Background"
+            android:background="@drawable/outlined_button_green"
+            android:layout_marginTop="6dp" />
+
 
     </LinearLayout>
 

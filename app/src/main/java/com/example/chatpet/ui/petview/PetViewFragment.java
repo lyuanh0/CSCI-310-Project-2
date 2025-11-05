@@ -39,6 +39,7 @@ public class PetViewFragment extends Fragment {
     private Button btnFeed;
     private Button btnTuckIn;
     private Button btnLevelUp;
+    private Button btnBackground;
 
     private PetManager petManager;
     private Pet currentPet;
@@ -108,12 +109,14 @@ public class PetViewFragment extends Fragment {
         btnFeed = view.findViewById(R.id.btn_feed);
         btnTuckIn = view.findViewById(R.id.btn_tuck_in);
         btnLevelUp = view.findViewById(R.id.btn_level_up);
+        btnBackground = view.findViewById(R.id.btn_background);
     }
 
     private void setupListeners() {
         btnFeed.setOnClickListener(v -> handleFeed());
         btnTuckIn.setOnClickListener(v -> handleTuckIn());
         btnLevelUp.setOnClickListener(v -> handleLevelUp());
+        btnBackground.setOnClickListener(v-> handleBackgroundChange());
     }
 
     private void showPetCreationDialog() {
@@ -259,6 +262,31 @@ public class PetViewFragment extends Fragment {
         }
     }
 
+    private void handleBackgroundChange() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Choose Background");
+
+        String[] backgrounds = {"Forest", "Ocean", "Backyard", "Flower Field"};
+        int[] drawableIds = {
+                R.drawable.verticalforest,
+                R.drawable.verticalocean,
+                R.drawable.verticalbackyard,
+                R.drawable.verticalflowerfield
+        };
+
+        builder.setItems(backgrounds, (dialog, which) -> {
+            View rootView = getView();
+            if (rootView != null) {
+                rootView.setBackgroundResource(drawableIds[which]);
+                Toast.makeText(requireContext(),
+                        "Background changed to " + backgrounds[which],
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
 //    private void performTuckOnce() {
 //        if (currentPet == null) return;
 //
