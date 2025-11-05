@@ -9,13 +9,13 @@ public class Pet {
     private Date creationDate;
     private int age;
     private int level;
-    private int health;
     private int hunger; // 0 = starving, 100 = full
     private int happiness;// 0 = sad, 100 = happy
     private int energy; // 0 = tired, 100 = energized
     private String currentStatus;
     private String personalityTraits;
     private String imageUrl;
+    private boolean isSleep = false;
 
     // XP System
     private int totalXP;
@@ -36,6 +36,7 @@ public class Pet {
         this.currentStatus = "awake";
         this.creationDate = new Date();
         this.totalXP = 0;
+        this.isSleep = false;
     }
 
     public Pet(String name, String type) {
@@ -47,6 +48,15 @@ public class Pet {
         //this.maxXP = 10000;
     }
 
+    public boolean isSleeping() {
+        return this.isSleep;
+    }
+
+    public void setIsSleeping(boolean isSleeping) {
+
+        this.isSleep = isSleeping;
+
+    }
     public void addXP(int xp){
         totalXP += xp;
         checkLevelUp();
@@ -55,10 +65,10 @@ public class Pet {
     private void checkLevelUp(){
         int maxXPForLevel = getMaxXPForLevel();
         if (totalXP >= maxXPForLevel && level < 3) {
-            level++;
+            levelUp();
             totalXP = 0; // reset XP
         }
-    }
+    } // this seems correct.
 
     public int getMaxXPForLevel() {
         if (level == 1) return 100;
@@ -110,7 +120,7 @@ public class Pet {
     }
 
     public void tuck() {
-        //this.currentStatus = "sleeping";//handle in petviewactivity
+        //this.currentStatus = "sleeping"; //handle in petviewactivity
         decreaseHunger(10);
         increaseHappiness(10);
         increaseEnergy(20); // regain energy
@@ -119,9 +129,7 @@ public class Pet {
 
     public void wakeUp() {
         this.currentStatus = "awake";
-        increaseEnergy(60);
-
-        if (this.totalXP > 100) this.totalXP = 100;
+        increaseEnergy(10);
     }
 
     /*
@@ -138,18 +146,18 @@ public class Pet {
 
     public void updatePersonality() {
         // Logic to update personality based on level and interactions
-        if (level >= 5) {
+        if (level == 1) {
             personalityTraits = "Playful and energetic";
-        } else if (level >= 3) {
+        } else if (level == 2) {
             personalityTraits = "Curious and friendly";
         } else {
             personalityTraits = "Shy and timid";
         }
     }
 
-    public void updateStatus() {
-
-    }
+    // public void updateStatus() {
+    //
+    // }
 
     // Getters and Setters
     public String getName() { return name; }
@@ -204,8 +212,8 @@ public class Pet {
     public void setAge(int age) { this.age = age; }
     public int getLevel() { return level; }
     public void setLevel(int level) { this.level = level; }
-    public int getHealth() { return health; }
-    public void setHealth(int health) { this.health = health; }
+    // public int getHealth() { return health; }
+    // public void setHealth(int health) { this.health = health; }
 
     public int getHunger() { return hunger; }
     public void setHunger(int hunger) { this.hunger = hunger; }

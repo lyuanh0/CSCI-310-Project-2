@@ -1,17 +1,11 @@
 package com.example.chatpet.ui.petview;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -59,7 +53,7 @@ public class PetViewActivity extends AppCompatActivity {
     private static final int ENERGY_BOOST_PER_TUCK = 10;
     private static final int XP_GAIN_PER_ACTION = 10;
     private static final int MAX_XP = 100;
-    private static final int TUCKS_BEFORE_COOLDOWN = 3;
+    private static final int TUCKS_BEFORE_COOLDOWN = 1;
     private static final long COOLDOWN_MS =  60 * 1000L; // 1 minutes
     private static final long TUCK_ANIMATION_MS = 3_000L; // quick 3s "sleep" sim for testing
 
@@ -67,42 +61,31 @@ public class PetViewActivity extends AppCompatActivity {
     private boolean isInCooldown = false;
     private CountDownTimer cooldownTimer;
 
-    private final ActivityResultLauncher<Intent> chatLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    boolean chatted = result.getData().getBooleanExtra("chatted", false);
-                    if (chatted) {
-                        Pet p = petManager.getCurrentPet();
-                        if (p != null) {
-                            p.addXP(10); // your Pet class method; or petManager.addXP(10)
-                            Toast.makeText(this, "+10 XP for chatting!", Toast.LENGTH_SHORT).show();
-                            updateUI();
-                        }
-                    }
-                }
-            });
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_view);
 
         petManager = PetManager.getInstance();
+        // foodMenu = new FoodMenu("dog");
+        // foodMenu = new FoodMenu("cat");
+        // foodMenu = new FoodMenu("dragon");
+        // foodMenu = new FoodMenu("fish");
+
         initializeViews();
 
-
-        // Check if pet exists, if not show creation dialog
+        //Check if pet exists, if not show creation dialog
         if (petManager.getCurrentPet() == null) {
             showPetCreationDialog();
+            foodMenu = new FoodMenu(currentPet.getType());
         } else {
             currentPet = petManager.getCurrentPet();
-            // build menu for this pet type
-            foodMenu = new FoodMenu(currentPet.getType());
             updateUI();
         }
 
         setupListeners();
         setupStatDecayHandler();
+
     }
 
     private void initializeViews() {
@@ -194,7 +177,7 @@ public class PetViewActivity extends AppCompatActivity {
         if (currentPet == null) return;
 
         //cannot feed when sleeping
-        if ("sleeping".equalsIgnoreCase(currentPet.getCurrentStatus())) {
+        if (currentPet.isSleeping()) {
             Toast.makeText(this, currentPet.getName() + " is sleeping. Wait until awake!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -224,6 +207,7 @@ public class PetViewActivity extends AppCompatActivity {
             Food selectedFood = foodMenu.getMenu().get(which);
             petManager.feedPet(selectedFood);
             currentPet.increaseHappiness(10);
+            currentPet.increaseXP(10);
 
             //update stats after feeding
             petManager.setCurrentPet(currentPet);
@@ -271,28 +255,29 @@ public class PetViewActivity extends AppCompatActivity {
         }
     }
 
-    private void performTuckOnce() {
-        if (currentPet == null) return;
-
-        // Simulate going to sleep instantly
-        currentPet.tuck();
-
-        // +10% Happiness (cap at 100)
-        currentPet.increaseHappiness(HAPPINESS_BOOST_PER_TUCK);
-        clampPetStats();
-        updateUI();
-
-        Toast.makeText(this,
-                currentPet.getName() + " is happy!!",
-                Toast.LENGTH_SHORT).show();
-
-        currentPet.increaseXP(10);
-    }
+    // private void performTuckOnce() {
+    //    if (currentPet == null) return;
+    //
+    //    // Simulate going to sleep instantly
+    //    currentPet.tuck();
+    //
+    //    // +10% Happiness (cap at 100)
+    //    currentPet.increaseHappiness(HAPPINESS_BOOST_PER_TUCK);
+    //    clampPetStats();
+    //    updateUI();
+    //
+    //    Toast.makeText(this,
+    //            currentPet.getName() + " is happy!!",
+    //            Toast.LENGTH_SHORT).show();
+    //
+    //    currentPet.increaseXP(10);
+    // }
 
     private void startCooldown() {
         isInCooldown = true;
         btnTuckIn.setEnabled(false);
-        currentPet.setCurrentStatus("sleeping");//stays sleeping
+        currentPet.setCurrentStatus("sleeping"); //stays sleeping
+        currentPet.setIsSleeping(true);
         updateUI();
         Toast.makeText(this, currentPet.getName() + " fell asleep...", Toast.LENGTH_SHORT).show();
 
@@ -310,7 +295,8 @@ public class PetViewActivity extends AppCompatActivity {
             public void onFinish() {
                 isInCooldown = false;
                 tuckInCount = 0;
-                //currentPet.setCurrentStatus("awake");//wake up after cooldown
+                currentPet.setCurrentStatus("awake");//wake up after cooldown
+                currentPet.setIsSleeping(false);
                 currentPet.wakeUp();
                 updateUI();
                 btnTuckIn.setEnabled(true);
@@ -328,6 +314,7 @@ public class PetViewActivity extends AppCompatActivity {
         int level = currentPet.getLevel();
 
         int requiredXP;
+
         if (level == 1) {
             requiredXP = 100;
         } else if (level == 2) {
