@@ -83,7 +83,8 @@ public class LoginActivity extends AppCompatActivity {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
-        JournalRepository.getInstance().loadJournalSnapshot();
+//        JournalRepository.getInstance().loadJournalSnapshot();
+        JournalRepository.getInstance().loadJournalSnapshot(entries -> {});
 
         PetManager.getInstance().loadPetData(userId, new PetManager.OnPetLoadedListener() {
             @Override

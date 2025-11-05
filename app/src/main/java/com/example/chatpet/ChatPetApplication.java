@@ -1,6 +1,7 @@
 package com.example.chatpet;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.lifecycle.DefaultLifecycleObserver;
@@ -16,6 +17,8 @@ import java.util.List;
 
 public class ChatPetApplication extends Application implements DefaultLifecycleObserver {
     private static final String TAG = "JournalChatPetApplication";
+    private static final String PREFS_NAME = "chatpet_prefs";
+    private static final String KEY_LAST_RUN_DATE = "last_run_date";
 
     @Override
     public void onCreate() {
@@ -30,25 +33,30 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
         Log.i(TAG, "App moved to foreground");
 
         JournalRepository journalRepo = JournalRepository.getInstance();
+
+        journalRepo.loadJournalSnapshot(entries -> {
+            Log.i(TAG, "Firebase load complete: " + entries.size() + " entries loaded");
+            handleJournalLogic(entries);
+        });
+    }
+
+    private void handleJournalLogic(List<JournalEntry> allEntries) {
         LocalDate today = LocalDate.now();
 
-        // Create a blank entry for today
-        JournalEntry todayEntry = journalRepo.getJournalEntryByDate(today);
-        if (todayEntry == null) {
-            todayEntry = new JournalEntry(today.toString(), "");
-            //todayEntry.setReport("went to the beach");
-            journalRepo.saveJournalEntry(todayEntry);
-            Log.i(TAG, "Created placeholder journal entry for " + today);
-        }
+        JournalRepository journalRepo = JournalRepository.getInstance();
 
-        // Generate entries for past days with existing reports
-        List<JournalEntry> allEntries = journalRepo.getAllJournalEntries();
+//        SharedPreferences prefs = getSharedPreferences("journal_prefs", MODE_PRIVATE);
+//        String lastScheduledDate = prefs.getString("last_scheduled_date", "");
+
+
+        JournalEntry todayEntry = journalRepo.getJournalEntryByDate(today);
         Log.i(TAG, "Entries size: " + allEntries.size());
+
 
         for (JournalEntry entry : allEntries) {
             LocalDate entryDate = LocalDate.parse(entry.getDate());
             if (entryDate.isBefore(today) && entry.getEntry().isEmpty() &&
-                    (entry.getReport() != null) ) {
+                    (entry.getReport() != null && !entry.getReport().isEmpty()) ) {
 
                 Log.i(TAG, "Generating report for " + entry.getDate());
                 JournalGenerator.getInstance().generateDailyEntry(
@@ -75,7 +83,7 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
             }
 
             else if (entryDate.isBefore(today) && entry.getEntry().isEmpty() &&
-                    (entry.getReport() == null) ) {
+                    (entry.getReport() == null || entry.getReport().isEmpty()) ) {
                 Log.i(TAG, "Deleting empty entry/report " + entry.getDate());
 
                 journalRepo.deleteJournalEntry(entryDate);
@@ -85,7 +93,27 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
 
         Log.i(TAG, "Entries size after: " + journalRepo.getAllJournalEntries().size());
 
+        // Create a blank entry for today
+//        if (todayEntry == null) {
+//            todayEntry = new JournalEntry(today.toString(), "");
+//            todayEntry.setReport("went to the beach");
+//            journalRepo.saveJournalEntry(todayEntry);
+//            Log.i(TAG, "Created placeholder journal entry for " + today);
+//        }
+        if (todayEntry == null ) {
+            todayEntry = new JournalEntry(today.toString(), "");
+            todayEntry.setReport("went to the beach");
+            journalRepo.saveJournalEntry(todayEntry);
+            Log.i(TAG, "Created placeholder journal entry for " + today);
+        }
+
+        // Generate entries for past days with existing reports
+        allEntries = journalRepo.getAllJournalEntries();
+        Log.i(TAG, "Entries size: " + allEntries.size());
+
+
         // Schedule tonight’s generation
         JournalGenerator.getInstance().scheduleJournalWork(this);
+
     }
 }
