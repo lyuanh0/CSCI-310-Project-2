@@ -82,8 +82,6 @@ public class LoginActivity extends AppCompatActivity {
     private void loadUserDataAndNavigate() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-
-//        JournalRepository.getInstance().loadJournalSnapshot();
         JournalRepository.getInstance().loadJournalSnapshot(entries -> {});
 
         PetManager.getInstance().loadPetData(userId, new PetManager.OnPetLoadedListener() {
