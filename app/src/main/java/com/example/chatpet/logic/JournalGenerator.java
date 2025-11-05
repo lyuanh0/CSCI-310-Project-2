@@ -110,7 +110,7 @@ public class JournalGenerator extends ViewModel{
                 // Run the model (blocking)
                 Pet currPet = petManager.getCurrentPet();
                 String prompt = "Write only a somewhat short diary entry from the perspective of the pet " + currPet.getType()  +
-                        "strictly based on given interactions that had occur today. " +
+                        "strictly based on given interactions that had occur today. (do not add dates)" +
                         "Return ONLY the diary entry text — no introductions, no explanations, no phrases like 'Dear Entry' 'Okay' or 'Here’s the entry'. " +
                         "Output must begin immediately with the diary entry content itself." +
                         "Do not include any unnecessary explanations or introductions." +
