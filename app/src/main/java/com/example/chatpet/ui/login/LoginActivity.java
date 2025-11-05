@@ -75,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = AuthManager.currentUser();
         if(currentUser != null){
+            Toast.makeText(this,"You have been automatically logged in",Toast.LENGTH_LONG).show();
             loadUserDataAndNavigate();
         }
     }
