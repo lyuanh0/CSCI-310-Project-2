@@ -363,10 +363,17 @@ public class PetViewFragment extends Fragment {
                     //clampPetStats();
                     petManager.setCurrentPet(currentPet);
                     updateUI();
+                    //add pet to database
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(AuthManager.currentUser().getUid());
+                    ref.child("currentPet").setValue(currentPet).addOnCompleteListener((task -> {
+                        if(task.isSuccessful()){
+                        }
+                    }));
                 }
                 statHandler.postDelayed(this, STAT_DECAY_INTERVAL_MS);
             }
         };
+
     }
 
     private void updateUI() {
@@ -502,32 +509,33 @@ public class PetViewFragment extends Fragment {
         }
     }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        /*
-//        if (currentPet != null) {
-//            currentPet = petManager.getCurrentPet();
-//            updateUI();
-//        }*/
-//
-//        // START TEST MODE STAT DECAY HERE
-//        if (statHandler != null && statDecayRunnable != null) {
-//            statHandler.postDelayed(statDecayRunnable, STAT_DECAY_INTERVAL_MS);
-//        }
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        /*
+        if (currentPet != null) {
+            currentPet = petManager.getCurrentPet();
+            updateUI();
+        }*/
+
+        // START TEST MODE STAT DECAY HERE
+        if (statHandler != null && statDecayRunnable != null) {
+            statHandler.postDelayed(statDecayRunnable, STAT_DECAY_INTERVAL_MS);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Stop TEST MODE stat decay when leaving screen (avoid leaks)
+        if (statHandler != null && statDecayRunnable != null) {
+            statHandler.removeCallbacks(statDecayRunnable);
+        }
+    }
+
 
 //    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        // Stop TEST MODE stat decay when leaving screen (avoid leaks)
-//        if (statHandler != null && statDecayRunnable != null) {
-//            statHandler.removeCallbacks(statDecayRunnable);
-//        }
-//    }
-
-//    @Override
-//    protected void onDestroy() {
+//    public void onDestroy() {
 //        super.onDestroy();
 //        // Clean up cooldown timer if running
 //        if (cooldownTimer != null) {
@@ -536,5 +544,6 @@ public class PetViewFragment extends Fragment {
 //        if (statHandler != null && statDecayRunnable != null) {
 //            statHandler.removeCallbacks(statDecayRunnable);
 //        }
+//
 //    }
 }

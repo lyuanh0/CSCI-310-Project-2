@@ -106,6 +106,7 @@ public class PetManager {
         petRepository.updatePet(currentPet);
     }
 
+
     private void checkLevelUp() {
         if (currentPet == null) return;
 
