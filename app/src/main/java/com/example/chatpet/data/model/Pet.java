@@ -63,10 +63,10 @@ public class Pet {
     }
     public void addXP(int xp){
         totalXP += xp;
-        checkLevelUp();
+        tryLevelUp();
     }
 
-    private void checkLevelUp(){
+    public void tryLevelUp(){
         int maxXPForLevel = getMaxXPForLevel();
         if (totalXP >= maxXPForLevel && level < 3) {
             levelUp();

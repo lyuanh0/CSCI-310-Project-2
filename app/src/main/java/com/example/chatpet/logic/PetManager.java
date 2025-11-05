@@ -111,7 +111,7 @@ public class PetManager {
 
         // Level up if happiness is at max
         if (currentPet.getHappiness() >= LEVEL_UP_THRESHOLD) {
-            currentPet.levelUp();
+            currentPet.tryLevelUp();
             currentPet.setHappiness(50); // Reset to 50 after level up
         }
     }
@@ -132,7 +132,7 @@ public class PetManager {
     public void levelUpPet() {
         if (currentPet == null) return;
 
-        currentPet.levelUp();
+        currentPet.tryLevelUp();
         currentPet.updatePersonality();
         petRepository.updatePet(currentPet);
     }

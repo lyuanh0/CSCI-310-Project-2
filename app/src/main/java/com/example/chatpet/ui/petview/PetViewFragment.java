@@ -70,6 +70,87 @@ public class PetViewFragment extends Fragment {
     private boolean isInCooldown = false;
     private CountDownTimer cooldownTimer;
 
+    private static final String[] DOG_JOKES = {
+            "Why do dogs run in circles? Because it's hard to run in squares!",
+            "What do you call a dog that doesn't bark? A hush puppy!",
+            "What do you call a dog magician? A labracadabrador!",
+            "Why did the dog sit in the shade? He was a hot dog!",
+            "Why did the dog go to the bank? To make a de-paws-it!",
+            "What do you give a dog with a fever? Mustard! It's the best thing for a hot dog.",
+            "How do you identify a dogwood tree? By its bark!",
+            "What did the dog say when he sat on sandpaper? 'Ruff!'",
+            "Where do you find a dog with no legs? Right where you left him!",
+            "What do you get a dog for its birthday? Pupcakes!",
+            "What did the dog say when it forgot its homework? “My human ate my homework.”",
+            "Who is the most famous doggy magician in history? Houndini.",
+            "What kind of car does a dog drive? A Fur-rari.",
+            "What do dogs get after they graduate from obedience school? Their masters.",
+            "What's a dog's favorite type of workout? Pawlates!",
+            "What kinds of outdoor markets do dogs despise? Flea markets.",
+            "What kind of dog likes taking a bath every day? A shampoo-dle.",
+            "What do dogs eat for breakfast? Pooched eggs.",
+            "What do you call a dog that sneezes? A-choo-wawa.",
+    };
+
+    private static final String[] CAT_JOKES = {
+            "What do you call a pile of cats? A meow-ntain!",
+            "What's a cat's favorite color? Purrrrple!",
+            "Why don't cats play poker? Too many cheetahs!",
+            "What do cats eat for breakfast? Mice Krispies!",
+            "What do you call a cat who works in business? A purr-fessional!",
+            "What's a cat's favorite subject? Hiss-tory.",
+            "What do you call a cat who teaches at a university? A purr-fessor.",
+            "Why shouldn’t you buy essential oils from a cat? It’s probably a purr-amid scheme.",
+            "Why didn’t the cat get promoted to management? He had terrible littership skills.",
+            "Why is it annoying to watch TV with cats? They keep pawsing the show.",
+            "What did the cat say to the dog? “Meowt of my way!”",
+            "What’s a cat’s favorite dessert? A mice cream cone.",
+            "What’s a cat’s favorite jacket? A purr coat.",
+            "What’s a cat’s least favorite jacket? A fleas-lined coat.",
+            "What’s a cat’s favorite comedy show? Caturday Night Live.",
+            "What do you call a cat prom? A Fur Ball.",
+            "What is a cat’s favorite thing to drink on a summer day? White Claw.",
+            "What does a cat order at a bar? A whisker sour.",
+            "Why aren’t cats religious? They’re scared of dogma.",
+            "Why does the cat do stand-up? He lives for the a-paws.",
+    };
+
+    private static final String[] DRAGON_JOKES = {
+            "Why don't dragons ever win at poker? They always get caught bluffing fire!",
+            "What do you call a dragon who loves to garden? A snap-dragon!",
+            "Why did the dragon cross the road? To prove he wasn't chicken!",
+            "What's a dragon's favorite snack? Fire crackers!",
+            "Why don't dragons use cutlery? They have forked tongues!",
+            "What do you call a dragon that's really good at singing? Talon-ted!",
+            "What's a hungry dragon's favorite day of the week? Chews-day.",
+            "Don't make me unleash the *dragon*!",
+            "Why are dragons so good at climbing the corporate ladder? Because they know how to scale it.",
+            "I would tell you a very long, bad lizard joke, but I don't want to dragon.",
+            "No need to get all *fired* up about it!",
+            "Dragons really know how to breathe life into a party.",
+            "When dragons gossip, they always add a little fire to the tale.",
+            "Be careful with my dragon jokes – they might just roast you!",
+            "When life gives you dragons, make a pun to fire up your day.",
+            "What would USC's slogan be if they had a dragon mascot? 'Flame on'!",
+    };
+
+    private static final String[] FISH_JOKES = {
+            "What do you call a fish with no eyes? A fsh!",
+            "How do fish get to school? By octobus!",
+            "Why are fish so smart? They live in schools!",
+            "What do you call a fish that wears a crown? King of the sea!",
+            "Do you like my puns? Let minnow if you want to hear more!",
+            "You're a fin-tastic human being!",
+            "What did the pirate make the whale do? Walk the plank-ton.",
+            "What's my favorite musician? Sabrina Carp-enter!",
+            "Does something smell fish-y to you?",
+            "Without a trout, my puns are unde-bait-ably the best!",
+            "You haven't met my friend Frankie, but I bet you've been herring all about him!",
+            "What's my favorite movie? Octo-puss in boots!",
+            "An octopus is always ready for war because they’re well-armed!",
+            "Where does an octopus sing? The choral reef!",
+    };
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_pet_view, container, false);
@@ -122,6 +203,7 @@ public class PetViewFragment extends Fragment {
         btnTuckIn.setOnClickListener(v -> handleTuckIn());
         btnLevelUp.setOnClickListener(v -> handleLevelUp());
         btnBackground.setOnClickListener(v-> handleBackgroundChange());
+        ivPet.setOnClickListener(v-> showRandomJoke());
     }
 
     private void showPetCreationDialog() {
@@ -203,6 +285,44 @@ public class PetViewFragment extends Fragment {
             return;
         }
         showFoodMenu();
+    }
+
+    private void showRandomJoke() {
+        if (currentPet == null) return;
+
+        String[] jokes;
+        switch (currentPet.getType().toLowerCase()) {
+            case "dog":
+                jokes = DOG_JOKES;
+                break;
+
+            case "cat":
+                jokes = CAT_JOKES;
+                break;
+
+            case "dragon":
+                jokes = DRAGON_JOKES;
+                break;
+
+            case "fish":
+                jokes = FISH_JOKES;
+                break;
+
+            default:
+                jokes = new String[] {"Your pet says is feeling playful!",
+                                        "Your pet says hi!",
+                                        "Your pet wonders what you've been up to today!"};
+                break;
+        }
+
+        int randomIndex = random.nextInt(jokes.length);
+        String joke = jokes[randomIndex];
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(currentPet.getName() + " says:");
+        builder.setMessage(joke);
+        builder.setPositiveButton("Haha!", null);
+        builder.show();
     }
 
     private void showFoodMenu() {
@@ -380,8 +500,16 @@ public class PetViewFragment extends Fragment {
 
         currentPet.setTotalXP(0);
         petManager.setCurrentPet(currentPet);
-        Toast.makeText(requireContext(), "Level Up! " + currentPet.getName() + " is now level " +
-                currentPet.getLevel() + "!", Toast.LENGTH_LONG).show();
+
+        if (currentPet.getLevel() != 3){
+            Toast.makeText(requireContext(), "Level Up! " + currentPet.getName() + " is now level " +
+                    currentPet.getLevel() + "!", Toast.LENGTH_LONG).show();
+        }
+        else {
+            Toast.makeText(requireContext(), "Your pet " + currentPet.getName() + " has reached level 3 (Max lvl)!"
+                    , Toast.LENGTH_LONG).show();
+        }
+
         updateUI();
     }
     private void setupStatDecayHandler() {

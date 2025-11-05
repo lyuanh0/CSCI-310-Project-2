@@ -377,8 +377,11 @@ public class PetViewActivity extends AppCompatActivity {
     private void updateUI() {
         if (currentPet == null) return;
 
+        String isMax = "";
+        if (currentPet.getLevel() == 3) isMax = "(Max Lvl)";
+
         tvPetName.setText(currentPet.getName());
-        tvPetLevel.setText("Level: " + currentPet.getLevel());
+        tvPetLevel.setText("Level: " + currentPet.getLevel() + isMax);
         tvPetStatus.setText("Status: " + currentPet.getCurrentStatus());
 
         pbHunger.setProgress(currentPet.getHunger());
