@@ -101,7 +101,9 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
             boolean matchesFormattedDate = formattedDate.contains(query);
 
             if (matchesText || matchesDate || matchesFormattedDate) {
-                displayedEntries.add(entry);
+                if (!entry.getEntry().isEmpty()) {
+                    displayedEntries.add(entry);
+                }
             }
         }
         notifyDataSetChanged();
