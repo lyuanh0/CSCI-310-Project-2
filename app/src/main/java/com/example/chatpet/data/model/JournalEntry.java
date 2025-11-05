@@ -1,5 +1,9 @@
 package com.example.chatpet.data.model;
 
+import android.util.Log;
+
+import com.example.chatpet.data.repository.JournalRepository;
+
 import java.time.LocalDate;
 
 public class JournalEntry {
@@ -15,6 +19,7 @@ public class JournalEntry {
     public JournalEntry(String date, String entry) {
         this.date = date;
         this.entry = entry;
+        this.report = "";
     }
 
     public String getDate() { return date; }
@@ -30,7 +35,10 @@ public class JournalEntry {
     public void setReport(String report) { this.report = report; }
 
     public void addToReport(String interaction) {
-        this.report += "\n" + interaction;
+        this.report += interaction + "\n";
+        Log.e("JournalEntryReport", "Added: " + interaction);
+        JournalRepository.getInstance().updateJournalEntry(LocalDate.parse(this.date), this);
+
     }
 
 }
