@@ -7,18 +7,14 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.example.chatpet.ui.journal.JournalFragment;
-import com.example.chatpet.ui.petview.PetViewFragment;
-
 
 import com.example.chatpet.R;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.ui.chat.ChatActivity;
-import com.example.chatpet.ui.journal.JournalActivity;
+import com.example.chatpet.ui.journal.JournalFragment;
 import com.example.chatpet.ui.login.LoginActivity;
-import com.example.chatpet.ui.petview.PetViewActivity;
+import com.example.chatpet.ui.petview.PetViewFragment;
 import com.example.chatpet.ui.profile.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         authManager = AuthManager.getInstance();
-        petManager = PetManager.getInstance();
+        petManager  = PetManager.getInstance();
 
         // Check if user is logged in
         if (!authManager.isLoggedIn()) {
@@ -58,15 +54,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        //set user
+        // set user
         currUser = AuthManager.currentUser();
 
         bottomNav = findViewById(R.id.bottom_navigation);
         setupBottomNavigation();
-    }
 
-    private void initializeViews() {
-        bottomNav = findViewById(R.id.bottom_navigation);
+        // If we were launched with a requested tab (from ChatActivity), honor it
+        selectDestFromIntent(getIntent());
     }
 
     private void setupBottomNavigation() {
@@ -83,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_profile) {
                 loadFragment(new ProfileFragment());
+                return true; // <-- ensure we return true here
             }
             return false;
         });
@@ -100,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, fragment)
                 .commit();
     }
-
 
     // CHAT tab → gate on happiness, then launch for result so we can award XP
     private void navigateToChat() {
@@ -121,5 +116,32 @@ public class MainActivity extends AppCompatActivity {
         chatLauncher.launch(intent);
     }
 
+    // ===== Deep-link support from ChatActivity =====
+    private void selectDestFromIntent(Intent intent) {
+        if (intent == null || bottomNav == null) return;
+        String dest = intent.getStringExtra("dest");
+        if (dest == null) return;
 
+        switch (dest) {
+            case "pet":
+                bottomNav.setSelectedItemId(R.id.nav_pet);
+                break;
+            case "chat":
+                bottomNav.setSelectedItemId(R.id.nav_chat);
+                break;
+            case "journal":
+                bottomNav.setSelectedItemId(R.id.nav_journal);
+                break;
+            case "profile":
+                bottomNav.setSelectedItemId(R.id.nav_profile);
+                break;
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        selectDestFromIntent(intent);
+    }
 }
