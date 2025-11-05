@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     // CHAT tab → gate on happiness, then launch for result so we can award XP
     private void navigateToChat() {
         if (petManager.getCurrentPet() == null) {

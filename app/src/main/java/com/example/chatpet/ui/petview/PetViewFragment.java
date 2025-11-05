@@ -36,7 +36,6 @@ public class PetViewFragment extends Fragment {
     private TextView tvPetStatus;
     private ProgressBar pbHunger, pbHappiness, pbEnergy, pbXP;
     private TextView tvHungerValue, tvHappinessValue, tvEnergyValue, tvXPValue;
-    private TextView tvHealthValue;
     private Button btnFeed;
     private Button btnTuckIn;
     private Button btnLevelUp;
@@ -57,7 +56,7 @@ public class PetViewFragment extends Fragment {
     private static final int ENERGY_BOOST_PER_TUCK = 10;
     private static final int XP_GAIN_PER_ACTION = 10;
     private static final int MAX_XP = 100;
-    private static final int TUCKS_BEFORE_COOLDOWN = 3;
+    private static final int TUCKS_BEFORE_COOLDOWN = 1;
     private static final long COOLDOWN_MS =  60 * 1000L; // 1 minutes
     private static final long TUCK_ANIMATION_MS = 3_000L; // quick 3s "sleep" sim for testing
 
@@ -69,12 +68,11 @@ public class PetViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_pet_view, container, false);
 
-
         petManager = PetManager.getInstance();
-        foodMenu = new FoodMenu("dog");
-        foodMenu = new FoodMenu("cat");
-        foodMenu = new FoodMenu("dragon");
-        foodMenu = new FoodMenu("fish");
+//        foodMenu = new FoodMenu("dog");
+//        foodMenu = new FoodMenu("cat");
+//        foodMenu = new FoodMenu("dragon");
+//        foodMenu = new FoodMenu("fish");
         //foodMenu = new FoodMenu(currentPet.getType());
 
         initializeViews(view);
@@ -84,6 +82,7 @@ public class PetViewFragment extends Fragment {
             showPetCreationDialog();
         } else {
             currentPet = petManager.getCurrentPet();
+            foodMenu = new FoodMenu(currentPet.getType());
             updateUI();
         }
 
@@ -212,6 +211,7 @@ public class PetViewFragment extends Fragment {
             Food selectedFood = foodMenu.getMenu().get(which);
             petManager.feedPet(selectedFood);
             currentPet.increaseHappiness(10);
+            currentPet.increaseXP(10); //increase XP after opening menu?
 
             //update stats after feeding
             petManager.setCurrentPet(currentPet);
@@ -259,28 +259,29 @@ public class PetViewFragment extends Fragment {
         }
     }
 
-    private void performTuckOnce() {
-        if (currentPet == null) return;
-
-        // Simulate going to sleep instantly
-        currentPet.tuck();
-
-        // +10% Happiness (cap at 100)
-        currentPet.increaseHappiness(HAPPINESS_BOOST_PER_TUCK);
-        clampPetStats();
-        updateUI();
-
-        Toast.makeText(requireContext(),
-                currentPet.getName() + " is happy!!",
-                Toast.LENGTH_SHORT).show();
-
-        currentPet.increaseXP(10);
-    }
+//    private void performTuckOnce() {
+//        if (currentPet == null) return;
+//
+//        // Simulate going to sleep instantly
+//        currentPet.tuck();
+//
+//        // +10% Happiness (cap at 100)
+//        currentPet.increaseHappiness(HAPPINESS_BOOST_PER_TUCK);
+//        clampPetStats();
+//        updateUI();
+//
+//        Toast.makeText(requireContext(),
+//                currentPet.getName() + " is happy!!",
+//                Toast.LENGTH_SHORT).show();
+//
+//        currentPet.increaseXP(10);
+//    }
 
     private void startCooldown() {
         isInCooldown = true;
         btnTuckIn.setEnabled(false);
         currentPet.setCurrentStatus("sleeping");//stays sleeping
+        currentPet.setIsSleeping(true);
         updateUI();
         Toast.makeText(requireContext(), currentPet.getName() + " fell asleep...", Toast.LENGTH_SHORT).show();
 
@@ -298,7 +299,8 @@ public class PetViewFragment extends Fragment {
             public void onFinish() {
                 isInCooldown = false;
                 tuckInCount = 0;
-                //currentPet.setCurrentStatus("awake");//wake up after cooldown
+                currentPet.setCurrentStatus("awake");//wake up after cooldown
+                currentPet.setIsSleeping(false);
                 currentPet.wakeUp();
                 updateUI();
                 btnTuckIn.setEnabled(true);
@@ -421,12 +423,83 @@ public class PetViewFragment extends Fragment {
     }
 
     private void updatePetImage() {
-        // TODO: Load appropriate image based on pet type and level
-        // For now, use placeholder
+        if (currentPet == null) return;
+
         String petType = currentPet.getType().toLowerCase();
         int level = currentPet.getLevel();
+        boolean isSleeping = currentPet.isSleeping();
 
-        // Example: ivPet.setImageResource(R.drawable.pet_dog_level_1);
+        int resId = 0;
+
+        if (petType.equals("dog")) {
+            if (isSleeping) {
+                switch (level) {
+                    case 1: resId = R.drawable.dogsleep1; break;
+                    case 2: resId = R.drawable.dogsleep2; break;
+                    case 3: resId = R.drawable.dogsleep3; break;
+                    default: resId = R.drawable.dogsleep1;
+                }
+            } else {
+                switch (level) {
+                    case 1: resId = R.drawable.dogawake1; break;
+                    case 2: resId = R.drawable.dogawake2; break;
+                    case 3: resId = R.drawable.dogawake3; break;
+                    default: resId = R.drawable.dogawake1;
+                }
+            }
+        } else if (petType.equals("cat")) {
+            if (isSleeping) {
+                switch (level) {
+                    case 1: resId = R.drawable.catsleep1; break;
+                    case 2: resId = R.drawable.catsleep2; break;
+                    case 3: resId = R.drawable.catsleep3; break;
+                    default: resId = R.drawable.catsleep1;
+                }
+            } else {
+                switch (level) {
+                    case 1: resId = R.drawable.catawake1; break;
+                    case 2: resId = R.drawable.catawake2; break;
+                    case 3: resId = R.drawable.catawake3; break;
+                    default: resId = R.drawable.catawake1;
+                }
+            }
+        } else if (petType.equals("dragon")) {
+            if (isSleeping) {
+                switch (level) {
+                    case 1: resId = R.drawable.dragonsleep1; break;
+                    case 2: resId = R.drawable.dragonsleep2; break;
+                    case 3: resId = R.drawable.dragonsleep3; break;
+                    default: resId = R.drawable.dragonsleep1;
+                }
+            } else {
+                switch (level) {
+                    case 1: resId = R.drawable.dragonawake1; break;
+                    case 2: resId = R.drawable.dragonawake2; break;
+                    case 3: resId = R.drawable.dragonawake3; break;
+                    default: resId = R.drawable.dragonawake1;
+                }
+            }
+        } else if (petType.equals("fish")) {
+            if (isSleeping) {
+                switch (level) {
+                    case 1: resId = R.drawable.fishsleep1; break;
+                    case 2: resId = R.drawable.fishsleep2; break;
+                    case 3: resId = R.drawable.fishsleep3; break;
+                    default: resId = R.drawable.fishsleep1;
+                }
+            } else {
+                switch (level) {
+                    case 1: resId = R.drawable.fishawake1; break;
+                    case 2: resId = R.drawable.fishawake2; break;
+                    case 3: resId = R.drawable.fishawake3; break;
+                    default: resId = R.drawable.fishawake1;
+                }
+            }
+        }
+
+        if (resId != 0) {
+            ivPet.setImageResource(resId);
+        }
     }
 
 //    @Override
