@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.chatpet.ui.journal.JournalFragment;
+import com.example.chatpet.ui.petview.PetViewFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import com.example.chatpet.R;
@@ -12,7 +13,6 @@ import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.ui.chat.ChatActivity;
 import com.example.chatpet.ui.login.LoginActivity;
-import com.example.chatpet.ui.petview.PetViewActivity;
 import com.example.chatpet.ui.profile.ProfileFragment;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -39,11 +39,11 @@ public class MainActivity extends AppCompatActivity {
         //set user
         currUser = AuthManager.currentUser();
 
-        // Check if user has a pet, if not navigate to pet creation
-        if (petManager.getCurrentPet() == null) {
-            navigateToPetView();
-            return;
-        }
+//        // Check if user has a pet, if not navigate to pet creation
+//        if (petManager.getCurrentPet() == null) {
+//            navigateToPetView();
+//            return;
+//        }
 
         initializeViews();
         setupBottomNavigation();
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
 
             if (itemId == R.id.nav_pet) {
-                navigateToPetView();
+                loadFragment(new PetViewFragment());
                 return true;
             } else if (itemId == R.id.nav_chat) {
                 navigateToChat();
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Set default selection
-      //  bottomNav.setSelectedItemId(R.id.nav_pet);
+        bottomNav.setSelectedItemId(R.id.nav_pet);
     }
 
     private void loadFragment(androidx.fragment.app.Fragment fragment) {
@@ -91,10 +91,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    private void navigateToPetView() {
-        Intent intent = new Intent(this, PetViewActivity.class);
-        startActivity(intent);
-    }
+
 
     private void navigateToChat() {
         Intent intent = new Intent(this, ChatActivity.class);

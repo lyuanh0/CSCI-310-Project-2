@@ -12,7 +12,6 @@ import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.ui.MainActivity;
-import com.example.chatpet.ui.petview.PetViewActivity;
 import com.example.chatpet.util.ValidationUtils;
 import com.example.chatpet.data.repository.JournalRepository;
 
@@ -93,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onNoPetFound() {
-                startActivity(new Intent(LoginActivity.this, PetViewActivity.class));
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             }
         });
