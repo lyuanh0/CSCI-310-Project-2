@@ -106,5 +106,12 @@
         android:layout_height="wrap_content"
         android:text="Register"
         android:textColor="@android:color/white" />
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Return to Login"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>

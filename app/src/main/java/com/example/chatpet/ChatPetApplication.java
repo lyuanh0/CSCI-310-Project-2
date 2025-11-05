@@ -34,10 +34,7 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
 
         JournalRepository journalRepo = JournalRepository.getInstance();
 
-        journalRepo.loadJournalSnapshot(entries -> {
-            Log.i(TAG, "Firebase load complete: " + entries.size() + " entries loaded");
-            handleJournalLogic(entries);
-        });
+
     }
 
     private void handleJournalLogic(List<JournalEntry> allEntries) {

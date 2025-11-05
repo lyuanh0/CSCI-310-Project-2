@@ -24,7 +24,7 @@ public class RegistrationActivity extends AppCompatActivity {
     ImageView avatar1, avatar2, avatar3, avatar4;
     private int selectedAvatar = R.drawable.pf3; // default avatar
 
-    Button registerBtn;
+    Button registerBtn, returnBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,7 @@ public class RegistrationActivity extends AppCompatActivity {
         birthdayEt = findViewById(R.id.birthday);
         usernameEt = findViewById(R.id.username);
         registerBtn = findViewById(R.id.registerButton);
+        returnBtn = findViewById(R.id.backButton);
 
         avatar1 = findViewById(R.id.avatar1);
         avatar2 = findViewById(R.id.avatar2);
@@ -76,6 +77,11 @@ public class RegistrationActivity extends AppCompatActivity {
                     Toast.makeText(this, "Auth failed: " + errorMessage, Toast.LENGTH_LONG).show();
                 }
             });
+        });
+        //when retur button is pressed load login activity
+        returnBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+            startActivity(intent);
         });
     }
 
