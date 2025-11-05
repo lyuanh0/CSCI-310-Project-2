@@ -299,7 +299,7 @@ public class PetViewFragment extends Fragment {
             }
 
             currentPet = petManager.createPet(petName, petType);
-
+            currentPet.setCurrentStatus("awake");
             //add pet to database
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(AuthManager.currentUser().getUid());
             ref.child("currentPet").setValue(currentPet).addOnCompleteListener((task -> {
