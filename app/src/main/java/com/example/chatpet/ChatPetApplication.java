@@ -10,6 +10,7 @@ import androidx.lifecycle.ProcessLifecycleOwner;
 
 import com.example.chatpet.data.model.JournalEntry;
 import com.example.chatpet.data.repository.JournalRepository;
+import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.JournalGenerator;
 
 import java.time.LocalDate;
@@ -34,7 +35,12 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
 
         JournalRepository journalRepo = JournalRepository.getInstance();
 
-
+        if(AuthManager.currentUser()!=null) {
+            journalRepo.loadJournalSnapshot(entries -> {
+                Log.i(TAG, "Firebase load complete: " + entries.size() + " entries loaded");
+                handleJournalLogic(entries);
+            });
+        }
     }
 
     private void handleJournalLogic(List<JournalEntry> allEntries) {
