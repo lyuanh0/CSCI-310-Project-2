@@ -182,7 +182,7 @@
                 android:layout_height="wrap_content"
                 android:text="0%"
                 android:layout_marginStart="8dp"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textColor="@android:color/black"/>
         </LinearLayout>
 
@@ -230,6 +230,7 @@
             android:layout_height="wrap_content"
             android:text="Background"
             android:background="@drawable/outlined_button_green"
+            android:textSize="11sp"
             android:layout_marginTop="6dp" />
 
 
