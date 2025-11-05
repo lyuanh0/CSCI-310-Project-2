@@ -1,9 +1,13 @@
 package com.example.chatpet.data.model;
 
+import com.example.chatpet.data.repository.JournalRepository;
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Random;
 
 public class Pet {
+    private final JournalRepository journalRepo = JournalRepository.getInstance();
     private String name;
     private String type;
     private Date creationDate;
@@ -59,10 +63,10 @@ public class Pet {
     }
     public void addXP(int xp){
         totalXP += xp;
-        checkLevelUp();
+        tryLevelUp();
     }
 
-    private void checkLevelUp(){
+    public void tryLevelUp(){
         int maxXPForLevel = getMaxXPForLevel();
         if (totalXP >= maxXPForLevel && level < 3) {
             levelUp();
@@ -110,6 +114,9 @@ public class Pet {
     public void levelUp() {
         this.level++;
         updatePersonality();
+        // TODO also add journal calling for the CHAT AS WELL!
+        JournalEntry today = journalRepo.getJournalEntryByDate(LocalDate.now());
+        today.addToReport("Leveled up to level " + this.level + ".");
     }
 
     public void feed(Food food) {

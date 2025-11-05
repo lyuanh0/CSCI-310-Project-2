@@ -89,11 +89,11 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
         }
 
         Log.i(TAG, "Entries size after: " + journalRepo.getAllJournalEntries().size());
-
+        // Add new entry for today
         JournalEntry todayEntry = journalRepo.getJournalEntryByDate(today);
         if (todayEntry == null ) {
             todayEntry = new JournalEntry(today.toString(), "");
-            todayEntry.setReport("went to the beach");
+//            todayEntry.setReport("went to the beach");
             journalRepo.saveJournalEntry(todayEntry);
             Log.i(TAG, "Created placeholder journal entry for " + today);
         }
