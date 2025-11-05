@@ -191,8 +191,8 @@ public class JournalActivity extends AppCompatActivity {
     }
 
     private void generateToday() {
-//        String prompt = "fed me fish and we chatted 3 times.";
-//        Log.e(TAG, "ChatPet Prompt: " + prompt);
+        String prompt = "fed me fish and we chatted 3 times.";
+        Log.e(TAG, "ChatPet Prompt: " + prompt);
 
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
@@ -202,7 +202,7 @@ public class JournalActivity extends AppCompatActivity {
                 Log.e(TAG, "today journalEntry is exist");
                 if(today.getReport() == null) {
                     Log.e(TAG, "today journalEntry exist but report is null");
-                    today.setReport("Went to the park");
+                    today.setReport(prompt);
                 }
             } else {
                 Log.e(TAG, "today journalEntry is null!");
