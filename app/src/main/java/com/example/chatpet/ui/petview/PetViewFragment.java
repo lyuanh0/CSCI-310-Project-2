@@ -16,7 +16,9 @@ import androidx.fragment.app.Fragment;
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.Food;
 import com.example.chatpet.data.model.FoodMenu;
+import com.example.chatpet.data.model.JournalEntry;
 import com.example.chatpet.data.model.Pet;
+import com.example.chatpet.data.repository.JournalRepository;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.util.ValidationUtils;
@@ -27,9 +29,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import android.os.Handler;
 import android.os.CountDownTimer;
 
+import java.time.LocalDate;
 import java.util.Random;
 
 public class PetViewFragment extends Fragment {
+    private final JournalRepository journalRepo = JournalRepository.getInstance();
     private ImageView ivPet;
     private TextView tvPetName;
     private TextView tvPetLevel;
@@ -357,6 +361,10 @@ public class PetViewFragment extends Fragment {
 
         builder.setItems(foodNames, (dialog, which) -> {
             Food selectedFood = foodMenu.getMenu().get(which);
+
+            JournalEntry today = journalRepo.getJournalEntryByDate(LocalDate.now());
+            today.addToReport("Was fed " + selectedFood.getName() + ".");
+
             petManager.feedPet(selectedFood);
             currentPet.increaseHappiness(10);
             currentPet.increaseXP(10); //increase XP after opening menu?
@@ -426,6 +434,9 @@ public class PetViewFragment extends Fragment {
 //    }
 
     private void startCooldown() {
+        JournalEntry today = journalRepo.getJournalEntryByDate(LocalDate.now());
+        today.addToReport("Was tucked in.");
+
         isInCooldown = true;
         btnTuckIn.setEnabled(false);
         currentPet.setCurrentStatus("sleeping");//stays sleeping
