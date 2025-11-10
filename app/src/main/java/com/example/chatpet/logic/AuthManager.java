@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class AuthManager {
-    private static FirebaseAuth auth = FirebaseAuth.getInstance();
+    private static FirebaseAuth auth;
     private static AuthManager instance;
 
     public static AuthManager getInstance() {
@@ -22,9 +22,14 @@ public class AuthManager {
     public interface AuthCallback {
         void onComplete(boolean success, String errorMessage);
     }
-
+    private static FirebaseAuth getAuth() {
+        if (auth == null) {
+            auth = FirebaseAuth.getInstance();
+        }
+        return auth;
+    }
     public static void register(String email, String password, final AuthCallback callback) {
-        auth.createUserWithEmailAndPassword(email, password)
+        getAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) callback.onComplete(true, null);
                     else callback.onComplete(false, task.getException() != null ? task.getException().getMessage() : "Unknown error");
@@ -32,7 +37,7 @@ public class AuthManager {
     }
 
     public static void login(String email, String password, final AuthCallback callback) {
-        auth.signInWithEmailAndPassword(email, password)
+        getAuth().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) callback.onComplete(true, null);
                     else callback.onComplete(false, task.getException() != null ? task.getException().getMessage() : "Unknown error");
@@ -40,11 +45,11 @@ public class AuthManager {
     }
 
     public static void logout() {
-        auth.signOut();
+        getAuth().signOut();
     }
 
     public static FirebaseUser currentUser() {
-        return auth.getCurrentUser();
+        return getAuth().getCurrentUser();
     }
 
     public static boolean isLoggedIn(){
