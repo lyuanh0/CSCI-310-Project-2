@@ -6,7 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class AuthManager {
-    private static final FirebaseAuth auth = FirebaseAuth.getInstance();
+    private static FirebaseAuth auth = FirebaseAuth.getInstance();
     private static AuthManager instance;
 
     public static AuthManager getInstance() {
@@ -15,12 +15,9 @@ public class AuthManager {
         }
         return instance;
     }
-    public static boolean isUserLoggedIn(){
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if(currentUser != null){
-            return true;
-        }
-        return false;
+    //just for testing
+    public static void setFirebaseAuth(FirebaseAuth mockAuth) {
+        auth = mockAuth;
     }
     public interface AuthCallback {
         void onComplete(boolean success, String errorMessage);
