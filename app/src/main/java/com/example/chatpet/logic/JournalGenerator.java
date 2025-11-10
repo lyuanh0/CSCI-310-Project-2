@@ -110,12 +110,12 @@ public class JournalGenerator extends ViewModel{
                 // Run the model (blocking)
                 Pet currPet = petManager.getCurrentPet();
                 String prompt = "Write only a somewhat short diary entry from the perspective of the pet " + currPet.getType()  +
-                        "strictly based on given interactions that had occur, DO NOT mention or add any DATES" +
+                        "with the personality of " +currPet.getPersonalityTraits() + ", strictly based on given interactions that had occur, DO NOT mention or add any DATES" +
                         "Return ONLY the diary entry text — no introductions, no explanations, no phrases like 'Dear Entry' 'Okay' or 'Here’s the entry'. " +
                         "Output must begin immediately with the diary entry content itself." +
                         "Do not include any unnecessary explanations or introductions." +
                         "Don't add beginning transitions, just give the entry content" +
-                        "Do not make up extra interactions, details, events, or characters not mentioned in the interaction, strictly stay true to and explicitly state each given interactions." +
+                        "Do not make up extra interactions, details, events, or characters not mentioned in the interaction, strictly stay true to and explicitly state out each given interactions." +
                         "These are the interactions that happened: " + report;
                 //String result = llm.generateResponse("Write a diary entry (without the date) in the pet " + pet.getType() +"'s perspective with this daily report: " + report);
                 Log.i(TAG, "Entry for report: " + report);
