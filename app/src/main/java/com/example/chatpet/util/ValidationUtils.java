@@ -1,5 +1,8 @@
 package com.example.chatpet.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 public class ValidationUtils {
     private static final int MIN_USERNAME_LENGTH = 3;
     private static final int MAX_USERNAME_LENGTH = 20;
@@ -86,5 +89,23 @@ public class ValidationUtils {
         }
 
         return null;
+    }
+    // Check that a field is not null or empty
+    public static boolean isNotEmpty(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
+
+    // Validate date format (e.g., MM/dd/yyyy)
+    public static boolean isValidDate(String date) {
+        if (!isNotEmpty(date)) return false;
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+        sdf.setLenient(false);
+        try {
+            sdf.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
     }
 }

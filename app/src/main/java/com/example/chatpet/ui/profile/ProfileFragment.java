@@ -14,7 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+
 import com.example.chatpet.R;
+import com.example.chatpet.util.ValidationUtils;
 import com.example.chatpet.data.model.User;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.ui.login.LoginActivity;
@@ -113,7 +115,7 @@ public class ProfileFragment extends Fragment {
     private void setupButtons() {
         btnSaveUsername.setOnClickListener(v -> {
             String username = etUsername.getText().toString().trim();
-            if (!username.isEmpty() && userRef != null) {
+            if (ValidationUtils.isValidUsername(username)) {
                 userRef.child("username").setValue(username);
                 Toast.makeText(getContext(), "Username updated!", Toast.LENGTH_SHORT).show();
             }
@@ -121,7 +123,7 @@ public class ProfileFragment extends Fragment {
 
         btnSaveBirthday.setOnClickListener(v -> {
             String birthday = etBirthday.getText().toString().trim();
-            if (!birthday.isEmpty() && userRef != null) {
+            if (ValidationUtils.isValidDate(birthday)) {
                 userRef.child("birthday").setValue(birthday);
                 Toast.makeText(getContext(), "Birthday updated!", Toast.LENGTH_SHORT).show();
             }
@@ -204,3 +206,4 @@ public class ProfileFragment extends Fragment {
     }
 
 }
+
