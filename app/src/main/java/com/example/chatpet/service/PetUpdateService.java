@@ -29,7 +29,7 @@ public class PetUpdateService extends Service {
         updateRunnable = new Runnable() {
             @Override
             public void run() {
-                updatePetStatus();
+                //updatePetStatus();
                 handler.postDelayed(this, UPDATE_INTERVAL);
             }
         };

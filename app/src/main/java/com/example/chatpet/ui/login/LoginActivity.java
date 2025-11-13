@@ -12,7 +12,6 @@ import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.PetManager;
 import com.example.chatpet.ui.MainActivity;
-import com.example.chatpet.util.ValidationUtils;
 import com.example.chatpet.data.repository.JournalRepository;
 
 import com.google.firebase.auth.FirebaseAuth;
