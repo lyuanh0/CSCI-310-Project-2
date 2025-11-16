@@ -91,9 +91,9 @@ public class JournalRepository {
         updateJournalSnapshot();
     }
 
+    // Used for testing
     public void clearAllEntries() {
         journalEntries.clear();
-        updateJournalSnapshot();
     }
 
     private void updateJournalSnapshot(){
