@@ -154,7 +154,7 @@ public class JournalRepoTest {
 
     // Test updating entry and retrieving specific entry
     @Test
-    public void testUpdatAndRetrievingEntry() {
+    public void testUpdateAndRetrievingEntry() {
         JournalEntry entry1 = new JournalEntry("2025-11-15", "First entry");
         JournalEntry entry2 = new JournalEntry("2025-05-13", "Second entry");
         JournalEntry entry3 = new JournalEntry("2025-02-25", "Third entry");
