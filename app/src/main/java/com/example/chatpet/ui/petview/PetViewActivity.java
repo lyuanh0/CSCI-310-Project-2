@@ -17,7 +17,6 @@ import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.data.repository.JournalRepository;
 import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.logic.PetManager;
-import com.example.chatpet.util.ValidationUtils;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -143,7 +142,7 @@ public class PetViewActivity extends AppCompatActivity {
         builder.setPositiveButton("Create", (dialog, which) -> {
             String petName = input.getText().toString().trim();
 
-            String error = ValidationUtils.getPetNameError(petName);
+            String error = getPetNameError(petName);
             if (error != null) {
                 Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
                 showNameInputDialog(petType);
@@ -461,6 +460,23 @@ public class PetViewActivity extends AppCompatActivity {
         if (statHandler != null && statDecayRunnable != null) {
             statHandler.removeCallbacks(statDecayRunnable);
         }
+    }
+
+    public static String getPetNameError(String petName) {
+        if (petName == null || petName.trim().isEmpty()) {
+            return "Pet name cannot be empty";
+        }
+
+        int length = petName.trim().length();
+        if (length < 1) {
+            return "Pet name must be at least 1 character";
+        }
+
+        if (length > 15) {
+            return "Pet name must be at most 15 characters";
+        }
+
+        return null;
     }
 
     @Override

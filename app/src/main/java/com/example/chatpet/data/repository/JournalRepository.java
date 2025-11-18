@@ -91,6 +91,11 @@ public class JournalRepository {
         updateJournalSnapshot();
     }
 
+    // Used for testing
+    public void clearAllEntries() {
+        journalEntries.clear();
+    }
+
     private void updateJournalSnapshot(){
         String uid = AuthManager.currentUser().getUid();
         if (journalEntries == null || journalEntries.isEmpty()) {

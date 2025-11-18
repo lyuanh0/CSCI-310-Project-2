@@ -10,13 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.Message;
-import com.example.chatpet.util.TimeUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHolder> {
     private List<Message> messages;
     private Context context;
+    private static final SimpleDateFormat TIME_FORMAT =
+            new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+
 
     public ChatAdapter(List<Message> messages, Context context) {
         this.messages = messages;
@@ -37,7 +42,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
 
         holder.tvSender.setText(message.getSender());
         holder.tvMessage.setText(message.getText());
-        holder.tvTimestamp.setText(TimeUtils.formatTime(message.getTimestamp()));
+        holder.tvTimestamp.setText(formatTime(message.getTimestamp()));
 
         // Style differently for user vs pet messages
         if ("User".equals(message.getSender())) {
@@ -64,5 +69,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MessageViewHol
             tvMessage = itemView.findViewById(R.id.tv_message);
             tvTimestamp = itemView.findViewById(R.id.tv_timestamp);
         }
+    }
+
+    public static String formatTime(Date date) {
+        if (date == null) return "";
+        return TIME_FORMAT.format(date);
     }
 }

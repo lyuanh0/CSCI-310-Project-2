@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class AuthManager {
+//    private static FirebaseAuth auth = FirebaseAuth.getInstance();
     private static FirebaseAuth auth;
     private static AuthManager instance;
 
@@ -15,6 +16,14 @@ public class AuthManager {
         }
         return instance;
     }
+
+    private static FirebaseAuth getAuth() {
+        if (auth == null) {
+            auth = FirebaseAuth.getInstance();
+        }
+        return auth;
+    }
+
     //just for testing
     public static void setFirebaseAuth(FirebaseAuth mockAuth) {
         auth = mockAuth;
