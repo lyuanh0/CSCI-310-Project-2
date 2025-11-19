@@ -38,6 +38,11 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
         if(AuthManager.currentUser()!=null) {
             journalRepo.loadJournalSnapshot(entries -> {
                 Log.i(TAG, "Firebase load complete: " + entries.size() + " entries loaded");
+
+                if (TestUtils.isRunningTest()) {
+                    Log.w("LLM", "Skipping LLM journal generation (TEST MODE)");
+                    return;
+                }
                 handleJournalLogic(entries);
             });
         }
