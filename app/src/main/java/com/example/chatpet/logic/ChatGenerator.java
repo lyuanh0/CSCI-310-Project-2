@@ -36,6 +36,8 @@ public class ChatGenerator {
         return instance;
     }
 
+    // a
+
     public void generateChatResponse(Context context, String userMessage, ChatCallback callback) {
         Pet pet = petManager.getCurrentPet();
 
@@ -106,9 +108,11 @@ public class ChatGenerator {
                     }
                 }
                 new Handler(Looper.getMainLooper()).post(() -> callback.onError("Empty response"));
-            } catch (Exception e) {
+            } catch (Throwable e) {   // catch *all* errors, including NoSuchMethodError
                 Log.e(TAG, "LLM error", e);
-                new Handler(Looper.getMainLooper()).post(() -> callback.onError(e.getMessage()));
+                new Handler(Looper.getMainLooper()).post(
+                        () -> callback.onError("LLM unavailable")
+                );
             } finally {
                 if (llm != null) {
                     llm.close();
