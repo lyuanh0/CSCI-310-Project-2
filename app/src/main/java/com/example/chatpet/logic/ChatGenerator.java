@@ -36,6 +36,8 @@ public class ChatGenerator {
         return instance;
     }
 
+    // a
+
     public void generateChatResponse(Context context, String userMessage, ChatCallback callback) {
         Pet pet = petManager.getCurrentPet();
 

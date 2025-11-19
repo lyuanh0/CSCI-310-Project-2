@@ -9,6 +9,8 @@ import org.junit.Test;
 
 public class ChatGeneratorTest {
 
+    // a
+
     @Before
     public void setup() {
         // Clear and reset current pet before each test

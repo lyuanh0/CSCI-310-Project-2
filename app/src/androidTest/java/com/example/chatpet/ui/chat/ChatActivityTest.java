@@ -33,6 +33,8 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 public class ChatActivityTest {
 
+    // a
+
     private void resetChatState() {
         ChatManager.getInstance().getMessages().clear();
     }
