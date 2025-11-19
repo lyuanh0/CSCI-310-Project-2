@@ -39,6 +39,10 @@ public class ValidationUtilsTest {
     public void testValidDate_invalidMonth() {
         assertFalse(ValidationUtils.isValidDate("13-25-2024"));
     }
+    @Test
+    public void testValidDate_invalidSeparation() {
+        assertFalse(ValidationUtils.isValidDate("12/25/2024"));
+    }
 
     @Test
     public void testValidDate_invalidFormat() {

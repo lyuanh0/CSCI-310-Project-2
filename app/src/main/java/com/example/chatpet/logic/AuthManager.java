@@ -31,12 +31,7 @@ public class AuthManager {
     public interface AuthCallback {
         void onComplete(boolean success, String errorMessage);
     }
-    private static FirebaseAuth getAuth() {
-        if (auth == null) {
-            auth = FirebaseAuth.getInstance();
-        }
-        return auth;
-    }
+
     public static void register(String email, String password, final AuthCallback callback) {
         getAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
