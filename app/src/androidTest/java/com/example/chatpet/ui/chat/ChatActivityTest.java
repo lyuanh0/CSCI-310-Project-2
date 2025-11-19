@@ -38,7 +38,6 @@ public class ChatActivityTest {
     }
 
     // 1) User sends a message and sees pet reply
-// app/src/androidTest/java/com/example/chatpet/ui/chat/ChatActivityTest.java::userSendMessage_displaysUserAndPetReply
     @Test
     public void userSendMessage_displaysUserAndPetReply() {
         resetChatState();
@@ -53,14 +52,11 @@ public class ChatActivityTest {
         // User bubble "hello" appears
         onView(withText("hello")).check(matches(isDisplayed()));
 
-        // Wait for async reply (LLM or error fallback) – we don't care what text it is,
-        // only that the app does not crash.
         onView(withId(R.id.rv_messages)).perform(waitFor(2000));
     }
 
 
     // 2) Empty input should not send
-    // app/src/androidTest/java/com/example/chatpet/ui/chat/ChatActivityTest.java::emptyInput_noMessageAdded
     @Test
     public void emptyInput_noMessageAdded() {
         resetChatState();
@@ -76,7 +72,6 @@ public class ChatActivityTest {
     }
 
     // 3) Chat disabled when happiness is too high (smoke test)
-    // app/src/androidTest/java/com/example/chatpet/ui/chat/ChatActivityTest.java::highHappiness_disablesChatAndFinishes
     @Test
     public void highHappiness_disablesChatAndFinishes() {
         resetChatState();
@@ -92,7 +87,6 @@ public class ChatActivityTest {
     }
 
     // 4) Backend error shows “Oops!” system message
-    // app/src/androidTest/java/com/example/chatpet/ui/chat/ChatActivityTest.java::backendError_showsOopsSystemMessage
     @Test
     public void backendError_showsOopsSystemMessage() {
         resetChatState();
@@ -107,13 +101,11 @@ public class ChatActivityTest {
         // Give ChatGenerator time to run and hit the error handler
         onView(withId(R.id.rv_messages)).perform(waitFor(3000));
 
-        // We don't assert "Thinking..." at all — just the final fallback text
         onView(withText("Oops! I couldn't think of a reply.")).check(matches(isDisplayed()));
     }
 
 
     // 5) Chat history clears when leaving the chat
-    // app/src/androidTest/java/com/example/chatpet/ui/chat/ChatActivityTest.java::leavingChat_clearsChatHistory
     @Test
     public void leavingChat_clearsChatHistory() {
         resetChatState();
@@ -127,14 +119,12 @@ public class ChatActivityTest {
         onView(withId(R.id.btn_send)).perform(click());
         onView(withText("hello")).check(matches(isDisplayed()));
 
-        // Expect the activity to finish — wrap in try/catch
         try {
             Espresso.pressBack();
         } catch (NoActivityResumedException expected) {
-            // THIS IS EXPECTED. ChatActivity finished. Do nothing.
         }
 
-        // Now relaunch chat
+        // relaunch chat
         resetChatState();
         ActivityScenario.launch(new Intent(
                 ApplicationProvider.getApplicationContext(), ChatActivity.class));
