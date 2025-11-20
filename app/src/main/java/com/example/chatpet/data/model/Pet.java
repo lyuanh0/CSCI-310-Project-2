@@ -120,9 +120,14 @@ public class Pet {
     }
 
     public void feed(Food food) {
+
+        //STOP feeding if hunger is already full
+        if (this.hunger >= 100) {
+            return;
+        }
         increaseHunger(food.getHungerPoints()); // fills hunger
         increaseHappiness(10);
-        decreaseEnergy(10);                     // eating uses energy
+        //decreaseEnergy(10);                     // eating uses energy
         increaseXP(70);                         // gain XP
     }
 
