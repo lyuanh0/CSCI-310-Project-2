@@ -21,7 +21,7 @@
 * Open a terminal and type: `adb devices`
 * This should show all the list of connected devices or emulators. Make sure you have at least one emulator or device running.
 
-**Download the LLM model**
+**Download the LLM model.**
 * Download the file `gemma3-1b-it-int4.task` from HuggingFace
 * Now push the model to your device.
 * For example, if you have the model in Downloads folder: `adb push ~/Downloads/gemma3-1b-it-int4.task /data/local/tmp/llm/gemma3-1b-it-int4.task`
