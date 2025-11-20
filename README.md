@@ -2,7 +2,7 @@
 ## Environment Setup
 ### Install the latest version of Android Studio (2025)
 * https://developer.android.com/studio
-** Set up the AVD **
+**Set up the AVD**
 * If you have not set up any AVD yet, do so by selecting menu “Tools > Device Manager”
 * Choose Pixel 2
 
@@ -26,4 +26,4 @@
 
 ## Running the App
 * Open Project: Open the ChatPet project in Android Studio and let Gradle sync.
-* Launch Emulator and click the Run App (▶️) button to run the app
+* Launch the emulator and click the Run App (▶️) button to run the app
