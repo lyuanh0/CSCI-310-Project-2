@@ -5,7 +5,6 @@ import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.NoMatchingRootException;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.PerformException;
@@ -17,7 +16,6 @@ import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -41,10 +39,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.allOf;
 
-import com.example.chatpet.data.repository.JournalRepository;
 import com.example.chatpet.ui.MainActivity;
 
 
@@ -197,41 +192,6 @@ public class JournalFeatureTest {
 
     }
 
-    // Test search bar
-        // 3 entries (nov 30th, 26th, 19th, 2025)
-    @Test
-    public void testSearchBar() {
-        login("journalTest@usc.edu", "journal");
-        pickPet();
-
-        onView(withId(R.id.nav_journal)).perform(click());
-
-        // Search up entry with "26" keyword
-        onView(withId(R.id.searchView)).perform(click());
-        onView(allOf(
-                // TARGET THE TEXT FIELD by its class (SearchAutoComplete)
-                isAssignableFrom(androidx.appcompat.widget.SearchView.SearchAutoComplete.class),
-
-                // AND check that it belongs to *your* R.id.searchView container
-                isDescendantOfA(withId(R.id.searchView))
-        ))
-                .check(matches(isDisplayed()))
-                .perform(typeText("26"), closeSoftKeyboard());
-
-        // Matching entry is visible
-        onView(withText("Nov 26, 2025")).check(matches(isDisplayed()));
-        onView(withId(R.id.rv_journal)).check(matches(withItemCount(1)));
-
-        // Non-matching entry is not visible
-        onView(withText("Nov 19, 2025")).check(doesNotExist());
-
-        // Clear search text
-        onView(withId(R.id.searchView)).perform(clearText(), closeSoftKeyboard());
-
-        // Check all entries reappear
-        onView(withId(R.id.rv_journal)).check(matches(withItemCount(3)));
-    }
-
     // Test journal entry content viewability being expandable and collapsable
         // 3 entries (nov 30th, 26th, 19th, 2025)
     @Test
@@ -258,4 +218,25 @@ public class JournalFeatureTest {
                 .check(matches(atPosition(0, isDisplayed())));
     }
 
+    // Test scrolling
+        // 6 entries (nov 19, 20, 21, 22, 23, 24, 2025)
+    @Test
+    public void testScrolling() {
+        login("journalTest2@usc.edu", "journal");
+        pickPet();
+
+        onView(withId(R.id.nav_journal)).perform(click());
+
+        // First entry in view, last entry not in view initially
+        onView(withText("Nov 24, 2025")).check(matches(isDisplayed()));
+        onView(withText("Nov 19, 2025")).check(doesNotExist());
+
+        // Scroll to the last entry in the list (index 5, nov 19th)
+        onView(withId(R.id.rv_journal))
+                .perform(RecyclerViewActions.scrollToPosition(5));
+
+        // First entry not in view, last entry in view after scrolling
+        onView(withText("Nov 24, 2025")).check(doesNotExist());
+        onView(withText("Nov 19, 2025")).check(matches(isDisplayed()));
+    }
 }

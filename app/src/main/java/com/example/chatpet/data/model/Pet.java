@@ -116,7 +116,9 @@ public class Pet {
         updatePersonality();
         // TODO also add journal calling for the CHAT AS WELL!
         JournalEntry today = journalRepo.getJournalEntryByDate(LocalDate.now());
-        today.addToReport("Leveled up to " + this.level + ". ");
+        if (today != null){
+            today.addToReport("Leveled up to " + this.level + ". ");
+        }
     }
 
     public void feed(Food food) {
@@ -244,4 +246,6 @@ public class Pet {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String url) { this.imageUrl = url; }
+
+
 }

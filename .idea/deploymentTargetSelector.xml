@@ -13,13 +13,10 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="userSendMessage_displaysUserAndPetReply()">
+      <SelectionState runConfigName="PetViewLevelUpBlackBoxTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ChatActivityTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="ChatGeneratorTest">
+      <SelectionState runConfigName="testXPCapsAtMaximum()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

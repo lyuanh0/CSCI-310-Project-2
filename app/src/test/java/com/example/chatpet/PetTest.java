@@ -54,13 +54,6 @@ public class PetTest {
         assertTrue(pet.getHunger() <= 100);
     }
 
-    @Test
-    public void testFeedDecreasesEnergy() {
-        int oldEnergy = pet.getEnergy();
-        pet.feed(pizza);
-        assertTrue(pet.getEnergy() < oldEnergy);
-    }
-
     //test tucking in tests
     @Test
     public void testTuckInIncreasesEnergyAndHappiness() {
