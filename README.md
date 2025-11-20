@@ -2,6 +2,7 @@
 ## Environment Setup
 ### Install the latest version of Android Studio (2025)
 * https://developer.android.com/studio
+  
 **Set up the AVD**
 * If you have not set up any AVD yet, do so by selecting menu “Tools > Device Manager”
 * Choose Pixel 2
