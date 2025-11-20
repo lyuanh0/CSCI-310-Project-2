@@ -51,7 +51,7 @@ public class PetViewFragment extends Fragment {
     // ===== TEST: 10s stat decay =====
     private Handler statHandler;
     private Runnable statDecayRunnable;
-    private static final long STAT_DECAY_INTERVAL_MS = 10_000L; // 10 seconds
+    private static final long STAT_DECAY_INTERVAL_MS = 45_000L; // 45 seconds
     private final Random random = new Random();
 
     // ===== TEST Tuck-in rules =====
@@ -337,10 +337,10 @@ public class PetViewFragment extends Fragment {
             return;
         }
 
-        if (currentPet.getEnergy() <= 0) {
-            Toast.makeText(requireContext(), currentPet.getName() + " is too tired to eat! Try tucking in first.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        //if (currentPet.getEnergy() <= 0) {
+        //    Toast.makeText(requireContext(), currentPet.getName() + " is too tired to eat! Try tucking in first.", Toast.LENGTH_SHORT).show();
+        //    return;
+        //}
         if (currentPet.getHunger() >= 100) {
             Toast.makeText(requireContext(), currentPet.getName() + " is full!", Toast.LENGTH_SHORT).show();
             return;
