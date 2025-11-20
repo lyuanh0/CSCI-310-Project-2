@@ -1,6 +1,6 @@
 # CSCI-310-Project-2: ChatPet
 ## Environment Setup
-### Install the latest version of Android Studio (2025)
+### Install the latest version of Android Studio (2025):
 * https://developer.android.com/studio
   
 **Set up the AVD**
