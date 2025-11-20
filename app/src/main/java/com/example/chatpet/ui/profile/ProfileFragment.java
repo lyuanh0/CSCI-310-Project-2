@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
+import com.bumptech.glide.Glide;
 
 import com.example.chatpet.R;
 import com.example.chatpet.util.ValidationUtils;
@@ -25,13 +25,19 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class ProfileFragment extends Fragment {
     private TextView helloUserText;
-    private EditText etUsername, etBirthday, etPassword, etEmail;
-    private Button btnSaveUsername, btnSaveBirthday, btnSavePassword, btnSaveEmail, btnLogout;
+    public EditText etUsername;
+    private EditText etBirthday;
+    private EditText etPassword;
+    public EditText etEmail;
+    public Button btnSaveUsername;
+    private Button btnSaveBirthday;
+    private Button btnSavePassword;
+    public Button btnSaveEmail;
+    public Button btnLogout;
     private ImageView avatar0, avatar1, avatar2, avatar3, avatar4;
 
     private DatabaseReference userRef;
@@ -39,7 +45,7 @@ public class ProfileFragment extends Fragment {
     private User user;
 
 
-    private int selectedAvatar = R.drawable.catawake1; // default avatar
+    public int selectedAvatar = R.drawable.catawake1; // default avatar
 
     @Nullable
     @Override
@@ -53,9 +59,7 @@ public class ProfileFragment extends Fragment {
         currentUser = AuthManager.currentUser();
 
         if (currentUser != null) {
-            userRef = FirebaseDatabase.getInstance()
-                    .getReference("users")
-                    .child(currentUser.getUid());
+            userRef = AuthManager.FirebaseDatabaseProvider.getUsersRef(currentUser.getUid());
         }
 
         // Find all views
@@ -99,7 +103,6 @@ public class ProfileFragment extends Fragment {
             else if (avatarId == R.id.avatar4) selectedAvatar = R.drawable.pf4;
 
             avatar0.setImageResource(selectedAvatar);
-            Toast.makeText(getContext(), "Avatar selected!", Toast.LENGTH_SHORT).show();
 
             // Optional: Save avatar to database
             if (userRef != null)

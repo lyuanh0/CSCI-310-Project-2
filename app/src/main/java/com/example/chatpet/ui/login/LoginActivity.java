@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
     private Button btnRegister;
 
-    private AuthManager authManager;
+    private AuthManager authManager = AuthManager.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +48,11 @@ public class LoginActivity extends AppCompatActivity {
             String email = emailEt.getText().toString().trim();
             String password = passwordEt.getText().toString();
 
-            AuthManager.login(email,password,(boolean success, String errorMessage) -> {
+            authManager.login(email,password,(boolean success, String errorMessage) -> {
                 if(success){
                     Toast.makeText(this,"You have been logged in",Toast.LENGTH_LONG).show();
                     //load data
-                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    String userId = authManager.getAuth().getCurrentUser().getUid();
                     loadUserDataAndNavigate();
                 } else{
                     Toast.makeText(this,"Login failed",Toast.LENGTH_LONG).show();
@@ -72,14 +72,18 @@ public class LoginActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = AuthManager.currentUser();
+        if (AuthManager.isTestMode()) return;
+        FirebaseUser currentUser = authManager.currentUser();
         if(currentUser != null){
             Toast.makeText(this,"You have been automatically logged in",Toast.LENGTH_LONG).show();
             loadUserDataAndNavigate();
         }
     }
+    public void setAuthManager(AuthManager manager) {
+        this.authManager = manager;
+    }
     private void loadUserDataAndNavigate() {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = authManager.getAuth().getCurrentUser().getUid();
 
         JournalRepository.getInstance().loadJournalSnapshot(entries -> {});
 
