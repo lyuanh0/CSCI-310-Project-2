@@ -3,9 +3,9 @@
 ### Install the latest version of Android Studio (2025):
 * https://developer.android.com/studio
   
-**Set up the AVD**
-* If you have not set up any AVD yet, do so by selecting menu “Tools > Device Manager”
-* Choose Pixel 2
+**Set up the AVD.**
+* If you have not set up any AVD yet, do so by selecting the menu, Tools > Device Manager.
+* Choose Pixel 2.
 
 ### Setup the LLM Model:
 **Check if you have ADB installed.**
@@ -22,7 +22,7 @@
 * This should show all the list of connected devices or emulators. Make sure you have at least one emulator or device running.
 
 **Download the LLM model.**
-* Download the file `gemma3-1b-it-int4.task` from HuggingFace
+* Download the file `gemma3-1b-it-int4.task` from HuggingFace(https://huggingface.co/litert-community/Gemma3-1B-IT)
 * Now push the model to your device.
 * For example, if you have the model in Downloads folder: `adb push ~/Downloads/gemma3-1b-it-int4.task /data/local/tmp/llm/gemma3-1b-it-int4.task`
 
