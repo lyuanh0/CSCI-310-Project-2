@@ -13,7 +13,8 @@
 * In the SDK Manager window, select SDK Tools.
 * Look for Android SDK Platform-Tools. If it's not installed, check the box and click Apply to install it.
 * Note the Android SDK Location displayed at the top of the SDK Manager window. This is your SDK directory.
-* The adb executable is located in the platform-tools subdirectory within your SDK directory. For example, if your SDK location is /Users/yourusername/Library/Android/sdk, then adb will be at /Users/yourusername/Library/Android/sdk/platform-tools/adb.
+* The adb executable is located in the platform-tools subdirectory within your SDK directory.  
+&emsp;For example, if your SDK location is /Users/yourusername/Library/Android/sdk, then adb will be at /Users/yourusername/Library/Android/sdk/platform-tools/adb.
 * Add the SDK directory to your PATH environment variable, e.g., by typing the following command in a terminal: `export PATH=$PATH:/Users/yourusername/Library/Android/sdk/platform-tools`
 
 **Verify `adb` is working.**
