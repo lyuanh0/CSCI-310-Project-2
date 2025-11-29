@@ -107,6 +107,9 @@ public class ProfileFragment extends Fragment {
             // Optional: Save avatar to database
             if (userRef != null)
                 userRef.child("avatar").setValue(selectedAvatar);
+
+            //update pic
+
         };
 
         avatar1.setOnClickListener(avatarClickListener);
@@ -121,6 +124,7 @@ public class ProfileFragment extends Fragment {
             if (ValidationUtils.isValidUsername(username)) {
                 userRef.child("username").setValue(username);
                 Toast.makeText(getContext(), "Username updated!", Toast.LENGTH_SHORT).show();
+                helloUserText.setText("Hello " + username);
             }
         });
 

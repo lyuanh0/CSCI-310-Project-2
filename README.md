@@ -29,3 +29,7 @@
 ## Running the App
 * Open Project: Open the ChatPet project in Android Studio and let Gradle sync.
 * Launch the emulator and click the Run App (▶️) button to run the app
+
+## 2.5 Improvements
+* Updated the profile fragment to update greeting message when username is updated
+* 
