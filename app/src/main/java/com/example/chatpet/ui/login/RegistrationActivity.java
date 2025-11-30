@@ -14,6 +14,7 @@ import com.example.chatpet.MainActivity;
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.User;
 import com.example.chatpet.logic.AuthManager;
+import com.example.chatpet.util.ValidationUtils;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -54,6 +55,16 @@ public class RegistrationActivity extends AppCompatActivity {
             String birthday = birthdayEt.getText().toString().trim();
             String username = usernameEt.getText().toString().trim();
 
+            if(!ValidationUtils.isValidDate(birthday)){
+                Toast.makeText(this, "Please enter a valid Date", Toast.LENGTH_SHORT).show();
+                return;
+            }else if(!ValidationUtils.isValidUsername(username)){
+                Toast.makeText(this, "Please enter a valid Username", Toast.LENGTH_SHORT).show();
+                return;
+            }else if(!ValidationUtils.isValidPassword(password)){
+                Toast.makeText(this, "Please Enter a valid Password", Toast.LENGTH_SHORT).show();
+                return;
+            }
             // create user in Firebase Auth
             AuthManager.register(email, password, (success, errorMessage) -> {
                 if (success) {

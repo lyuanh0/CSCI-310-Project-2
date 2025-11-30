@@ -66,6 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="MM-DD-YYYY"
+            android:inputType="date"
             android:layout_marginBottom="8dp"/>
         <Button
             android:id="@+id/btn_save_birthday"

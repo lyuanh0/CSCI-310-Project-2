@@ -32,4 +32,5 @@
 
 ## 2.5 Improvements
 * Updated the profile fragment to update greeting message when username is updated
-* 
+* Udated birthday input field to expect a date
+* Added additional error checking for registration

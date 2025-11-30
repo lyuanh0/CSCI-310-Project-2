@@ -133,6 +133,9 @@ public class ProfileFragment extends Fragment {
             if (ValidationUtils.isValidDate(birthday)) {
                 userRef.child("birthday").setValue(birthday);
                 Toast.makeText(getContext(), "Birthday updated!", Toast.LENGTH_SHORT).show();
+            } else{
+                Toast.makeText(getContext(), "Please enter a valid Date", Toast.LENGTH_SHORT).show();
+
             }
         });
 
