@@ -37,6 +37,7 @@ public class JournalFragment extends Fragment {
     private TextView outputText;
     private ProgressBar progressBar;
     private SearchView searchView;
+    private boolean favState = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,8 +59,11 @@ public class JournalFragment extends Fragment {
         // Entries logic setup
         loadJournalEntries();
         //setUpEntries();
+        //generateToday();
 
-        generateToday();
+        // Set up bookmark button for fav entries
+        favButton();
+
         return view;
     }
 
@@ -68,9 +72,6 @@ public class JournalFragment extends Fragment {
         searchView = view.findViewById(R.id.searchView);
 
         rvJournal = view.findViewById(R.id.rv_journal);
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setTitle("Pet Journal");
-//        }
     }
 
     private void searchBar() {
@@ -96,7 +97,14 @@ public class JournalFragment extends Fragment {
     }
 
     private void loadJournalEntries() {
-        List<JournalEntry> entries = journalRepository.getAllJournalEntries();
+        List<JournalEntry> entries;// = journalRepository.getAllJournalEntries();
+
+        if(!favState) {
+            entries = journalRepository.getAllJournalEntries();
+        }
+        else {
+            entries = journalRepository.getFavEntries();
+        }
 
         // For testing: samples
 //        if (entries.isEmpty()) {
@@ -113,6 +121,15 @@ public class JournalFragment extends Fragment {
 //        }
 
         journalAdapter.setEntries(entries);
+    }
+
+    private void favButton() {
+        sendButton.setOnClickListener(v -> {
+            Log.e(TAG, "bookmark button clicked\nPrev state: fav is " + favState + ", now: " + !favState);
+            favState = !favState;
+
+            loadJournalEntries();
+        });
     }
 
     @Override
@@ -200,7 +217,7 @@ public class JournalFragment extends Fragment {
 
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
-            Log.e(TAG, "button clicked");
+            Log.e(TAG, "bookmark button clicked");
             JournalEntry today = journalRepository.getJournalEntryByDate(LocalDate.now());
             if (today != null) {
                 Log.e(TAG, "today journalEntry is exist");

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
+import com.example.chatpet.data.model.Message;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -58,6 +59,15 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
         holder.tvDate.setText(entryDate.format(formatter));
         holder.tvEntry.setText(entry.getEntry());
+        holder.btnFavorite.setText(entry.isFav() ? "♥" : "♡");
+
+        // Toggle fav button
+        holder.btnFavorite.setOnClickListener(v -> {
+            boolean newState = !entry.isFav();
+            entry.setFav(newState);
+
+            holder.btnFavorite.setText(newState ? "♥" : "♡");
+        });
 
         // Expand/collapse functionality
         holder.itemView.setOnClickListener(v -> {
@@ -75,6 +85,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     }
 
     public static class JournalViewHolder extends RecyclerView.ViewHolder {
+        TextView btnFavorite;
         TextView tvDate;
         TextView tvEntry;
 
@@ -82,6 +93,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
             super(itemView);
             tvDate = itemView.findViewById(R.id.tv_date);
             tvEntry = itemView.findViewById(R.id.tv_entry);
+            btnFavorite = itemView.findViewById(R.id.btnFavorite);
         }
     }
 
@@ -93,14 +105,18 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
         for (JournalEntry entry : allEntries) {
             boolean matchesText = entry.getEntry().toLowerCase().contains(query);
 
-            String dateStr = entry.getDate().toString().replace("-", ""); // yyyyMMdd
-            boolean matchesDate = dateStr.contains(query);
             LocalDate entryDate = LocalDate.parse(entry.getDate());
+
+            String dateStr = entryDate.toString().replace("-", ""); // yyyyMMdd
+            boolean matchesDate = dateStr.contains(query);
 
             String formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMMM d yyyy")).toLowerCase();
             boolean matchesFormattedDate = formattedDate.contains(query);
 
-            if (matchesText || matchesDate || matchesFormattedDate) {
+            formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy")).toLowerCase();
+            boolean matchesFormattedDate2 = formattedDate.contains(query.replace(",", "")) && !(query.replace(",", "").trim().isEmpty());
+
+            if (matchesText || matchesDate || matchesFormattedDate || matchesFormattedDate2) {
                 if (!entry.getEntry().isEmpty()) {
                     displayedEntries.add(entry);
                 }

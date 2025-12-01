@@ -46,6 +46,18 @@ public class JournalRepository {
         return journalEntries.get(0);
     }
 
+    public List<JournalEntry> getFavEntries() {
+        ArrayList<JournalEntry> favList = new ArrayList<>();
+
+        for (JournalEntry entry : journalEntries) {
+            if (entry.isFav()) {
+                favList.add(entry);
+            }
+        }
+        favList.sort(Comparator.comparing(JournalEntry::getDate).reversed());
+
+        return favList;
+    }
 
     public void saveJournalEntry(JournalEntry entry) {
         journalEntries.add(entry);
