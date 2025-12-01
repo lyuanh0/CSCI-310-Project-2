@@ -582,6 +582,7 @@ public class PetViewFragment extends Fragment {
         // ADDED THIS TO ENABLE/DISABLE the level up
         btnLevelUp.setEnabled((currentPet.getLevel() < 3) && (currentPet.getCurrentLevelXP() >= currentPet.getXPToNextLevel()));
 
+
         if (!isInCooldown) {
             btnTuckIn.setEnabled(true);
             btnTuckIn.setText("Tuck In");
