@@ -101,6 +101,7 @@ public class PetViewLevelUpBlackBoxTest {
 
     // Feed pet once
     public void feedPet() throws InterruptedException {
+        Thread.sleep(500);
         tuckInAndWait();
         onView(withId(R.id.btn_feed)).perform(click());
         Thread.sleep(300);
@@ -138,7 +139,7 @@ public class PetViewLevelUpBlackBoxTest {
 
         onView(withId(R.id.btn_login)).perform(click());
 
-        waitForView(R.id.nav_pet, 10000);
+        waitForView(R.id.nav_pet, 12000);
     }
 
     // Pick pet if dialog appears
@@ -172,6 +173,7 @@ public class PetViewLevelUpBlackBoxTest {
 
     // Tuck in pet and wait for wakeup
     public void tuckInAndWait() throws InterruptedException {
+        Thread.sleep(500);
         onView(withId(R.id.btn_tuck_in)).perform(click());
         Thread.sleep(500);
         Thread.sleep(12000);  // 12 seconds for cooldown
@@ -237,16 +239,16 @@ public class PetViewLevelUpBlackBoxTest {
     @Test
     public void testXPValueUpdatesAfterGainingXP() throws InterruptedException {
 //        login("testXP2@usc.edu", "testPass123456");
-        login("testNew@usc.edu", "testNew");
+//        login("testNew@usc.edu", "testNew");
 
         // ALTERNATE EMAIL 1:
-        //login("AndyTest2@gmail.com, "Test1234567");
+        login("AndyTest2@gmail.com", "Test1234567");
 
         // ALTERNATE EMAIL 2:
-        //login("AndyTest2B@gmail.com, "Test1234567");
+        //login("AndyTest2B@gmail.com", "Test1234567");
 
         // ALTERNATE EMAIL 3:
-        //login("AndyTest2C@gmail.com, "Test1234567");
+        //login("AndyTest2C@gmail.com", "Test1234567");
 
         pickPet();
 
