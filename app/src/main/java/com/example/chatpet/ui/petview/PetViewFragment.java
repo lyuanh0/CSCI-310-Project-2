@@ -580,7 +580,7 @@ public class PetViewFragment extends Fragment {
                 && currentPet.getEnergy() > 0 && currentPet.getHunger() < 100);
         //btnFeed.setEnabled(currentPet.getEnergy() > 0 && currentPet.getHunger() < 100);
         // ADDED THIS TO ENABLE/DISABLE the level up
-        btnLevelUp.setEnabled((currentPet.getLevel() < 3) && (currentPet.getCurrentLevelXP() >= currentPet.getXPToNextLevel()));
+        btnLevelUp.setEnabled((currentPet.getLevel() < 3) && (xpProgress == 100));
 
 
         if (!isInCooldown) {
