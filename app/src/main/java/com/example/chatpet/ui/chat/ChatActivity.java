@@ -136,7 +136,11 @@ public class ChatActivity extends AppCompatActivity {
         rvMessages.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
 
         Pet pet = petManager.getCurrentPet();
-        if (pet != null) pet.addXP(5); // +5 XP per message
+        if (pet != null) {
+            pet.addXP(5);          // +5 XP
+            pet.increaseHappiness(5);   // +5 happiness
+        }
+
 
         Message thinking = new Message(currentPet.getName(), "Thinking...");
         chatManager.getMessages().add(thinking);
