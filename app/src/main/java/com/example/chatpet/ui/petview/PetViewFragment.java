@@ -579,6 +579,9 @@ public class PetViewFragment extends Fragment {
         btnFeed.setEnabled("awake".equalsIgnoreCase(currentPet.getCurrentStatus())
                 && currentPet.getEnergy() > 0 && currentPet.getHunger() < 100);
         //btnFeed.setEnabled(currentPet.getEnergy() > 0 && currentPet.getHunger() < 100);
+        // ADDED THIS TO ENABLE/DISABLE the level up
+        btnLevelUp.setEnabled((currentPet.getLevel() < 3) && (currentPet.getCurrentLevelXP() >= currentPet.getXPToNextLevel()));
+
         if (!isInCooldown) {
             btnTuckIn.setEnabled(true);
             btnTuckIn.setText("Tuck In");
