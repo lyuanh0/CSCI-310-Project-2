@@ -17,8 +17,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatpet.R;
+import com.example.chatpet.data.model.JournalEntry;
 import com.example.chatpet.data.model.Message;
 import com.example.chatpet.data.model.Pet;
+import com.example.chatpet.data.repository.JournalRepository;
 import com.example.chatpet.logic.ChatGenerator;
 import com.example.chatpet.logic.ChatManager;
 import com.example.chatpet.logic.PetManager;
@@ -26,8 +28,10 @@ import com.example.chatpet.ui.MainActivity;
 import com.example.chatpet.ui.journal.JournalActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class ChatActivity extends AppCompatActivity {
+import java.time.LocalDate;
 
+public class ChatActivity extends AppCompatActivity {
+    private final JournalRepository journalRepo = JournalRepository.getInstance();
     private RecyclerView rvMessages;
     private EditText etMessage;
     private ImageButton btnSend;
@@ -139,6 +143,13 @@ public class ChatActivity extends AppCompatActivity {
         if (pet != null) {
             pet.addXP(5);          // +5 XP
             pet.increaseHappiness(5);   // +5 happiness
+
+            JournalEntry today = journalRepo.getJournalEntryByDate(LocalDate.now());
+            if (today != null) {
+                if (!today.getReport().contains("Had a small chat with the owner.")) {
+                    today.addToReport("Had a small chat with the owner.");
+                }
+            }
         }
 
 

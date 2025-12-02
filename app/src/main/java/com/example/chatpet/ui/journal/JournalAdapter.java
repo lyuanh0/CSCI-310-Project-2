@@ -4,13 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
-import com.example.chatpet.data.model.Message;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -59,14 +59,14 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
         holder.tvDate.setText(entryDate.format(formatter));
         holder.tvEntry.setText(entry.getEntry());
-        holder.btnFavorite.setText(entry.isFav() ? "♥" : "♡");
+        holder.btnFavorite.setImageResource(entry.isFav() ? R.drawable.favfilled : R.drawable.favoutline);
 
         // Toggle fav button
         holder.btnFavorite.setOnClickListener(v -> {
             boolean newState = !entry.isFav();
             entry.setFav(newState);
 
-            holder.btnFavorite.setText(newState ? "♥" : "♡");
+            holder.btnFavorite.setImageResource(newState ? R.drawable.favfilled : R.drawable.favoutline);
         });
 
         // Expand/collapse functionality
@@ -85,7 +85,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     }
 
     public static class JournalViewHolder extends RecyclerView.ViewHolder {
-        TextView btnFavorite;
+        ImageButton btnFavorite;
         TextView tvDate;
         TextView tvEntry;
 

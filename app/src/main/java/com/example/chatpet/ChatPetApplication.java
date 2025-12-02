@@ -104,6 +104,9 @@ public class ChatPetApplication extends Application implements DefaultLifecycleO
 //            todayEntry.setReport("went to the beach");
             journalRepo.saveJournalEntry(todayEntry);
             Log.i(TAG, "Created placeholder journal entry for " + today);
+            if (journalRepo.getAllJournalEntries().size() == 1) {
+                todayEntry.addToReport("Met the owner for the first time today!");
+            }
         }
 
         // Generate entries for past days with existing reports
