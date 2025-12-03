@@ -87,10 +87,19 @@ public class ProfileFragment extends Fragment {
 
         // Example greeting
         if (currentUser != null && currentUser.getDisplayName() != null) {
-            helloUserText.setText("Hello " + currentUser.getDisplayName());
+
+            printMessage(currentUser.getDisplayName());
         }
 
         return view;
+    }
+
+    private void printMessage(String name){
+        if(currentUser.isEmailVerified()){
+            helloUserText.setText(("Hello "+name+"     \u2705"));
+        } else{
+            helloUserText.setText(("Hello "+name+"     \u274C"));
+        }
     }
 
     private void setupAvatarSelection() {
@@ -107,9 +116,6 @@ public class ProfileFragment extends Fragment {
             // Optional: Save avatar to database
             if (userRef != null)
                 userRef.child("avatar").setValue(selectedAvatar);
-
-            //update pic
-
         };
 
         avatar1.setOnClickListener(avatarClickListener);
@@ -124,7 +130,7 @@ public class ProfileFragment extends Fragment {
             if (ValidationUtils.isValidUsername(username)) {
                 userRef.child("username").setValue(username);
                 Toast.makeText(getContext(), "Username updated!", Toast.LENGTH_SHORT).show();
-                helloUserText.setText("Hello " + username);
+                printMessage(username);
             }
         });
 
@@ -179,40 +185,43 @@ public class ProfileFragment extends Fragment {
     private void loadUserData() {
         if (userRef == null) return;
 
-        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    // Get user fields safely
-                    String username = snapshot.child("username").getValue(String.class);
-                    String birthday = snapshot.child("birthday").getValue(String.class);
-                    String email = snapshot.child("email").getValue(String.class);
-                    Integer avatarRes = snapshot.child("avatar").getValue(Integer.class);
+        AuthManager.currentUser().reload().addOnCompleteListener(task -> {
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        // Get user fields safely
+                        String username = snapshot.child("username").getValue(String.class);
+                        String birthday = snapshot.child("birthday").getValue(String.class);
+                        String email = snapshot.child("email").getValue(String.class);
+                        Integer avatarRes = snapshot.child("avatar").getValue(Integer.class);
 
-                    // Update UI
-                    if (username != null && !username.isEmpty()) {
-                        etUsername.setText(username);
-                        helloUserText.setText("Hello " + username);
-                    }
+                        // Update UI
+                        if (username != null && !username.isEmpty()) {
+                            etUsername.setText(username);
+                            printMessage(username);
+                        }
 
-                    if (birthday != null && !birthday.isEmpty())
-                        etBirthday.setText(birthday);
+                        if (birthday != null && !birthday.isEmpty())
+                            etBirthday.setText(birthday);
 
-                    if (email != null && !email.isEmpty())
-                        etEmail.setText(email);
+                        if (email != null && !email.isEmpty())
+                            etEmail.setText(email);
 
-                    if (avatarRes != null) {
-                        selectedAvatar = avatarRes;
-                        avatar0.setImageResource(avatarRes);
+                        if (avatarRes != null) {
+                            selectedAvatar = avatarRes;
+                            avatar0.setImageResource(avatarRes);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Failed to load data: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(getContext(), "Failed to load data: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
+
     }
 
 }

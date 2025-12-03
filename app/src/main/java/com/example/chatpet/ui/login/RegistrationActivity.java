@@ -17,6 +17,7 @@ import com.example.chatpet.logic.AuthManager;
 import com.example.chatpet.util.ValidationUtils;
 import com.google.firebase.database.FirebaseDatabase;
 
+
 public class RegistrationActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
 
@@ -84,6 +85,13 @@ public class RegistrationActivity extends AppCompatActivity {
                                     Toast.makeText(this, "Database save failed", Toast.LENGTH_LONG).show();
                                 }
                             });
+                    AuthManager.currentUser().sendEmailVerification().addOnCompleteListener(task -> {
+
+                        if(task.isSuccessful()){
+                            Toast.makeText(this, "Please verify your Email" , Toast.LENGTH_LONG).show();
+                        }
+                    });
+
                 } else {
                     Toast.makeText(this, "Auth failed: " + errorMessage, Toast.LENGTH_LONG).show();
                 }
