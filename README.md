@@ -31,6 +31,10 @@
 * Launch the emulator and click the Run App (▶️) button to run the app
 
 ## 2.5 Improvements
-* Updated the profile fragment to update greeting message when username is updated
-* Udated birthday input field to expect a date
+* Updated the profile fragment to update the greeting message when the username is updated
+* Updated birthday input field to expect a date
 * Added additional error checking for registration
+* New feature: Journal entries can be favorited and the bookmark button can toggle to display all entries or only favorited entries
+* Journal entries can now consider the first time the player creates the pet (meeting the owner for the first time) and the interaction that the user chatted with the pet
+* Improved the search query to be able to search for dates in different formats such as mm/dd/yyyy and month names
+* Improved the prompt for journal entry generation (content for journal entries are better)
