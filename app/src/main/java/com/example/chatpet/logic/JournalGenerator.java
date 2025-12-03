@@ -124,9 +124,10 @@ public class JournalGenerator extends ViewModel{
 
                         "Do not invent new events, interactions, characters, or details. " +
                         "You must base the entry strictly on the provided interactions. " +
+                        "Explicitly state out each interaction. " +
                         "You may describe them vaguely, but do not add new ones. " +
 
-                        "The owner's name is " + user.getUsername() + ". " +
+                        "The owner's name is " + user.getUsername() + " with they/them pronouns." +
                         "Here are the interactions: " + report + " " +
                         "Return ONLY the diary entry text. Nothing else.";
 
