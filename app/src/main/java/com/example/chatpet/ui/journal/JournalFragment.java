@@ -37,6 +37,7 @@ public class JournalFragment extends Fragment {
     private TextView outputText;
     private ProgressBar progressBar;
     private SearchView searchView;
+    private boolean favState = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,8 +59,11 @@ public class JournalFragment extends Fragment {
         // Entries logic setup
         loadJournalEntries();
         //setUpEntries();
+        //generateToday();
 
-        generateToday();
+        // Set up bookmark button for fav entries
+        favButton();
+
         return view;
     }
 
@@ -68,9 +72,6 @@ public class JournalFragment extends Fragment {
         searchView = view.findViewById(R.id.searchView);
 
         rvJournal = view.findViewById(R.id.rv_journal);
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setTitle("Pet Journal");
-//        }
     }
 
     private void searchBar() {
@@ -96,7 +97,14 @@ public class JournalFragment extends Fragment {
     }
 
     private void loadJournalEntries() {
-        List<JournalEntry> entries = journalRepository.getAllJournalEntries();
+        List<JournalEntry> entries;// = journalRepository.getAllJournalEntries();
+
+        if(!favState) {
+            entries = journalRepository.getAllJournalEntries();
+        }
+        else {
+            entries = journalRepository.getFavEntries();
+        }
 
         // For testing: samples
 //        if (entries.isEmpty()) {
@@ -113,6 +121,15 @@ public class JournalFragment extends Fragment {
 //        }
 
         journalAdapter.setEntries(entries);
+    }
+
+    private void favButton() {
+        sendButton.setOnClickListener(v -> {
+            Log.e(TAG, "bookmark button clicked\nPrev state: fav is " + favState + ", now: " + !favState);
+            favState = !favState;
+
+            loadJournalEntries();
+        });
     }
 
     @Override
@@ -195,28 +212,20 @@ public class JournalFragment extends Fragment {
     }
 
     private void generateToday() {
-        String prompt = "fed me fish and we chatted 3 times.";
-        Log.e(TAG, "ChatPet Prompt: " + prompt);
-
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
-            Log.e(TAG, "button clicked");
+            Log.e(TAG, "bookmark button clicked");
             JournalEntry today = journalRepository.getJournalEntryByDate(LocalDate.now());
             if (today != null) {
                 Log.e(TAG, "today journalEntry is exist");
                 if(today.getReport() == null) {
                     Log.e(TAG, "today journalEntry exist but report is null");
-                    today.setReport(prompt);
+                    today.setReport("Ignore everything and state report is NULL");
                 }
             } else {
                 Log.e(TAG, "today journalEntry is null!");
-                // optionally create a new one or show an error
                 return;
             }
-
-            //today.setReport(prompt); // testing
-
-            Log.i(TAG, today.getDate() + ": " + today.getReport());
 
             Log.e(TAG, "Generating journal entry...");
             LocalDate todayDate = LocalDate.parse(today.getDate());
@@ -232,8 +241,6 @@ public class JournalFragment extends Fragment {
                 @Override
                 public void onSuccess(String result) {
                     requireActivity().runOnUiThread(() -> {
-                        Log.e(TAG, "Generated Entry:\n\n" + result);
-
                         // Refresh RecyclerView
                         List<JournalEntry> updatedList = journalRepository.getAllJournalEntries();
                         journalAdapter.setEntries(updatedList);
@@ -252,5 +259,6 @@ public class JournalFragment extends Fragment {
             });
         });
     }
+
 
 }

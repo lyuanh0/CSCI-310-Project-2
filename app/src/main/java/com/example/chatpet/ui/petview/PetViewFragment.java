@@ -329,8 +329,15 @@ public class PetViewFragment extends Fragment {
             Toast.makeText(this, "Your pet is not hungry right now!", Toast.LENGTH_SHORT).show();
             return;
         }*/
-        if (currentPet == null) return;
+        //if (currentPet == null) return;
 
+        if (currentPet == null) {
+            Toast.makeText(requireContext(),
+                    "No pet found. Please create a pet first.",
+                    Toast.LENGTH_SHORT).show();
+            showPetCreationDialog();
+            return;
+        }
         //cannot feed when sleeping
         if ("sleeping".equalsIgnoreCase(currentPet.getCurrentStatus())) {
             Toast.makeText(requireContext(), currentPet.getName() + " is sleeping. Wait until awake!", Toast.LENGTH_SHORT).show();
@@ -380,7 +387,14 @@ public class PetViewFragment extends Fragment {
     }
 
     private void handleTuckIn() {
-        // TEST: ignore PetManager.canTuckIn() and allow tucking unless in cooldown
+        if (currentPet == null) {
+            Toast.makeText(requireContext(),
+                    "No pet found. Please create a pet first.",
+                    Toast.LENGTH_SHORT).show();
+            showPetCreationDialog();
+            return;
+        }
+
         if (isInCooldown) {
             Toast.makeText(requireContext(), "Please wait until cooldown ends.", Toast.LENGTH_SHORT).show();
             return;
@@ -390,28 +404,12 @@ public class PetViewFragment extends Fragment {
         currentPet.increaseEnergy(ENERGY_BOOST_PER_TUCK);
         currentPet.increaseHappiness(HAPPINESS_BOOST_PER_TUCK);
         currentPet.increaseXP(XP_GAIN_PER_ACTION);
-        //currentPet.increaseXP(10);
 
         clampPetStats();
+        startCooldown();
         updateUI();
         Toast.makeText(requireContext(), currentPet.getName() + " is resting and feeling happier!", Toast.LENGTH_SHORT).show();
 
-        // Apply instant “sleep” + +10 happiness, then 3s simulated animation lockout
-        //performTuckOnce();
-
-        tuckInCount++;
-        if (tuckInCount >= TUCKS_BEFORE_COOLDOWN) {
-            startCooldown();
-        } else {
-            // Short disable to simulate sleep animation
-            btnTuckIn.setEnabled(false);
-            btnTuckIn.postDelayed(() -> {
-                if (!isInCooldown) {
-                    btnTuckIn.setEnabled(true);
-                    btnTuckIn.setText("Tuck In");
-                }
-            }, TUCK_ANIMATION_MS);
-        }
     }
 
 //    private void performTuckOnce() {
@@ -461,8 +459,8 @@ public class PetViewFragment extends Fragment {
                 currentPet.setIsSleeping(false);
                 currentPet.wakeUp();
                 updateUI();
-                btnTuckIn.setEnabled(true);
-                btnTuckIn.setText("Tuck In");
+                //btnTuckIn.setEnabled(true);
+                //btnTuckIn.setText("Tuck In");
                 Toast.makeText(requireContext(),
                         "You can tuck in again!", Toast.LENGTH_SHORT).show();
             }
@@ -544,6 +542,8 @@ public class PetViewFragment extends Fragment {
     private void updateUI() {
         if (currentPet == null) return;
 
+        clampPetStats();
+
         tvPetName.setText(currentPet.getName());
         tvPetLevel.setText("Level: " + currentPet.getLevel());
         tvPetStatus.setText("Status: " + currentPet.getCurrentStatus());
@@ -576,24 +576,43 @@ public class PetViewFragment extends Fragment {
         tvEnergyValue.setText(currentPet.getEnergy() + "%");
         //tvXPValue.setText((currentPet.getTotalXP() % 100) + "/100");
 
+
         btnFeed.setEnabled("awake".equalsIgnoreCase(currentPet.getCurrentStatus())
                 && currentPet.getEnergy() > 0 && currentPet.getHunger() < 100);
         //btnFeed.setEnabled(currentPet.getEnergy() > 0 && currentPet.getHunger() < 100);
-        if (!isInCooldown) {
+        // ADDED THIS TO ENABLE/DISABLE the level up
+        btnLevelUp.setEnabled((currentPet.getLevel() < 3) && (xpProgress == 100));
+
+
+
+        if (isInCooldown) {
+            btnTuckIn.setEnabled(false);
+        } else if (currentPet.getEnergy() >= 80) {
+
+            btnTuckIn.setEnabled(false);
+            btnTuckIn.setText("Energized");
+        } else {
+
             btnTuckIn.setEnabled(true);
             btnTuckIn.setText("Tuck In");
         }
 
-        // Update pet image based on type and level
         updatePetImage();
+
     }
 
+    /*
     private void clampPetStats() {
         currentPet.setHunger(Math.max(0, Math.min(100, currentPet.getEnergy())));
         currentPet.setHappiness(Math.max(0, Math.min(100, currentPet.getHappiness())));
         currentPet.setEnergy(Math.max(0, Math.min(100, currentPet.getHunger())));
     }
-
+    */
+    private void clampPetStats() {
+        currentPet.setHunger(Math.max(0, Math.min(100, currentPet.getHunger())));
+        currentPet.setHappiness(Math.max(0, Math.min(100, currentPet.getHappiness())));
+        currentPet.setEnergy(Math.max(0, Math.min(100, currentPet.getEnergy())));
+    }
     private void updatePetImage() {
         if (currentPet == null) return;
 

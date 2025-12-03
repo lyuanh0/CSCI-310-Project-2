@@ -4,12 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
+import com.example.chatpet.data.repository.JournalRepository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -20,6 +22,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     private List<JournalEntry> allEntries;  // OG entries
     private List<JournalEntry> displayedEntries;
     private final Context context;
+    private final JournalRepository journalRepo = JournalRepository.getInstance();
 
     public JournalAdapter(Context context) {
         this.context = context;
@@ -58,6 +61,15 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
         holder.tvDate.setText(entryDate.format(formatter));
         holder.tvEntry.setText(entry.getEntry());
+        holder.btnFavorite.setImageResource(entry.isFav() ? R.drawable.favfilled : R.drawable.favoutline);
+
+        // Toggle fav button
+        holder.btnFavorite.setOnClickListener(v -> {
+            boolean newState = !entry.isFav();
+            entry.setFav(newState);
+            journalRepo.updateJournalFav();
+            holder.btnFavorite.setImageResource(newState ? R.drawable.favfilled : R.drawable.favoutline);
+        });
 
         // Expand/collapse functionality
         holder.itemView.setOnClickListener(v -> {
@@ -75,6 +87,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     }
 
     public static class JournalViewHolder extends RecyclerView.ViewHolder {
+        ImageButton btnFavorite;
         TextView tvDate;
         TextView tvEntry;
 
@@ -82,6 +95,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
             super(itemView);
             tvDate = itemView.findViewById(R.id.tv_date);
             tvEntry = itemView.findViewById(R.id.tv_entry);
+            btnFavorite = itemView.findViewById(R.id.btnFavorite);
         }
     }
 
@@ -93,14 +107,27 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
         for (JournalEntry entry : allEntries) {
             boolean matchesText = entry.getEntry().toLowerCase().contains(query);
 
-            String dateStr = entry.getDate().toString().replace("-", ""); // yyyyMMdd
-            boolean matchesDate = dateStr.contains(query);
             LocalDate entryDate = LocalDate.parse(entry.getDate());
 
-            String formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMMM d yyyy")).toLowerCase();
-            boolean matchesFormattedDate = formattedDate.contains(query);
+            boolean matchDate = false;
+            boolean matchesDateNum = false;
+            boolean matchesFormattedDate = false;
+            boolean matchesFormattedDate2 = false;
+            if (!query.equals("/") && !query.equals("-")) {
+                String dateStr = entryDate.toString().replace("-", ""); // yyyyMMdd
+                matchesDateNum = dateStr.contains(query);
 
-            if (matchesText || matchesDate || matchesFormattedDate) {
+                matchDate = entryDate.toString().contains(query) || entryDate.format(DateTimeFormatter.ofPattern("M/d/yyyy")).contains(query)
+                        || entryDate.format(DateTimeFormatter.ofPattern("M-d-yyyy")).contains(query);
+
+                String formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMMM d yyyy")).toLowerCase();
+                matchesFormattedDate = formattedDate.contains(query);
+
+                formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy")).toLowerCase();
+                matchesFormattedDate2 = formattedDate.contains(query.replace(",", "")) && !(query.replace(",", "").trim().isEmpty());
+            }
+
+            if (matchesText || matchDate || matchesDateNum || matchesFormattedDate || matchesFormattedDate2) {
                 if (!entry.getEntry().isEmpty()) {
                     displayedEntries.add(entry);
                 }

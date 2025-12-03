@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.chatpet.data.model.JournalEntry;
+import com.example.chatpet.data.model.User;
 import com.example.chatpet.logic.AuthManager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -18,6 +19,8 @@ public class JournalRepository {
     private static final String TAG = "JournalRepository";
     private static JournalRepository instance;
     private List<JournalEntry> journalEntries;
+    private User user = new User();;
+
     private JournalRepository() {
         journalEntries = new ArrayList<>();
     }
@@ -46,6 +49,18 @@ public class JournalRepository {
         return journalEntries.get(0);
     }
 
+    public List<JournalEntry> getFavEntries() {
+        ArrayList<JournalEntry> favList = new ArrayList<>();
+
+        for (JournalEntry entry : journalEntries) {
+            if (entry.isFav()) {
+                favList.add(entry);
+            }
+        }
+        favList.sort(Comparator.comparing(JournalEntry::getDate).reversed());
+
+        return favList;
+    }
 
     public void saveJournalEntry(JournalEntry entry) {
         journalEntries.add(entry);
@@ -67,6 +82,10 @@ public class JournalRepository {
             }
         }
 
+        updateJournalSnapshot();
+    }
+
+    public void updateJournalFav() {
         updateJournalSnapshot();
     }
 
@@ -116,35 +135,48 @@ public class JournalRepository {
 
     public void loadJournalSnapshot(OnJournalLoadedListener listener) {
         String uid = AuthManager.currentUser().getUid();
+
         DatabaseReference userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
-                .child(uid)
-                .child("journalEntries");
+                .child(uid);
 
-        userRef.get().addOnCompleteListener(task -> {
-            journalEntries.clear();
+        // Load username first
+        userRef.child("username").get().addOnSuccessListener(nameSnap -> {
+            String username = nameSnap.getValue(String.class);
+            user.setUsername(username);
+            Log.i(TAG, "Loaded username: " + username);
 
-            if (task.isSuccessful() && task.getResult() != null) {
-                DataSnapshot snapshot = task.getResult();
+            // Load journal entries
+            userRef.child("journalEntries").get().addOnCompleteListener(task -> {
+                journalEntries.clear();
 
-                //loop through each journal entry and rebuild the list
-                for (DataSnapshot entrySnapshot : snapshot.getChildren()) {
-                    JournalEntry entry = entrySnapshot.getValue(JournalEntry.class);
-                    if (entry != null) {
-                        journalEntries.add(entry);
+                if (task.isSuccessful() && task.getResult() != null) {
+                    DataSnapshot snapshot = task.getResult();
+
+                    // loop through each journal entry and rebuild the list
+                    for (DataSnapshot entrySnapshot : snapshot.getChildren()) {
+                        JournalEntry entry = entrySnapshot.getValue(JournalEntry.class);
+                        if (entry != null) {
+                            journalEntries.add(entry);
+                        }
                     }
+
+                    Log.i(TAG, "Loaded " + journalEntries.size() + " journal entries from Firebase");
+                } else {
+                    Log.e(TAG, "Failed to load journal snapshot", task.getException());
                 }
 
-                Log.i(TAG, "Loaded " + journalEntries.size() + " journal entries from Firebase");
-            } else {
-                Log.e(TAG, "Failed to load journal snapshot", task.getException());
-            }
+                // ⃣After both username & entries are loaded
+                if (listener != null) {
+                    listener.onLoaded(new ArrayList<>(journalEntries));
+                }
+            });
 
-            // Notify loading is done
-            if (listener != null) {
-                listener.onLoaded(new ArrayList<>(journalEntries));
-            }
+        }).addOnFailureListener(e -> {
+            Log.e(TAG, "Failed to load username", e);
         });
     }
+
+    public User getUser() { return user; }
 
 }

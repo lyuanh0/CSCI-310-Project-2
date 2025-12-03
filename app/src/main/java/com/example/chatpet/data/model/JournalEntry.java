@@ -10,16 +10,19 @@ public class JournalEntry {
     private String date;
     private String entry;
     private String report;
+    private boolean fav;
 
     public JournalEntry() {
         this.date = LocalDate.now().toString();
         this.report = "";
+        this.fav = false;
     }
 
     public JournalEntry(String date, String entry) {
         this.date = date;
         this.entry = entry;
         this.report = "";
+        this.fav = false;
     }
 
     public String getDate() { return date; }
@@ -28,11 +31,15 @@ public class JournalEntry {
 
     public String getReport() { return report; }
 
+    public boolean isFav() { return fav; }
+
     public void setDate(String date) { this.date = date; }
 
     public void setEntry(String entry) { this.entry = entry; }
 
     public void setReport(String report) { this.report = report; }
+
+    public void setFav(boolean fav) { this.fav = fav; }
 
     public void addToReport(String interaction) {
         this.report += interaction + "\n";
