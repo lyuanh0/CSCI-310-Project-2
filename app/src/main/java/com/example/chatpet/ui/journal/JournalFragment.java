@@ -212,9 +212,6 @@ public class JournalFragment extends Fragment {
     }
 
     private void generateToday() {
-        String prompt = "fed me fish and we chatted 3 times.";
-        Log.e(TAG, "ChatPet Prompt: " + prompt);
-
         // Button click = run LLM
         sendButton.setOnClickListener(v -> {
             Log.e(TAG, "bookmark button clicked");
@@ -223,17 +220,12 @@ public class JournalFragment extends Fragment {
                 Log.e(TAG, "today journalEntry is exist");
                 if(today.getReport() == null) {
                     Log.e(TAG, "today journalEntry exist but report is null");
-                    today.setReport(prompt);
+                    today.setReport("Ignore everything and state report is NULL");
                 }
             } else {
                 Log.e(TAG, "today journalEntry is null!");
-                // optionally create a new one or show an error
                 return;
             }
-
-            //today.setReport(prompt); // testing
-
-            Log.i(TAG, today.getDate() + ": " + today.getReport());
 
             Log.e(TAG, "Generating journal entry...");
             LocalDate todayDate = LocalDate.parse(today.getDate());
@@ -249,8 +241,6 @@ public class JournalFragment extends Fragment {
                 @Override
                 public void onSuccess(String result) {
                     requireActivity().runOnUiThread(() -> {
-                        Log.e(TAG, "Generated Entry:\n\n" + result);
-
                         // Refresh RecyclerView
                         List<JournalEntry> updatedList = journalRepository.getAllJournalEntries();
                         journalAdapter.setEntries(updatedList);
@@ -269,5 +259,6 @@ public class JournalFragment extends Fragment {
             });
         });
     }
+
 
 }

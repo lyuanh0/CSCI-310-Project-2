@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.chatpet.R;
 import com.example.chatpet.data.model.JournalEntry;
+import com.example.chatpet.data.repository.JournalRepository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -21,6 +22,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
     private List<JournalEntry> allEntries;  // OG entries
     private List<JournalEntry> displayedEntries;
     private final Context context;
+    private final JournalRepository journalRepo = JournalRepository.getInstance();
 
     public JournalAdapter(Context context) {
         this.context = context;
@@ -65,7 +67,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
         holder.btnFavorite.setOnClickListener(v -> {
             boolean newState = !entry.isFav();
             entry.setFav(newState);
-
+            journalRepo.updateJournalFav();
             holder.btnFavorite.setImageResource(newState ? R.drawable.favfilled : R.drawable.favoutline);
         });
 
@@ -107,16 +109,25 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalAdapter.JournalV
 
             LocalDate entryDate = LocalDate.parse(entry.getDate());
 
-            String dateStr = entryDate.toString().replace("-", ""); // yyyyMMdd
-            boolean matchesDate = dateStr.contains(query);
+            boolean matchDate = false;
+            boolean matchesDateNum = false;
+            boolean matchesFormattedDate = false;
+            boolean matchesFormattedDate2 = false;
+            if (!query.equals("/") && !query.equals("-")) {
+                String dateStr = entryDate.toString().replace("-", ""); // yyyyMMdd
+                matchesDateNum = dateStr.contains(query);
 
-            String formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMMM d yyyy")).toLowerCase();
-            boolean matchesFormattedDate = formattedDate.contains(query);
+                matchDate = entryDate.toString().contains(query) || entryDate.format(DateTimeFormatter.ofPattern("M/d/yyyy")).contains(query)
+                        || entryDate.format(DateTimeFormatter.ofPattern("M-d-yyyy")).contains(query);
 
-            formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy")).toLowerCase();
-            boolean matchesFormattedDate2 = formattedDate.contains(query.replace(",", "")) && !(query.replace(",", "").trim().isEmpty());
+                String formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMMM d yyyy")).toLowerCase();
+                matchesFormattedDate = formattedDate.contains(query);
 
-            if (matchesText || matchesDate || matchesFormattedDate || matchesFormattedDate2) {
+                formattedDate = entryDate.format(DateTimeFormatter.ofPattern("MMM d, yyyy")).toLowerCase();
+                matchesFormattedDate2 = formattedDate.contains(query.replace(",", "")) && !(query.replace(",", "").trim().isEmpty());
+            }
+
+            if (matchesText || matchDate || matchesDateNum || matchesFormattedDate || matchesFormattedDate2) {
                 if (!entry.getEntry().isEmpty()) {
                     displayedEntries.add(entry);
                 }

@@ -12,6 +12,7 @@ import androidx.work.WorkManager;
 import com.example.chatpet.data.model.JournalEntry;
 import com.example.chatpet.data.model.Pet;
 import com.example.chatpet.data.model.Message;
+import com.example.chatpet.data.model.User;
 import com.example.chatpet.data.repository.JournalRepository;
 import com.example.chatpet.service.JournalWorker;
 import com.google.mediapipe.tasks.genai.llminference.LlmInference;
@@ -37,6 +38,7 @@ public class JournalGenerator extends ViewModel{
     private JournalEntry journalEntry;
     private ChatManager chatManager;
     private PetManager petManager;
+    private User user;
 
     // Interface to communicate with the UI (JournalActivity)
     public interface LlmCallback {
@@ -109,18 +111,28 @@ public class JournalGenerator extends ViewModel{
 
                 // Run the model (blocking)
                 Pet currPet = petManager.getCurrentPet();
-                String prompt = "Write only a somewhat short diary entry from the perspective of the pet " + currPet.getType()  +
-                        "with the personality of " + currPet.getPersonalityTraits() + ", strictly based on given interactions that had occur, " +
-                        "DO NOT mention or add any DATES" +
-                        "Return ONLY the diary entry text — no introductions, no explanations, no phrases like 'Dear Entry' 'Okay' or 'Here’s the entry'. " +
-                        "Output must begin immediately with the diary entry content itself." +
-                        "Do not include any unnecessary explanations or introductions." +
-                        "Don't add beginning transitions, just give the entry content" +
-                        "Do not make up new extra interactions, details, events, or characters not mentioned in the interaction, " +
-                        "strictly stay true to and explicitly state out each given interactions. Describing the interactions can be vague." +
-                        "These are the interactions that happened: " + report;
+                user = journalRepository.getUser();
+
+                String prompt = "Write a diary entry from the perspective of the pet " + currPet.getType() +
+                        " with the personality of " + currPet.getPersonalityTraits() + ". " +
+                        "Your response MUST begin immediately with the diary entry text itself. " +
+                        "The first word of your output must be part of the diary entry. " +
+                        "Do not include 'Okay', 'Well', ellipses (...), greetings, openings, or any prefaces. " +
+
+                        "Make the entry somewhat short. Use natural diary-style voice. " +
+                        "Do NOT mention or add any dates. " +
+
+                        "Do not invent new events, interactions, characters, or details. " +
+                        "You must base the entry strictly on the provided interactions. " +
+                        "You may describe them vaguely, but do not add new ones. " +
+
+                        "The owner's name is " + user.getUsername() + ". " +
+                        "Here are the interactions: " + report + " " +
+                        "Return ONLY the diary entry text. Nothing else.";
 
                 //String result = llm.generateResponse("Write a diary entry (without the date) in the pet " + pet.getType() +"'s perspective with this daily report: " + report);
+                Log.i(TAG, "uname: " + user.getUsername());
+
                 Log.i(TAG, "Entry for report: \n" + report);
 
                 String result = llm.generateResponse(prompt);
