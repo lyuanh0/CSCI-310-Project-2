@@ -44,3 +44,4 @@
 * Updated the happiness meter increase by 5% upon chatting with pet.
 * Fixed the implementation so tuck-in is disabled when energy is close to 100%
 * Updated so that feeding increases hunger and happiness meter only.
+* fixed about app crashes when the pet wakes up while the user is on another tab.
