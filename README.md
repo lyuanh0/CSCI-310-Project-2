@@ -39,3 +39,8 @@
 * Improved the search query to be able to search for dates in different formats such as mm/dd/yyyy and month names
 * Improved the prompt for journal entry generation (content for journal entries are better)
 * Fixed the Level up button to be only available when the XP reached the max for the level, and the level was not already the max level.
+* Updated the profile fragment and updated the greeting message as soon as the username is updated.
+* Sends a verification email upon account registration, which, when clicked, will see the verification status reflected in the profile tab.
+* Updated the happiness meter increase by 5% upon chatting with pet.
+* Fixed the implementation so tuck-in is disabled when energy is close to 100%
+* Updated so that feeding increases hunger and happiness meter only.
