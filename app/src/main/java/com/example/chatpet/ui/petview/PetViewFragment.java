@@ -412,34 +412,24 @@ public class PetViewFragment extends Fragment {
 
     }
 
-//    private void performTuckOnce() {
-//        if (currentPet == null) return;
-//
-//        // Simulate going to sleep instantly
-//        currentPet.tuck();
-//
-//        // +10% Happiness (cap at 100)
-//        currentPet.increaseHappiness(HAPPINESS_BOOST_PER_TUCK);
-//        clampPetStats();
-//        updateUI();
-//
-//        Toast.makeText(requireContext(),
-//                currentPet.getName() + " is happy!!",
-//                Toast.LENGTH_SHORT).show();
-//
-//        currentPet.increaseXP(10);
-//    }
-
     private void startCooldown() {
         JournalEntry today = journalRepo.getJournalEntryByDate(LocalDate.now());
         today.addToReport("Was tucked in.");
 
         isInCooldown = true;
-        btnTuckIn.setEnabled(false);
+        if (btnTuckIn != null) {
+            btnTuckIn.setEnabled(false);
+        }
+
         currentPet.setCurrentStatus("sleeping");//stays sleeping
         currentPet.setIsSleeping(true);
-        updateUI();
-        Toast.makeText(requireContext(), currentPet.getName() + " fell asleep...", Toast.LENGTH_SHORT).show();
+
+        if (isAdded()) {
+            updateUI();
+            Toast.makeText(requireContext(),
+                    currentPet.getName() + " fell asleep...",
+                    Toast.LENGTH_SHORT).show();
+        }
 
         //Show countdown on the button
         cooldownTimer = new CountDownTimer(COOLDOWN_MS, 1000) {
@@ -448,21 +438,26 @@ public class PetViewFragment extends Fragment {
                 long seconds = millisUntilFinished / 1000;
                 long m = seconds / 60;
                 long s = seconds % 60;
+
                 btnTuckIn.setText(String.format("Sleeping… %02d:%02d", m, s));
             }
 
             @Override
             public void onFinish() {
                 isInCooldown = false;
-                tuckInCount = 0;
+
                 currentPet.setCurrentStatus("awake");//wake up after cooldown
                 currentPet.setIsSleeping(false);
                 currentPet.wakeUp();
-                updateUI();
-                //btnTuckIn.setEnabled(true);
-                //btnTuckIn.setText("Tuck In");
-                Toast.makeText(requireContext(),
-                        "You can tuck in again!", Toast.LENGTH_SHORT).show();
+                if (isAdded() && btnTuckIn != null) {
+                    updateUI();
+                    btnTuckIn.setText("Tuck In");
+                    btnTuckIn.setEnabled(true);
+
+                    Toast.makeText(requireContext(),
+                            "You can tuck in again!",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         }.start();
     }
@@ -587,6 +582,7 @@ public class PetViewFragment extends Fragment {
 
         if (isInCooldown) {
             btnTuckIn.setEnabled(false);
+            currentPet.setCurrentStatus("sleeping");
         } else if (currentPet.getEnergy() >= 80) {
 
             btnTuckIn.setEnabled(false);
@@ -701,11 +697,16 @@ public class PetViewFragment extends Fragment {
             currentPet = petManager.getCurrentPet();
             updateUI();
         }*/
+        currentPet = PetManager.getInstance().getCurrentPet();
 
-        // START TEST MODE STAT DECAY HERE
-        if (statHandler != null && statDecayRunnable != null) {
-            statHandler.postDelayed(statDecayRunnable, STAT_DECAY_INTERVAL_MS);
+        if (currentPet != null) {
+            updateUI();
         }
+        statHandler.postDelayed(statDecayRunnable, STAT_DECAY_INTERVAL_MS);
+
+        //if (statHandler != null && statDecayRunnable != null) {
+        //    statHandler.postDelayed(statDecayRunnable, STAT_DECAY_INTERVAL_MS);
+        //}
     }
 
     @Override
