@@ -38,3 +38,4 @@
 * Journal entries can now consider the first time the player creates the pet (meeting the owner for the first time) and the interaction that the user chatted with the pet
 * Improved the search query to be able to search for dates in different formats such as mm/dd/yyyy and month names
 * Improved the prompt for journal entry generation (content for journal entries are better)
+* Fixed the Level up button to be only available when the XP reached the max for the level, and the level was not already the max level.
